@@ -10,10 +10,10 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 
 ### Assignements
 
-- [Work 1](/Assigments/)
-- [Work 2](/Assigments/)
-- [Work 3](/Assigmnets/)
-- [Project](/Assigments/)
+- [Work 1](Assignments)
+- [Work 2](Assigments)
+- [Work 3](Assigmnets)
+- [Project](Assigments)
 
 
 
@@ -21,7 +21,7 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 
 ### Practical Classes
 
-- [01 Basic C programming](/Practical classes/01 Basic C programming/)
+- [01 Basic C programming](Practical classes/01 Basic C programming)
 - 
 
 
