@@ -67,6 +67,6 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 
 ## Notes
 
-- [P16 Didactit Processor](Theory/P16 Didactit Processor/README.md)
+- [P16 Didactit Processor](Theory/P16%20Didactit%20Processor/README.md)
 - [Architecture of a Computer](Theory/1.%20Architecture%20of%20a%20Computer.md)
 
