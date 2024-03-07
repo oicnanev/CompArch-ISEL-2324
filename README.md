@@ -62,7 +62,10 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 ## Practical Classes
 
 - [01 Basic C programming](Practical%20classes/01%20Basic%20C%20programming)
-- 
+
+## Laboratorial activities
+
+- [First contact with P16 processor](Laboratorial%20activities/lab01)
 
 
 ## Notes
