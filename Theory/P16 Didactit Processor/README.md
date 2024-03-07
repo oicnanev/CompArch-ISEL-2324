@@ -41,6 +41,7 @@ The P16 processor supports two distinct operating modes:
 
 Both modes provide access to all system resources and allow you to switch mode of operation.
 The change of operating mode can be done by software or result from an exception:
+
 - Reset;
 - Interrupt Request (IRQ)
 
@@ -158,4 +159,46 @@ RRX R5, R4 			; R5(15)=Cy, R5(14..0)=R4(15..1), Cy=R4(0)
 ```
 
 
+
+### Control instructions
+
+The control instructions allow you to change the execution flow of the programs by changing the CP value.
+Typically, there are three types of control instructions:
+
+- Unconditional jumping (b);
+- Conditional jump (beq/bzs, bne/bzc, blo/bcc, bhs/bcs, bge, blt);
+- Jump with linkage.
+
+On the P16, all jump instructions set the jump address relative to the PC, this allows space saving when coding instructions and also allows programs to be relocatable.
+The value to add to the PC is specified using a constant, encoded with 11 bits using the add-on code. 
+
+> The range of jumps is limited to the range [-512; +511] instructions.
+
+#### For natural numbers
+
+| Testing condition   | Comparison instruction | Jump instruction |
+| ------------------- | ---------------------- | ---------------- |
+| ```if ( a == b )``` | ```CMP R0, R1```       | ```BNE if_end``` |
+| ```if ( a != b )``` | ```CMP R0, R1```       | ```BEQ if_end``` |
+| ```if ( a < b )```  | ```CMP R0, R1```       | ```BHS if_end``` |
+| ```if ( a <= b )``` | ```CMP R1, R0```       | ```BLO if_end``` |
+| ```if ( a > b )```  | ```CMP R1, R0```       | ```BHS if_end``` |
+| ```if ( a >= b )``` | ```CMP R0, R1```       | ```BLO if_end``` |
+
+
+
+#### For signal integers
+
+| Testing condition   | Comparison instruction | Jump instruction |
+| ------------------- | ---------------------- | ---------------- |
+| ```if ( a == b )``` | ```CMP R0, R1```       | ```BNE if_end``` |
+| ```if ( a != b )``` | ```CMP R0, R1```       | ```BEQ if_end``` |
+| ```if ( a < b )```  | ```CMP R0, R1```       | ```BGE if_end``` |
+| ```if ( a <= b )``` | ```CMP R1, R0```       | ```BLT if_end``` |
+| ```if ( a > b )```  | ```CMP R1, R0```       | ```BGE if_end``` |
+| ```if ( a >= b )``` | ```CMP R0, R1```       | ```BLT if_end``` |
+
+
+
+### Data transfer instructions
 
