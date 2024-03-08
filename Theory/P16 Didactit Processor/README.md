@@ -202,3 +202,42 @@ The value to add to the PC is specified using a constant, encoded with 11 bits u
 
 ### Data transfer instructions
 
+The address space of the P16 is 64 KB, byte and word addressable (16-bit dimension) with 16-bit word alignment.
+
+Data is organized according to *little-endian* format.
+
+Single address space for code access, data and I/O ports.
+
+The instructions for transferring data with memory are of the register-memory type.
+
+There are two classes of data transfer instructions with memory:
+
+- **Load**, for copying the data contained in memory bins to the register file
+- **Store**, for copying the contents of registers in the register file to memory locations.
+
+The P16 supports two addressing modes to set the effective address of the memory position to be accessed:
+
+- **Indexed addressing**
+  - The base value can be obtained from a register in the low block of the register file (R0 - R7);
+  - The index value can be retrieved from any register in the register file or defined using a constant.
+- **Relative addressing**
+  - The CP value is used as a baseline;
+  - The value of the index is defined by a constant.
+  - The constants used as an index are natural numbers
+
+
+
+| **Instruction**         | Notes                                                        |
+| ----------------------- | ------------------------------------------------------------ |
+| ldr Rd, label           | Copies a word from memory to the Rd register. The effective address of the memory accessed is specified by the label symbol with a max distance of +128 Bytes. |
+| pop Rd                  | Copies from stack to register Rd                             |
+| push Rs                 | Copies to stack the value of register Rd                     |
+| ldr Rd, [Rn, \<imm4\>]  | Copies a word from memory to the Rd register. The effective memory address accessed is obtained by adding the value of the constant imm4 (index) to the contents of the Rn register (base) |
+| ldrb Rd, [Rn, \<imm3\>] | Copies one byte from memory to the Rd register. The effective address of the memory position is obtained by adding the value of the constant imm3 (index) to the contents of the Rn (base) register. The read value is extended, unsigned, to 16 bits. |
+| ldr Rd, [Rn, Rm]        | Copies a word from memory to the Rd register. The effective memory address accessed is obtained by adding the contents of the Rm register (index) to the contents of the Rn register (base). |
+| ldrb Rd, [Rn, Rm]       | Copies one byte from memory to the Rd register. The effective address of the memory position is obtained by adding the contents of the Rm register (index) to the contents of the Rn register (base). The read value is extended, unsigned, to 16 bits. |
+| str Rs, [Rn, \<imm4\>]  | Copies the contents of the Rs register to a memory location. The actual address of that memory position is obtained by adding the value of an imm4 constant (index) to the contents of the Rn (base) register. |
+| strb Rs, [Rn, \<imm3\>] | Copies the least significant byte from the contents of the Rs register to a memory position. The effective address of this memory position is obtained by adding to the value of the register Rd (base) with the constant imm3 (index) multiplied by two. |
+| str Rs, [Rn, Rm]        | Copies the contents of the Rs registry to a memory location. The actual address of this memory position is obtained by adding the contents of the Rm register (index) to the contents of the of the Rn register (base) |
+| strb Rs, [Rn, Rm]       | Copies the least significant byte from the contents of the Rs register to a memory position. The effective address of this memory position is obtained by summing the contents from the Rm register (index) to the contents of the Rn register (base). |
+
