@@ -82,7 +82,7 @@ Listing 1: Program to be developed implemented in C language.
 
 The work must be carried out in groups and counts towards the evaluation process of the Curricular Unit (UC) Computer Architecture (AC).
 
-Each group must submit the work carried out on the CA meta discipline page on ISEL's Moodle platform, in the form of a list of the developed program (. S and .lst), duly indented and succinctly commented. The answers to the questions asked in this statements should be included in the programme listing itself, in the form of comments
+Each group must submit the work carried out on the CA meta discipline page on ISEL's Moodle platform, in the form of a list of the developed program (. S and .lst), duly indented and succinctly commented. The answers to the questions asked in this statements should be included in the program code itself, in the form of comments
 
 ## The deadline for submission is **March 25, 2024**.
 
