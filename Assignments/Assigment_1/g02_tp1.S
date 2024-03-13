@@ -1,9 +1,9 @@
 ; -----------------------------------------------------------------------------
 ; Ficheiro:  g02_tp1.S
 ; Descricao: Programa de suporte a realização do 1o trabalho prático de
-             Arquitectura de Computadores.
+;            Arquitectura de Computadores.
 ; Autor:     45824 Nuno Venancio
-             48070 Daniel Cabaça
+;            48070 Daniel Cabaça
 ; Data:      15-03-2024
 ; -----------------------------------------------------------------------------
 
