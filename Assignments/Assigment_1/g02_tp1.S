@@ -4,7 +4,7 @@
 ;               assignment of Computer Architecture.
 ; Authors:      45824 Nuno Venâncio
 ;               48070 Daniel Cabaça
-; Date:         2024-03-15
+; Date:         2024-03-17
 ; -----------------------------------------------------------------------------
 
 ; Setting the values for symbols (constants) used in the program ==============
@@ -30,7 +30,7 @@
 
 _start:
     ldr     SP, stack_top_addr  ; Initialize the stack pointer
-    mov     R0, PC              ; Jump to user code....
+    mov     R0, PC              ; The next intruction only allows R0..R7 in the 2nd operand
     add     LR, R0, #4          ; Set LR to after the call to main
     ldr     PC, main_addr       ; Set PC to begining of main address
     b       .
@@ -131,7 +131,7 @@ end_for:
 ; Routine:      color_scale ---------------------------------------------------
 ; Description:  returns a color value (0, 1, 2) according the t value
 ; Inputs:       t (uint16_t in R0)
-; outputs:      t (uint8_t in R0 )
+; Outputs:      t (uint8_t in R0 )
 ; Efects:
 
 color_scale:    
@@ -150,15 +150,15 @@ color_scale:
     cmp     R4, R1
     blo     red_scale           ; t is < CRITICAL_TIME
     cmp     R2, R4              ; WARNING_TIME > t
-    blo     amber_scale         ; t is >= CRITICAL_TIME and <= WARNING_TIME
+    blo     ambar_scale         ; t is >= CRITICAL_TIME and <= WARNING_TIME
     b       color_scale_end     ; t is > WARNING_TIME
 
 red_scale:
     mov     R0, RED_SCALE
     b       color_scale_end
 
-amber_scale:
-    mov     R0, AMBER_SCALE
+ambar_scale:
+    mov     R0, AMBAR_SCALE
 
 color_scale_end:
     pop     R4
@@ -168,24 +168,50 @@ color_scale_end:
 
 
 
-; Seccao:    .data ============================================================
-; Descricao: Guarda as variáveis globais com um valor inicial definido
+; Section:    .data ===========================================================
+; Description: Saves global variables
     .data
 
 times:
     .word 65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
 
 color_histogram:
-    .byte color_histogram
+    .space 3
 
 ; =============================================================================
 
 
 
-; Seccao:    .stack ===========================================================
-; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+; Section:    .stack ==========================================================
+; Description: Implements the stack with the size defined by the symbol STACK_SIZE
 ;
     .stack
 stack_bottom:
     .space  STACK_SIZE
 stack_top:
+
+
+
+; Assignment question responses in portuguese ==================================
+;
+; 1. b) 
+; O número de bytes necessários, em termos de requisitos de memória para para a
+; implementação dos símbolos RED_SCALE, AMBAR_SCALE, GREEN_SCALE, WARNING_TIME e
+; CRITICAL_TIME, são 0 bytes, uma vez que estes símbolos são definidos com .equ e
+; o assembler, substitui o valor definido nos .equ nos locais onde são referidos
+; na implementação do código na secção .text
+;
+; 2. 
+; Todas as varáveis globais (as arrays 'times' e 'color_histogram') foram implementadas
+; na secção .data porque esta secção é a aquela que é reponsável no P16 para guardar
+; tanto as varáveis com valor préviamente definido ('times') como as varáveis sem valor 
+; previamente definido ('color_histogram')
+;
+; 3. 
+; b) A nossa implementação ocupa 18 x 16 bytes de memória, dos endereços XXXXXXX ao XXXXXX,
+; o que prefaz um total de 288 bytes
+;
+; 4. a) 
+; A afirmação referida não está correta uma vez que o registo R4 é um registo que tem de
+; ser preservado (push / pop) enquanto que o registo R3, por convenção, pode ser usado
+; sem ser necessária a sua preservação.
