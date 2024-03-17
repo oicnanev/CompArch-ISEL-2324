@@ -59,7 +59,6 @@ main_addr:
 main:
     ; save used registers in stack 
     push	LR
-	push	R4
 
     mov		R0, #0 & 0xFF			; i = 0 (uint16_t) - lsb
     movt	R0, #(0>>8) & 0xFF		; i = 0 - msb
@@ -67,14 +66,13 @@ main:
     ldr		R1, color_hist_addr	; get color_histogram mem address
     mov		R2, #0					; color_histogram index value, 8bit
     mov		R3, #3					; temp value for while_main
-	mov		R4, #1					; to add to i (R0)
     
 while_main:
     ; while ( i < 3 )
     cmp		R0, R3					; check if i >= 3
     bhs		end_while_main
     strb	R2, [R1, R0]			; set 0 (8 bit R2) in color_histogram mem addr R1, idx R0
-    add		R0, R0, R4				; i++
+    add		R0, R0, #1				; i++
     b		while_main
 
 end_while_main:
@@ -85,7 +83,6 @@ end_while_main:
 
     mov		R0, #0					; return 0
 	
-	pop		R4
     pop		PC						; put LR in PC
 
 
@@ -111,29 +108,26 @@ test_color_scale:
     push	R5
 	push	R6
 	push	R7
-	push 	R8
 
     mov		R3, #0 & 0xFF			; i = 0 (int16_t) - lsb
     movt	R3, #0 >> 8 & 0xFF		; i = 0 - msb
     mov		R4, R0					; preserve R0, array_t times address
     mov		R5, R1					; preserve R1	, array_c color_histogram address
 	mov		R6, R2					; preserve R2, array_t size, 10
-	mov		R7, #1					; to add 1 to the times[index] value and i
 
 for:
     cmp		R3, R6  				; compare value i with 10
     bhs		end_for
-	add   	R8, R3, R3				; array_t index must be incremented by 2
-	ldr     R0, [R4, R8]			; array_t[i] (times) value
+	add   	R7, R3, R3				; array_t index must be incremented by 2
+	ldr     R0, [R4, R7]			; array_t[i] (times) value
     bl		color_scale			; call to color_scale, result comes in R0
     ldrb	R1, [R5, R0]			; array_c[color_scale(array_t)] value
-    add		R1, R1, R7				; array_c[color_scale(array_t)] value ++
+    add		R1, R1, #1				; array_c[color_scale(array_t)] value ++
     strb	R1, [R5, R0]			; save the new value
-	add 	R3, R3, R7				; i++
+	add 	R3, R3, #1				; i++
     b		for
 
 end_for:
-	pop 	R8
 	pop 	R7
 	pop		R6
     pop		R5
@@ -163,8 +157,8 @@ color_scale:
     ; t >= CRITICAL_TIME && t <= WARNING_TIME
     cmp		R4, R1
     blo		red_scale				; t is < CRITICAL_TIME
-    cmp		R4, R2					; WARNING_TIME > t
-    blo		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
+    cmp		R2, R4					; WARNING_TIME > t
+    bhs		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
     b		color_scale_end		; t is > WARNING_TIME
 
 red_scale:
@@ -222,7 +216,7 @@ stack_top:
 ; previamente definido ('color_histogram')
 ;
 ; 3. 
-; b) A nossa implementação ocupa 20 bytes de memória, dos endereços 0x0066 ao 0x0086,
+; b) A nossa implementação ocupa 36 bytes de memória, dos endereços 0x0068 ao 0x008A,
 ;
 ; 4. a) 
 ; A afirmação referida não está correta uma vez que o registo R4 é um registo que tem de
