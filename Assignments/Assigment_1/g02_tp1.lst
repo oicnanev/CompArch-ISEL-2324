@@ -1,21 +1,21 @@
-P16 assembler v1.5 (Feb  9 2024)	g02_tp1.lst	Sun Mar 17 14:43:29 2024
+P16 assembler v1.5 (Feb  9 2024)	g02_tp1.lst	Sun Mar 17 15:37:31 2024
 
 Sections
 Index   Name            Address   Size
 0       .startup        0000      0012 18
-1       .text           0012      0084 132
-2       .data           0096      0017 23
-3       .stack          00AE      0040 64
+1       .text           0012      0086 134
+2       .data           0098      0017 23
+3       .stack          00B0      0040 64
 
 Symbols
 Name                    Type      Value       Section
 _start                  LABEL     0004 4      .startup
-ambar_scale             LABEL     0090 144    .text
+ambar_scale             LABEL     0092 146    .text
 AMBAR_SCALE             ABSOLUTE  0001 1      .startup
 color_hist_addr         LABEL     0038 56     .text
-color_histogram         LABEL     00AA 170    .data
+color_histogram         LABEL     00AC 172    .data
 color_scale             LABEL     0074 116    .text
-color_scale_end         LABEL     0092 146    .text
+color_scale_end         LABEL     0094 148    .text
 CRITICAL_TIME           ABSOLUTE  0096 150    .startup
 end_for                 LABEL     0068 104    .text
 end_while_main          LABEL     002C 44     .text
@@ -26,13 +26,13 @@ line#36                 LABEL     000C 12     .startup
 main                    LABEL     0012 18     .text
 main_addr               LABEL     0010 16     .startup
 RED_SCALE               ABSOLUTE  0002 2      .startup
-red_scale               LABEL     008C 140    .text
-stack_bottom            LABEL     00AE 174    .stack
+red_scale               LABEL     008E 142    .text
+stack_bottom            LABEL     00B0 176    .stack
 STACK_SIZE              ABSOLUTE  0040 64     .startup
-stack_top               LABEL     00EE 238    .stack
+stack_top               LABEL     00F0 240    .stack
 stack_top_addr          LABEL     000E 14     .startup
 test_color_scale        LABEL     003C 60     .text
-times                   LABEL     0096 150    .data
+times                   LABEL     0098 152    .data
 times_addr              LABEL     003A 58     .text
 WARNING_TIME            ABSOLUTE  012C 300    .startup
 while_main              LABEL     0022 34     .text
@@ -76,7 +76,7 @@ Code listing
   36 000C FF 5B	    b		.
   37           	
   38           	stack_top_addr:
-  39 000E EE 00	    .word   stack_top
+  39 000E F0 00	    .word   stack_top
   40           	
   41           	main_addr:
   42 0010 12 00	    .word   main
@@ -130,10 +130,10 @@ Code listing
   90           	
   91           	
   92           	color_hist_addr:
-  93 0038 AA 00	    .word color_histogram
+  93 0038 AC 00	    .word color_histogram
   94           	
   95           	times_addr:
-  96 003A 96 00	    .word times
+  96 003A 98 00	    .word times
   97           	
   98           	
   99           	
@@ -161,7 +161,7 @@ Code listing
  121 0052 17 60		mov		R7, #1					; to add 1 to the times[index] value and i
  122           	
  123           	for:
- 124 0054 30 BB	    cmp		R3, R6
+ 124 0054 30 BB	    cmp		R3, R6  				; compare value i with 10
  125 0056 08 48	    bhs		end_for
  126 0058 B8 81		add   	R8, R3, R3				; array_t index must be incremented by 2
  127 005A 40 14		ldr     R0, [R4, R8]			; array_t[i] (times) value
@@ -193,84 +193,85 @@ Code listing
  153           	
  154 0076 04 B0	    mov		R4, R0					; preserve t
  155           	
- 156 0078 00 60	    mov		R0, #GREEN_SCALE
- 157 007A 61 69	    mov		R1, #CRITICAL_TIME & 0xFF
- 158 007C 01 70	    movt	R1, #CRITICAL_TIME >> 8 & 0xFF
- 159 007E C2 62	    mov		R2, #WARNING_TIME & 0xFF
- 160 0080 12 70	    movt	R2, #WARNING_TIME >> 8 & 0xFF
- 161           	
- 162           	    ; t >= CRITICAL_TIME && t <= WARNING_TIME
- 163 0082 C0 B8	    cmp		R4, R1
- 164 0084 03 4C	    blo		red_scale				; t is < CRITICAL_TIME
- 165 0086 20 BA	    cmp		R2, R4					; WARNING_TIME > t
- 166 0088 03 4C	    blo		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
- 167 008A 03 58	    b		color_scale_end		; t is > WARNING_TIME
- 168           	
- 169           	red_scale:
- 170 008C 20 60	    mov		R0, #RED_SCALE
- 171 008E 01 58	    b		color_scale_end
- 172           	
- 173           	ambar_scale:
- 174 0090 10 60	    mov		R0, #AMBAR_SCALE
- 175           	
- 176           	color_scale_end:
- 177 0092 04 04	    pop		R4
- 178 0094 0F B7	    mov		PC, LR
- 179           	
- 180           	; =============================================================================
- 181           	
+ 156 0078 00 60	    mov		R0, #GREEN_SCALE & 0xFF
+ 157 007A 00 70		movt 	R0, #GREEN_SCALE >> 8 & 0xFF
+ 158 007C 61 69	    mov		R1, #CRITICAL_TIME & 0xFF
+ 159 007E 01 70	    movt	R1, #CRITICAL_TIME >> 8 & 0xFF
+ 160 0080 C2 62	    mov		R2, #WARNING_TIME & 0xFF
+ 161 0082 12 70	    movt	R2, #WARNING_TIME >> 8 & 0xFF
+ 162           	
+ 163           	    ; t >= CRITICAL_TIME && t <= WARNING_TIME
+ 164 0084 C0 B8	    cmp		R4, R1
+ 165 0086 03 4C	    blo		red_scale				; t is < CRITICAL_TIME
+ 166 0088 40 B9	    cmp		R4, R2					; WARNING_TIME > t
+ 167 008A 03 4C	    blo		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
+ 168 008C 03 58	    b		color_scale_end		; t is > WARNING_TIME
+ 169           	
+ 170           	red_scale:
+ 171 008E 20 60	    mov		R0, #RED_SCALE
+ 172 0090 01 58	    b		color_scale_end
+ 173           	
+ 174           	ambar_scale:
+ 175 0092 10 60	    mov		R0, #AMBAR_SCALE
+ 176           	
+ 177           	color_scale_end:
+ 178 0094 04 04	    pop		R4
+ 179 0096 0F B7	    mov		PC, LR
+ 180           	
+ 181           	; =============================================================================
  182           	
  183           	
- 184           	; Section:    .data ===========================================================
- 185           	; Description: Saves global variables
- 186           	    .data
- 187           	
- 188           	times:
- 189          	    .word 65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
- 189 0096 FF FF F4 01 2D 01 2C 01 2B 01 97 00 96 00 95 00
- 189 00A6 01 00 00 00
- 190           	
- 191           	color_histogram:
- 192 00AA 00   	    .space 3
- 192 00AB 00
- 192 00AC 00
- 193           	
- 194           	; =============================================================================
- 195           	
+ 184           	
+ 185           	; Section:    .data ===========================================================
+ 186           	; Description: Saves global variables
+ 187           	    .data
+ 188           	
+ 189           	times:
+ 190          	    .word 65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
+ 190 0098 FF FF F4 01 2D 01 2C 01 2B 01 97 00 96 00 95 00
+ 190 00A8 01 00 00 00
+ 191           	
+ 192           	color_histogram:
+ 193 00AC 00   	    .space 3
+ 193 00AD 00
+ 193 00AE 00
+ 194           	
+ 195           	; =============================================================================
  196           	
  197           	
- 198           	; Section:    .stack ==========================================================
- 199           	; Description: Implements the stack with the size defined by the symbol STACK_SIZE
- 200           	;
- 201           	    .stack
- 202           	stack_bottom:
- 203 00AE 00   	    .space  STACK_SIZE
- 203 .... ..
- 203 00ED 00
- 204           	stack_top:
- 205           	
+ 198           	
+ 199           	; Section:    .stack ==========================================================
+ 200           	; Description: Implements the stack with the size defined by the symbol STACK_SIZE
+ 201           	;
+ 202           	    .stack
+ 203           	stack_bottom:
+ 204 00B0 00   	    .space  STACK_SIZE
+ 204 .... ..
+ 204 00EF 00
+ 205           	stack_top:
  206           	
  207           	
- 208           	; Assignment question responses in portuguese ==================================
- 209           	;
- 210           	; 1. b) 
- 211           	; O número de bytes necessários, em termos de requisitos de memória para para a
- 212           	; implementação dos símbolos RED_SCALE, AMBAR_SCALE, GREEN_SCALE, WARNING_TIME e
- 213           	; CRITICAL_TIME, são 0 bytes, uma vez que estes símbolos são definidos com .equ e
- 214           	; o assembler, substitui o valor definido nos .equ nos locais onde são referidos
- 215           	; na implementação do código na secção .text
- 216           	;
- 217           	; 2. 
- 218           	; Todas as varáveis globais (as arrays 'times' e 'color_histogram') foram implementadas
- 219           	; na secção .data porque esta secção é a aquela que é reponsável no P16 para guardar
- 220           	; tanto as varáveis com valor préviamente definido ('times') como as varáveis sem valor 
- 221           	; previamente definido ('color_histogram')
- 222           	;
- 223           	; 3. 
- 224           	; b) A nossa implementação ocupa 20 bytes de memória, dos endereços 0x0066 ao 0x0086,
- 225           	;
- 226           	; 4. a) 
- 227           	; A afirmação referida não está correta uma vez que o registo R4 é um registo que tem de
- 228           	; ser preservado (push / pop) enquanto que o registo R3, por convenção, pode ser usado
- 229           	; sem ser necessária a sua preservação.
- 229           	
+ 208           	
+ 209           	; Assignment question responses in portuguese ==================================
+ 210           	;
+ 211           	; 1. b) 
+ 212           	; O número de bytes necessários, em termos de requisitos de memória para para a
+ 213           	; implementação dos símbolos RED_SCALE, AMBAR_SCALE, GREEN_SCALE, WARNING_TIME e
+ 214           	; CRITICAL_TIME, são 0 bytes, uma vez que estes símbolos são definidos com .equ e
+ 215           	; o assembler, substitui o valor definido nos .equ nos locais onde são referidos
+ 216           	; na implementação do código na secção .text
+ 217           	;
+ 218           	; 2. 
+ 219           	; Todas as varáveis globais (as arrays 'times' e 'color_histogram') foram implementadas
+ 220           	; na secção .data porque esta secção é a aquela que é reponsável no P16 para guardar
+ 221           	; tanto as varáveis com valor préviamente definido ('times') como as varáveis sem valor 
+ 222           	; previamente definido ('color_histogram')
+ 223           	;
+ 224           	; 3. 
+ 225           	; b) A nossa implementação ocupa 20 bytes de memória, dos endereços 0x0066 ao 0x0086,
+ 226           	;
+ 227           	; 4. a) 
+ 228           	; A afirmação referida não está correta uma vez que o registo R4 é um registo que tem de
+ 229           	; ser preservado (push / pop) enquanto que o registo R3, por convenção, pode ser usado
+ 230           	; sem ser necessária a sua preservação.
+ 230           	

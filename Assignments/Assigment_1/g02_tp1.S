@@ -121,7 +121,7 @@ test_color_scale:
 	mov		R7, #1					; to add 1 to the times[index] value and i
 
 for:
-    cmp		R3, R6
+    cmp		R3, R6  				; compare value i with 10
     bhs		end_for
 	add   	R8, R3, R3				; array_t index must be incremented by 2
 	ldr     R0, [R4, R8]			; array_t[i] (times) value
@@ -153,7 +153,8 @@ color_scale:
 
     mov		R4, R0					; preserve t
 
-    mov		R0, #GREEN_SCALE
+    mov		R0, #GREEN_SCALE & 0xFF
+	movt 	R0, #GREEN_SCALE >> 8 & 0xFF
     mov		R1, #CRITICAL_TIME & 0xFF
     movt	R1, #CRITICAL_TIME >> 8 & 0xFF
     mov		R2, #WARNING_TIME & 0xFF
@@ -162,7 +163,7 @@ color_scale:
     ; t >= CRITICAL_TIME && t <= WARNING_TIME
     cmp		R4, R1
     blo		red_scale				; t is < CRITICAL_TIME
-    cmp		R2, R4					; WARNING_TIME > t
+    cmp		R4, R2					; WARNING_TIME > t
     blo		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
     b		color_scale_end		; t is > WARNING_TIME
 
