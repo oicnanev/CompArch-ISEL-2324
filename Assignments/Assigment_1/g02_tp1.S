@@ -109,7 +109,7 @@ test_color_scale:
 	push	R6
 	push	R7
 
-    mov		R3, #0         			; i = 0, int16_t, Note P16 puts zeros in higher part automatically
+    mov		R3, #0         			; i = 0, int16_t, Note P16 puts zeros in higher part automatically and the value 0 has the signal bit 0
     mov		R4, R0					; preserve R0, array_t times address
     mov		R5, R1					; preserve R1	, array_c color_histogram address
 	mov		R6, R2					; preserve R2, array_t size, 10
@@ -146,7 +146,7 @@ color_scale:
 
     mov		R4, R0					; preserve t
 
-    mov		R0, #GREEN_SCALE        ; unsigned 8 bit
+    mov		R0, #GREEN_SCALE & 0xFF ; unsigned 8 bit
     mov		R1, #CRITICAL_TIME & 0xFF
     movt	R1, #CRITICAL_TIME >> 8 & 0xFF
     mov		R2, #WARNING_TIME & 0xFF
