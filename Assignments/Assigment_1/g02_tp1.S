@@ -29,7 +29,7 @@
     b		.						; Interrupt handler
 
 _start:
-    ldr		SP, stack_top_addr	; Initialize the stack pointer
+    ldr		SP, stack_top_addr	    ; Initialize the stack pointer
     mov		R0, PC					; The next intruction only allows R0..R7 in the 2nd operand
     add		LR, R0, #4				; Set LR to after the call to main
     ldr		PC, main_addr			; Set PC to begining of main address
@@ -63,7 +63,7 @@ main:
     mov		R0, #0 & 0xFF			; i = 0 (uint16_t) - lsb
     movt	R0, #(0>>8) & 0xFF		; i = 0 - msb
 
-    ldr		R1, color_hist_addr	; get color_histogram mem address
+    ldr		R1, color_hist_addr	    ; get color_histogram mem address
     mov		R2, #0					; color_histogram index value, 8bit
     mov		R3, #3					; temp value for while_main
     
@@ -77,7 +77,7 @@ while_main:
 
 end_while_main:
     ; call to test_color_scale( times(R0), color_histogram(R1), 10(R2) )
-    ldr		R0, times_addr		; R0 = times mem address
+    ldr		R0, times_addr		    ; R0 = times mem address
     mov		R2, #10					; R2 = 10
     bl		test_color_scale		; R1 already has color_hist_addr
 
@@ -109,18 +109,17 @@ test_color_scale:
 	push	R6
 	push	R7
 
-    mov		R3, #0 & 0xFF			; i = 0 (int16_t) - lsb
-    movt	R3, #0 >> 8 & 0xFF		; i = 0 - msb
+    mov		R3, #0         			; i = 0, int16_t, Note P16 puts zeros in higher part automatically
     mov		R4, R0					; preserve R0, array_t times address
     mov		R5, R1					; preserve R1	, array_c color_histogram address
 	mov		R6, R2					; preserve R2, array_t size, 10
 
 for:
     cmp		R3, R6  				; compare value i with 10
-    bhs		end_for
+    bge		end_for                 ; i is signed 16 bit
 	add   	R7, R3, R3				; array_t index must be incremented by 2
 	ldr     R0, [R4, R7]			; array_t[i] (times) value
-    bl		color_scale			; call to color_scale, result comes in R0
+    bl		color_scale			    ; call to color_scale, result comes in R0
     ldrb	R1, [R5, R0]			; array_c[color_scale(array_t)] value
     add		R1, R1, #1				; array_c[color_scale(array_t)] value ++
     strb	R1, [R5, R0]			; save the new value
@@ -147,8 +146,7 @@ color_scale:
 
     mov		R4, R0					; preserve t
 
-    mov		R0, #GREEN_SCALE & 0xFF
-	movt 	R0, #GREEN_SCALE >> 8 & 0xFF
+    mov		R0, #GREEN_SCALE        ; unsigned 8 bit
     mov		R1, #CRITICAL_TIME & 0xFF
     movt	R1, #CRITICAL_TIME >> 8 & 0xFF
     mov		R2, #WARNING_TIME & 0xFF
@@ -158,8 +156,8 @@ color_scale:
     cmp		R4, R1
     blo		red_scale				; t is < CRITICAL_TIME
     cmp		R2, R4					; WARNING_TIME > t
-    bhs		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
-    b		color_scale_end		; t is > WARNING_TIME
+    bhs		ambar_scale			    ; t is >= CRITICAL_TIME and <= WARNING_TIME
+    b		color_scale_end		    ; t is > WARNING_TIME
 
 red_scale:
     mov		R0, #RED_SCALE
