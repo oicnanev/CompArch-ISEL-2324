@@ -1,38 +1,38 @@
-P16 assembler v1.5 (Feb  9 2024)	g02_tp1.lst	Sun Mar 17 16:48:07 2024
+P16 assembler v1.5 (Feb  9 2024)	g02_tp1.lst	Sat Mar 23 16:27:52 2024
 
 Sections
 Index   Name            Address   Size
 0       .startup        0000      0012 18
-1       .text           0012      007A 122
-2       .data           008C      0017 23
-3       .stack          00A4      0040 64
+1       .text           0012      0076 118
+2       .data           0088      0017 23
+3       .stack          00A0      0040 64
 
 Symbols
 Name                    Type      Value       Section
 _start                  LABEL     0004 4      .startup
-ambar_scale             LABEL     0086 134    .text
+ambar_scale             LABEL     0082 130    .text
 AMBAR_SCALE             ABSOLUTE  0001 1      .startup
 color_hist_addr         LABEL     0032 50     .text
-color_histogram         LABEL     00A0 160    .data
-color_scale             LABEL     0068 104    .text
-color_scale_end         LABEL     0088 136    .text
+color_histogram         LABEL     009C 156    .data
+color_scale             LABEL     0066 102    .text
+color_scale_end         LABEL     0084 132    .text
 CRITICAL_TIME           ABSOLUTE  0096 150    .startup
-end_for                 LABEL     005E 94     .text
+end_for                 LABEL     005C 92     .text
 end_while_main          LABEL     0028 40     .text
-for                     LABEL     004A 74     .text
+for                     LABEL     0048 72     .text
 GREEN_SCALE             ABSOLUTE  0000 0      .startup
 line#29                 LABEL     0002 2      .startup
 line#36                 LABEL     000C 12     .startup
 main                    LABEL     0012 18     .text
 main_addr               LABEL     0010 16     .startup
 RED_SCALE               ABSOLUTE  0002 2      .startup
-red_scale               LABEL     0082 130    .text
-stack_bottom            LABEL     00A4 164    .stack
+red_scale               LABEL     007E 126    .text
+stack_bottom            LABEL     00A0 160    .stack
 STACK_SIZE              ABSOLUTE  0040 64     .startup
-stack_top               LABEL     00E4 228    .stack
+stack_top               LABEL     00E0 224    .stack
 stack_top_addr          LABEL     000E 14     .startup
 test_color_scale        LABEL     0036 54     .text
-times                   LABEL     008C 140    .data
+times                   LABEL     0088 136    .data
 times_addr              LABEL     0034 52     .text
 WARNING_TIME            ABSOLUTE  012C 300    .startup
 while_main              LABEL     001E 30     .text
@@ -65,18 +65,18 @@ Code listing
   25           	
   26           	    .section .startup
   27           	
-  28 0000 01 58	    b		_start					; Reset handler
-  29 0002 FF 5B	    b		.						; Interrupt handler
+  28 0000 01 58	    b       _start                  ; Reset handler
+  29 0002 FF 5B	    b       .                       ; Interrupt handler
   30           	
   31           	_start:
-  32 0004 4D 0C	    ldr		SP, stack_top_addr	; Initialize the stack pointer
-  33 0006 80 B7	    mov		R0, PC					; The next intruction only allows R0..R7 in the 2nd operand
-  34 0008 0E A2	    add		LR, R0, #4				; Set LR to after the call to main
-  35 000A 2F 0C	    ldr		PC, main_addr			; Set PC to begining of main address
-  36 000C FF 5B	    b		.
+  32 0004 4D 0C	    ldr     SP, stack_top_addr      ; Initialize the stack pointer
+  33 0006 80 B7	    mov     R0, PC                  ; The next intruction only allows R0..R7 in the 2nd operand
+  34 0008 0E A2	    add     LR, R0, #4              ; Set LR to after the call to main
+  35 000A 2F 0C	    ldr     PC, main_addr           ; Set PC to begining of main address
+  36 000C FF 5B	    b       .
   37           	
   38           	stack_top_addr:
-  39 000E E4 00	    .word   stack_top
+  39 000E E0 00	    .word   stack_top
   40           	
   41           	main_addr:
   42 0010 12 00	    .word   main
@@ -98,39 +98,39 @@ Code listing
   58           	
   59           	main:
   60           	    ; save used registers in stack 
-  61 0012 0E 24	    push	LR
+  61 0012 0E 24	    push    LR
   62           	
-  63 0014 00 60	    mov		R0, #0 & 0xFF			; i = 0 (uint16_t) - lsb
-  64 0016 00 70	    movt	R0, #(0>>8) & 0xFF		; i = 0 - msb
+  63 0014 00 60	    mov     R0, #0 & 0xFF           ; i = 0 (uint16_t) - lsb
+  64 0016 00 70	    movt    R0, #(0>>8) & 0xFF      ; i = 0 - msb
   65           	
-  66 0018 C1 0C	    ldr		R1, color_hist_addr	; get color_histogram mem address
-  67 001A 02 60	    mov		R2, #0					; color_histogram index value, 8bit
-  68 001C 33 60	    mov		R3, #3					; temp value for while_main
+  66 0018 C1 0C	    ldr     R1, color_hist_addr     ; get color_histogram mem address
+  67 001A 02 60	    mov     R2, #0                  ; color_histogram index value, 8bit
+  68 001C 33 60	    mov     R3, #3                  ; temp value for while_main
   69           	    
   70           	while_main:
   71           	    ; while ( i < 3 )
-  72 001E 80 B9	    cmp		R0, R3					; check if i >= 3
-  73 0020 03 48	    bhs		end_while_main
-  74 0022 12 38	    strb	R2, [R1, R0]			; set 0 (8 bit R2) in color_histogram mem addr R1, idx R0
-  75 0024 80 A0	    add		R0, R0, #1				; i++
-  76 0026 FB 5B	    b		while_main
+  72 001E 80 B9	    cmp     R0, R3                  ; check if i >= 3
+  73 0020 03 48	    bhs     end_while_main
+  74 0022 12 38	    strb    R2, [R1, R0]            ; set 0 (8 bit R2) in color_histogram mem addr R1, idx R0
+  75 0024 80 A0	    add     R0, R0, #1              ; i++
+  76 0026 FB 5B	    b       while_main
   77           	
   78           	end_while_main:
   79           	    ; call to test_color_scale( times(R0), color_histogram(R1), 10(R2) )
-  80 0028 50 0C	    ldr		R0, times_addr		; R0 = times mem address
-  81 002A A2 60	    mov		R2, #10					; R2 = 10
-  82 002C 04 5C	    bl		test_color_scale		; R1 already has color_hist_addr
+  80 0028 50 0C	    ldr     R0, times_addr          ; R0 = times mem address
+  81 002A A2 60	    mov     R2, #10                 ; R2 = 10
+  82 002C 04 5C	    bl      test_color_scale        ; R1 already has color_hist_addr
   83           	
-  84 002E 00 60	    mov		R0, #0					; return 0
-  85           		
-  86 0030 0F 04	    pop		PC						; put LR in PC
+  84 002E 00 60	    mov     R0, #0                  ; return 0
+  85           	    
+  86 0030 0F 04	    pop     PC                      ; put LR in PC
   87           	
   88           	
   89           	color_hist_addr:
-  90 0032 A0 00	    .word color_histogram
+  90 0032 9C 00	    .word color_histogram
   91           	
   92           	times_addr:
-  93 0034 8C 00	    .word times
+  93 0034 88 00	    .word times
   94           	
   95           	
   96           	
@@ -143,129 +143,127 @@ Code listing
  103           	; Efects:       Fills the color_histogram array
  104           	
  105           	test_color_scale:
- 106 0036 0E 24	    push	LR
- 107 0038 04 24	    push	R4
- 108 003A 05 24	    push	R5
- 109 003C 06 24		push	R6
- 110 003E 07 24		push	R7
+ 106 0036 0E 24	    push    LR
+ 107 0038 04 24	    push    R4
+ 108 003A 05 24	    push    R5
+ 109 003C 06 24	    push    R6
+ 110 003E 07 24	    push    R7
  111           	
- 112 0040 03 60	    mov		R3, #0 & 0xFF			; i = 0 (int16_t) - lsb
- 113 0042 03 70	    movt	R3, #0 >> 8 & 0xFF		; i = 0 - msb
- 114 0044 04 B0	    mov		R4, R0					; preserve R0, array_t times address
- 115 0046 85 B0	    mov		R5, R1					; preserve R1	, array_c color_histogram address
- 116 0048 06 B1		mov		R6, R2					; preserve R2, array_t size, 10
- 117           	
- 118           	for:
- 119 004A 30 BB	    cmp		R3, R6  				; compare value i with 10
- 120 004C 08 48	    bhs		end_for
- 121 004E B7 81		add   	R7, R3, R3				; array_t index must be incremented by 2
- 122 0050 C0 13		ldr     R0, [R4, R7]			; array_t[i] (times) value
- 123 0052 0A 5C	    bl		color_scale			; call to color_scale, result comes in R0
- 124 0054 51 18	    ldrb	R1, [R5, R0]			; array_c[color_scale(array_t)] value
- 125 0056 91 A0	    add		R1, R1, #1				; array_c[color_scale(array_t)] value ++
- 126 0058 51 38	    strb	R1, [R5, R0]			; save the new value
- 127 005A B3 A0		add 	R3, R3, #1				; i++
- 128 005C F6 5B	    b		for
- 129           	
- 130           	end_for:
- 131 005E 07 04		pop 	R7
- 132 0060 06 04		pop		R6
- 133 0062 05 04	    pop		R5
- 134 0064 04 04	    pop		R4
- 135 0066 0F 04	    pop		PC
+ 112 0040 03 60	    mov     R3, #0                  ; i = 0, int16_t, Note P16 puts zeros in higher part automatically and 0 has the signal bit 0
+ 113 0042 04 B0	    mov     R4, R0                  ; preserve R0, array_t times address
+ 114 0044 85 B0	    mov     R5, R1                  ; preserve R1   , array_c color_histogram address
+ 115 0046 06 B1	    mov     R6, R2                  ; preserve R2, array_t size, 10
+ 116           	
+ 117           	for:
+ 118 0048 30 BB	    cmp     R3, R6                  ; compare value i with 10
+ 119 004A 08 50	    bge     end_for                 ; i is signed 16 bit
+ 120 004C B7 81	    add     R7, R3, R3              ; array_t index must be incremented by 2
+ 121 004E C0 13	    ldr     R0, [R4, R7]            ; array_t[i] (times) value
+ 122 0050 0A 5C	    bl      color_scale             ; call to color_scale, result comes in R0
+ 123 0052 51 18	    ldrb    R1, [R5, R0]            ; array_c[color_scale(array_t)] value
+ 124 0054 91 A0	    add     R1, R1, #1              ; array_c[color_scale(array_t)] value ++
+ 125 0056 51 38	    strb    R1, [R5, R0]            ; save the new value
+ 126 0058 B3 A0	    add     R3, R3, #1              ; i++
+ 127 005A F6 5B	    b       for
+ 128           	
+ 129           	end_for:
+ 130 005C 07 04	    pop     R7
+ 131 005E 06 04	    pop     R6
+ 132 0060 05 04	    pop     R5
+ 133 0062 04 04	    pop     R4
+ 134 0064 0F 04	    pop     PC
+ 135           	
  136           	
  137           	
- 138           	
- 139           	; Routine:      color_scale ---------------------------------------------------
- 140           	; Description:  returns a color value (0, 1, 2) according the t value
- 141           	; Inputs:       t (uint16_t in R0)
- 142           	; Outputs:      t (uint8_t in R0 )
- 143           	; Efects:
- 144           	
- 145           	color_scale:    
- 146 0068 04 24	    push	R4						; save used registers in stack
- 147           	
- 148 006A 04 B0	    mov		R4, R0					; preserve t
- 149           	
- 150 006C 00 60	    mov		R0, #GREEN_SCALE & 0xFF
- 151 006E 00 70		movt 	R0, #GREEN_SCALE >> 8 & 0xFF
- 152 0070 61 69	    mov		R1, #CRITICAL_TIME & 0xFF
- 153 0072 01 70	    movt	R1, #CRITICAL_TIME >> 8 & 0xFF
- 154 0074 C2 62	    mov		R2, #WARNING_TIME & 0xFF
- 155 0076 12 70	    movt	R2, #WARNING_TIME >> 8 & 0xFF
- 156           	
- 157           	    ; t >= CRITICAL_TIME && t <= WARNING_TIME
- 158 0078 C0 B8	    cmp		R4, R1
- 159 007A 03 4C	    blo		red_scale				; t is < CRITICAL_TIME
- 160 007C 20 BA	    cmp		R2, R4					; WARNING_TIME > t
- 161 007E 03 48	    bhs		ambar_scale			; t is >= CRITICAL_TIME and <= WARNING_TIME
- 162 0080 03 58	    b		color_scale_end		; t is > WARNING_TIME
- 163           	
- 164           	red_scale:
- 165 0082 20 60	    mov		R0, #RED_SCALE
- 166 0084 01 58	    b		color_scale_end
- 167           	
- 168           	ambar_scale:
- 169 0086 10 60	    mov		R0, #AMBAR_SCALE
- 170           	
- 171           	color_scale_end:
- 172 0088 04 04	    pop		R4
- 173 008A 0F B7	    mov		PC, LR
+ 138           	; Routine:      color_scale ---------------------------------------------------
+ 139           	; Description:  returns a color value (0, 1, 2) according the t value
+ 140           	; Inputs:       t (uint16_t in R0)
+ 141           	; Outputs:      t (uint8_t in R0 )
+ 142           	; Efects:
+ 143           	
+ 144           	color_scale:    
+ 145 0066 04 24	    push    R4                      ; save used registers in stack
+ 146           	
+ 147 0068 04 B0	    mov     R4, R0                  ; preserve t
+ 148           	
+ 149 006A 00 60	    mov     R0, #GREEN_SCALE & 0xFF ; unsigned 8 bit
+ 150 006C 61 69	    mov     R1, #CRITICAL_TIME & 0xFF
+ 151 006E 01 70	    movt    R1, #CRITICAL_TIME >> 8 & 0xFF
+ 152 0070 C2 62	    mov     R2, #WARNING_TIME & 0xFF
+ 153 0072 12 70	    movt    R2, #WARNING_TIME >> 8 & 0xFF
+ 154           	
+ 155           	    ; t >= CRITICAL_TIME && t <= WARNING_TIME
+ 156 0074 C0 B8	    cmp     R4, R1
+ 157 0076 03 4C	    blo     red_scale               ; t is < CRITICAL_TIME
+ 158 0078 20 BA	    cmp     R2, R4                  ; WARNING_TIME > t
+ 159 007A 03 48	    bhs     ambar_scale             ; t is >= CRITICAL_TIME and <= WARNING_TIME
+ 160 007C 03 58	    b       color_scale_end         ; t is > WARNING_TIME
+ 161           	
+ 162           	red_scale:
+ 163 007E 20 60	    mov     R0, #RED_SCALE
+ 164 0080 01 58	    b       color_scale_end
+ 165           	
+ 166           	ambar_scale:
+ 167 0082 10 60	    mov     R0, #AMBAR_SCALE
+ 168           	
+ 169           	color_scale_end:
+ 170 0084 04 04	    pop     R4
+ 171 0086 0F B7	    mov     PC, LR
+ 172           	
+ 173           	; =============================================================================
  174           	
- 175           	; =============================================================================
+ 175           	
  176           	
- 177           	
- 178           	
- 179           	; Section:    .data ===========================================================
- 180           	; Description: Saves global variables
- 181           	    .data
- 182           	
- 183           	times:
- 184          	    .word 65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
- 184 008C FF FF F4 01 2D 01 2C 01 2B 01 97 00 96 00 95 00
- 184 009C 01 00 00 00
- 185           	
- 186           	color_histogram:
- 187 00A0 00   	    .space 3
- 187 00A1 00
- 187 00A2 00
+ 177           	; Section:    .data ===========================================================
+ 178           	; Description: Saves global variables
+ 179           	    .data
+ 180           	
+ 181           	times:
+ 182          	    .word 65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
+ 182 0088 FF FF F4 01 2D 01 2C 01 2B 01 97 00 96 00 95 00
+ 182 0098 01 00 00 00
+ 183           	
+ 184           	color_histogram:
+ 185 009C 00   	    .space 3
+ 185 009D 00
+ 185 009E 00
+ 186           	
+ 187           	; =============================================================================
  188           	
- 189           	; =============================================================================
+ 189           	
  190           	
- 191           	
- 192           	
- 193           	; Section:    .stack ==========================================================
- 194           	; Description: Implements the stack with the size defined by the symbol STACK_SIZE
- 195           	;
- 196           	    .stack
- 197           	stack_bottom:
- 198 00A4 00   	    .space  STACK_SIZE
- 198 .... ..
- 198 00E3 00
- 199           	stack_top:
+ 191           	; Section:    .stack ==========================================================
+ 192           	; Description: Implements the stack with the size defined by the symbol STACK_SIZE
+ 193           	;
+ 194           	    .stack
+ 195           	stack_bottom:
+ 196 00A0 00   	    .space  STACK_SIZE
+ 196 .... ..
+ 196 00DF 00
+ 197           	stack_top:
+ 198           	
+ 199           	
  200           	
- 201           	
- 202           	
- 203           	; Assignment question responses in portuguese ==================================
- 204           	;
- 205           	; 1. b) 
- 206           	; O número de bytes necessários, em termos de requisitos de memória para para a
- 207           	; implementação dos símbolos RED_SCALE, AMBAR_SCALE, GREEN_SCALE, WARNING_TIME e
- 208           	; CRITICAL_TIME, são 0 bytes, uma vez que estes símbolos são definidos com .equ e
- 209           	; o assembler, substitui o valor definido nos .equ nos locais onde são referidos
- 210           	; na implementação do código na secção .text
- 211           	;
- 212           	; 2. 
- 213           	; Todas as varáveis globais (as arrays 'times' e 'color_histogram') foram implementadas
- 214           	; na secção .data porque esta secção é a aquela que é reponsável no P16 para guardar
- 215           	; tanto as varáveis com valor préviamente definido ('times') como as varáveis sem valor 
- 216           	; previamente definido ('color_histogram')
- 217           	;
- 218           	; 3. 
- 219           	; b) A nossa implementação ocupa 36 bytes de memória, dos endereços 0x0068 ao 0x008A,
- 220           	;
- 221           	; 4. a) 
- 222           	; A afirmação referida não está correta uma vez que o registo R4 é um registo que tem de
- 223           	; ser preservado (push / pop) enquanto que o registo R3, por convenção, pode ser usado
- 224           	; sem ser necessária a sua preservação.
- 224           	
+ 201           	; Assignment question responses in portuguese ==================================
+ 202           	;
+ 203           	; 1. b) 
+ 204           	; O número de bytes necessários, em termos de requisitos de memória para para a
+ 205           	; implementação dos símbolos RED_SCALE, AMBAR_SCALE, GREEN_SCALE, WARNING_TIME e
+ 206           	; CRITICAL_TIME, são 0 bytes, uma vez que estes símbolos são definidos com .equ e
+ 207           	; o assembler, substitui o valor definido nos .equ nos locais onde são referidos
+ 208           	; na implementação do código na secção .text
+ 209           	;
+ 210           	; 2. 
+ 211           	; Todas as varáveis globais (as arrays 'times' e 'color_histogram') foram implementadas
+ 212           	; na secção .data porque esta secção é a aquela que é reponsável no P16 para guardar
+ 213           	; tanto as varáveis com valor préviamente definido ('times') como as varáveis sem valor 
+ 214           	; previamente definido ('color_histogram')
+ 215           	;
+ 216           	; 3. 
+ 217           	; b) A nossa implementação ocupa 34 bytes de memória, dos endereços 0x0066 ao 0x0086,
+ 218           	;
+ 219           	; 4. a) 
+ 220           	; A afirmação referida não está correta uma vez que o registo R4 é um registo que tem de
+ 221           	; ser preservado (push / pop) enquanto que o registo R3, por convenção, pode ser usado
+ 222           	; sem ser necessária a sua preservação.
+ 222           	
