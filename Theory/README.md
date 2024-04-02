@@ -3,8 +3,8 @@
 
 
 - [1. Architecture of a Computer](1.%20Architecture%20of%20a%20Computer.md)
-- 2. Assembly Language Programming
-- 3. Processor Internal Organization
+- [2. Assembly Language Programming](2.%20Assembly%20Language%20Programming.md)
+- [3. Processor Internal Organization](3.%20Processor%20Internal%20Organization.md)
 - 4. Memory Subsystem
 - 5. Inputs and Outputs Subsystem
 - 6. Interrupt Mechanism
