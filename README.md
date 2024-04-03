@@ -73,5 +73,6 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 - [P16 Didactic Processor](Theory/P16%20Didactit%20Processor/README.md)
 - [Architecture of a Computer](Theory/1.%20Architecture%20of%20a%20Computer.md)
 - [Assembly Language Programming](Theory/2.%20Assembly%20Language%20Programming.md)
+- [Processor Internal Organization](/Theory/3.%20Processor%20Internal%20Organization.md)
 - 
 
