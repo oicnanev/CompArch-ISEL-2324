@@ -53,10 +53,10 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 
 ## Assignements
 
-- [Work 1](Assignments)
-- [Work 2](Assigments)
-- [Work 3](Assigmnets)
-- [Project](Assigments)
+- [Work 1](Assignments/Assigment_1)
+- [Work 2](Assigments/Assigment_2)
+- [Work 3](Assigmnets/Assigment_3)
+- [Project](Assigments/Assigment_4)
 
 
 ## Practical Classes
