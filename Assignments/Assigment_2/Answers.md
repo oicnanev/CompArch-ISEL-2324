@@ -95,23 +95,3 @@ Vamos precisar da flag Z para entrada, logo, ou 1 ou 2; A 1, não faz sentido po
 | mov r0, r1      | 0x04     | 00 01 - - 101  | 0x025 |
 | sub r2, r2, r2  | 0x05     | 10 10 10 001   | 0x151 |
 | b r2 (0x00)     | 0x06     | - - 10 - - 000 | 0x040 |
-
-
-
-### 3.
-
-
-
-## 3.4
-
-| Instrução         | Endereço | Código máquina |
-| ----------------- | -------- | -------------- |
-| ldr r0, [#0]      | 0x0000   |                |
-| ldr r1, [#1]      | 0x0001   |                |
-| tst r0, r1        | 0x0010   |                |
-| bzc skip (0x1000) | 0x0011   |                |
-| mov r0, r1        | 0x0100   |                |
-| sub r2, r2, r2    | 0x0101   |                |
-| str r0, [r2]      | 0x0111   |                |
-| b r2 (0x0000)     | 0x1000   |                |
-
