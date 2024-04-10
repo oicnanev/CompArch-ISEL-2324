@@ -47,39 +47,39 @@ var3:
 
 1. Analyze the program presented, written in the assembly language of the P16 processor, and indicate its functionality.
 
-   1. **Answer** 
+   **Answer** 
 
-      A funcionalidade deste programa é demonstrar um loop infinito que incrementa o valor de uma variável. Começa por carregar o endereço da *var2* no registo *R0*, depois, entra em loop infinito onde:
+   A funcionalidade deste programa é demonstrar um loop infinito que incrementa o valor de uma variável. Começa por carregar o endereço da *var2* no registo *R0*, depois, entra em loop infinito onde:
 
-      - Carrega o valor de 8 bits (byte) no endereço apontado por *R0* (var2) no registo *R1*
-      - Incrementa o valor de *R1* por 1
-      - Armazena o valor de *R1* de volta no endereço apontado por *R0* (var2)
+   - Carrega o valor de 8 bits (byte) no endereço apontado por *R0* (var2) no registo *R1*
+   - Incrementa o valor de *R1* por 1
+   - Armazena o valor de *R1* de volta no endereço apontado por *R0* (var2)
 
-      Como não existe condição de saída do *loop*, o programa continuará infinitamente a incrementar o valor da variável *var2*. De notar que quando o valor da *var2* atingir 255, irá 'dar a volta' e voltar a 0, pois o seu tamanho é *byte* (8 bits),
+   Como não existe condição de saída do *loop*, o programa continuará infinitamente a incrementar o valor da variável *var2*. De notar que quando o valor da *var2* atingir 255, irá 'dar a volta' e voltar a 0, pois o seu tamanho é *byte* (8 bits),
 
 2.  Indicate, justifying, the number of clock cycles spent running each iteration of the loop cycle implemented in the program (lines 3 through 7).
 
-   1. **Answer**
+   **Answer**
 
-      Nas linhas 3 a 7, estão as instruções:
+   Nas linhas 3 a 7, estão as instruções:
 
-      - **ldrb** - 6 clocks
-      - **add** - 3 clocks
-      - **strb** - 6 clocks
-      - **b** - 3 clocks
+   - **ldrb** - 6 clocks
+   - **add** - 3 clocks
+   - **strb** - 6 clocks
+   - **b** - 3 clocks
 
-      No P16 as instruções que não fazem uso da memória, gastam 3 clocks (fetch, decode, execute). Para além destes 3 clocks, as instruções que fazem uso da memória (neste caso ldrb e strb) gastam adicionalmente outros 3 clocks. Em conclusão, cada interação do ciclo de *loop* do programa vai gastar 18 clocks no total. 
+   No P16 as instruções que não fazem uso da memória, gastam 3 clocks (fetch, decode, execute). Para além destes 3 clocks, as instruções que fazem uso da memória (neste caso ldrb e strb) gastam adicionalmente outros 3 clocks. Em conclusão, cada interação do ciclo de *loop* do programa vai gastar 18 clocks no total. 
 
 3. Knowing that the program will be located in memory from the 0x0000 address, indicate the values that should be associated with the symbols var2_addr, var1, var2 and var3. Justify your answer.
 
-   1. **Answer**
+   **Answer**
 
-      - **var2_addr** 0x000A
-      - **var1** 0x000C
-      - **var2** 0x000D
-      - **var3** 0x000E
+   - **var2_addr** 0x000A
+   - **var1** 0x000C
+   - **var2** 0x000D
+   - **var3** 0x000E
 
-      Como o programa começa em 0x0000 e cada intrução ocupa uma *word* (16 bits), temos até ao **var2_addr**, 5 instruções (ldr, ldrb, add, strb e b), 5x2 = 10 -> 0xA -> 0x000A. Como esta varíavél é um endereço, ocupa 16 bits, logo, a próxima variável, **var1** vai estar em 0x000A + 2 = 0x000C. **var1** é de apenas 8 bits, logo, **var2** vai estar no proximo endereço, 0x000D. Como **var2** também é apenas *byte*, **var3**, vai estar no endereço seguinte 0x000E.
+   Como o programa começa em 0x0000 e cada intrução ocupa uma *word* (16 bits), temos até ao **var2_addr**, 5 instruções (ldr, ldrb, add, strb e b), 5x2 = 10 -> 0xA -> 0x000A. Como esta varíavél é um endereço, ocupa 16 bits, logo, a próxima variável, **var1** vai estar em 0x000A + 2 = 0x000C. **var1** é de apenas 8 bits, logo, **var2** vai estar no proximo endereço, 0x000D. Como **var2** também é apenas *byte*, **var3**, vai estar no endereço seguinte 0x000E.
 
 4. Manually translate the program to P16 machine code. Use a table to record the result of this encoding, assuming that each row of the table should correspond to only one instruction in the program. Represent in hexadecimal notation, using four digits, the values of memory addresses and program instructions.
 
