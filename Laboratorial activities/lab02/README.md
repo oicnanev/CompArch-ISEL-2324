@@ -74,10 +74,10 @@ var3:
 
    **Answer**
 
-   - **var2_addr** 0x000A
-   - **var1** 0x000C
-   - **var2** 0x000D
-   - **var3** 0x000E
+   - **var2_addr** 0x000A - value 0x00D
+   - **var1** 0x000C - value 0xAC
+   - **var2** 0x000D - value 0x7E
+   - **var3** 0x000E - value 0x2022
 
    Como o programa começa em 0x0000 e cada intrução ocupa uma *word* (16 bits), temos até ao **var2_addr**, 5 instruções (ldr, ldrb, add, strb e b), 5x2 = 10 -> 0xA -> 0x000A. Como esta varíavél é um endereço, ocupa 16 bits, logo, a próxima variável, **var1** vai estar em 0x000A + 2 = 0x000C. **var1** é de apenas 8 bits, logo, **var2** vai estar no proximo endereço, 0x000D. Como **var2** também é apenas *byte*, **var3**, vai estar no endereço seguinte 0x000E.
 
