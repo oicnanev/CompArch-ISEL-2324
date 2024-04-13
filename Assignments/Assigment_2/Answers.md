@@ -1,4 +1,4 @@
-# Answers - draft!!!
+# Answers
 
 ## 3.1 Microarchitecture analysis
 
@@ -55,7 +55,17 @@ O modo condicional permite saltos baseados no estado das flags do processador, c
 |                 | [imm7 | imm7 | imm7  | imm7 | imm7 | imm7  | imm7]      |       |       |
 |                 |       |      | [imm4 | imm4 | imm4 | imm4] |            |       |       |
 
+Para definir os "opcodes" é necessário que os mesmos sejam distintos uns dos outros por instrução. Sendo o "opcode" da instrução "sub" dado, escolhemos códigos distintos deste para as restantes instruções:
+- 000 - b
+- 001 - sub
+- 010 - tst
+- 011 - bzc com imm7-bit0 a 0
+- 100 - ldr
+- 101 - mov
+- 110 - str
+- 111 - bzc com imm7-bit0 a 1
 
+A instrução "bzc" irá ocupar 2 "opcode" pois o bit 0 do seu imm7, ocupa o espaço do "opcode"
 
 ### 3.
 
@@ -82,7 +92,7 @@ Desvantagem - **Ineficiência na utilização do espaço da memória de instruç
 
 Escolheria a Montagem 2, (b). 
 
-Vamos precisar da flag Z para entrada, logo, ou 1 ou 2; A 1, não faz sentido porque tem uma saida de 2 bit com OP_ALU, OP_ALU já faz parte do OPCODE e já entra direto na ALU.
+A nossa escolha recaí sobre a montagem 2, porque vamos necessitar da "flag" Z como entrada para efetuar a descodificação (instrução bzc) e, não necessitamos de 2 bits de saída para "OP_ALU" uma vez que os bits "OP_ALU" já fazem parte do "opcode" e entram diretamente para na "ALU".
 
 ## 3.4 Machine code encoding
 
@@ -94,4 +104,5 @@ Vamos precisar da flag Z para entrada, logo, ou 1 ou 2; A 1, não faz sentido po
 | bzc skip (0x06) | 0x03     | 000110 011     | 0x033 |
 | mov r0, r1      | 0x04     | 00 01 - - 101  | 0x025 |
 | sub r2, r2, r2  | 0x05     | 10 10 10 001   | 0x151 |
-| b r2 (0x00)     | 0x06     | - - 10 - - 000 | 0x040 |
+| str r0, [r2]    | 0x06     | 00 10 - - 110  | 0x046 | 
+| b r2 (0x00)     | 0x07     | - - 10 - - 000 | 0x040 |
