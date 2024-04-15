@@ -133,6 +133,11 @@ end_for:
     pop     R4
     pop     PC
 
+; Teacher comment:
+; Registos inadequados para representar a variável local i (deve usar R4, R5, R6 ou R7) 
+; e o resultado da conversão de index (i) para offset (linha 120) (deve usar R0, R1, R2 ou R3).
+; Depois de chamar função color_scale, R3 pode vir alterado
+
 
 
 ; Routine:      color_scale ---------------------------------------------------
