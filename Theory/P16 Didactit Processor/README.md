@@ -398,3 +398,35 @@ The P16 encodes, outwards, via two pins (**S1** and **S0**) the nature of the cy
 | 1             | 0             | Break     |
 | 1             | 1             | Interrupt |
 
+## P16 Memory Map
+
+![image-20240423212405537](../../images/image-20240423212405537.png)
+
+### SDP16 System Memory Map Description for P16Simulator Tool
+
+```txt
+p16
+
+ram
+id=0
+databus=P16Low
+addrbits=14
+addrsel=0000,7FFF
+
+ram
+id=1
+databus=P16High
+addrbits=14
+addrsel=0000,7FFF
+
+outputport
+id=2
+databus=P16Low
+addrsel=FFC0,FFFF
+
+inputport
+id=3
+databus=P16Low
+addrsel=FF80,FFBF
+```
+

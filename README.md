@@ -66,6 +66,8 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 ## Laboratorial activities
 
 - [First contact with P16 processor](Laboratorial%20activities/lab01)
+- [Translation of P16 assembly to Machine Code](Laboratorial%20activities/lab02)
+- [I/O Ports](Laboratorial%20activities/lab03)
 
 
 ## Notes
@@ -74,5 +76,7 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 - [Architecture of a Computer](Theory/1.%20Architecture%20of%20a%20Computer.md)
 - [Assembly Language Programming](Theory/2.%20Assembly%20Language%20Programming.md)
 - [Processor Internal Organization](/Theory/3.%20Processor%20Internal%20Organization.md)
+- [Memory Subsystem](/Theory/4.%20Memory%20Subsistem)
+- [Input and Output Subsystem](/Theory/5.%20/Input%20and%20Output%20Subsystem)
 - 
 
