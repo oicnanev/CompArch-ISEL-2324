@@ -76,7 +76,7 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 - [Architecture of a Computer](Theory/1.%20Architecture%20of%20a%20Computer.md)
 - [Assembly Language Programming](Theory/2.%20Assembly%20Language%20Programming.md)
 - [Processor Internal Organization](/Theory/3.%20Processor%20Internal%20Organization.md)
-- [Memory Subsystem](/Theory/4.%20Memory%20Subsistem)
-- [Input and Output Subsystem](/Theory/5.%20/Input%20and%20Output%20Subsystem)
+- [Memory Subsystem](/Theory/4.%20Memory%20Subsistem.md)
+- [Input and Output Subsystem](/Theory/5.%20Input%20and%20Output%20Subsystem.md)
 - 
 
