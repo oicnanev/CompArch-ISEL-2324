@@ -52,10 +52,9 @@ Consider the logical diagram shown in figure, corresponding to the implementatio
    - Size: 8 bits (Incoming data 0..7 / Outcoming data 0..7)
    - Modes: byte-wise
 
-​	U6:
-
-		- Type: Output port (Connected to the WRL)
-		- Size: 8 bits (Incoming data 0..7 / Outcoming data 0..7)
+​    U16:
+ - - Type: Output port (Connected to the WRL)
+ - - Size: 8 bits (Incoming data 0..7 / Outcoming data 0..7)
 
  - - Modes: byte-wise 
 
