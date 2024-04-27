@@ -1,0 +1,67 @@
+P16 assembler v1.5 (Feb  9 2024)	trab3.lst	Sat Apr 27 18:04:48 2024
+
+Sections
+Index   Name            Address   Size
+0       startup         0000      0012 18
+1       .text           0012      0010 16
+2       .data           0022      0004 4
+3       stack           0026      0002 2
+
+Symbols
+Name                    Type      Value       Section
+_start                  LABEL     0004 4      startup
+line#12                 LABEL     000C 12     startup
+line#26                 LABEL     001E 30     .text
+line#4                  LABEL     0002 2      startup
+main                    LABEL     0012 18     .text
+main_addr               LABEL     0010 16     startup
+stack_bottom            LABEL     0026 38     stack
+stack_top               LABEL     0028 40     stack
+stack_top_addr          LABEL     000E 14     startup
+value                   LABEL     0020 32     .text
+value1                  LABEL     0022 34     .data
+value2                  LABEL     0024 36     .data
+
+Code listing
+   1           	.section startup ; --------------------------------------
+   2           		; Exception / Interrupt vector table
+   3 0000 01 58		b	_start		; Reset handler
+   4 0002 FF 5B		b	.			; interrupt handler
+   5           	_start:
+   6           		; Initialize the SP (Stack Pointer)
+   7 0004 4D 0C		ldr	SP, stack_top_addr
+   8           		; Jump to user code (main function)
+   9 0006 80 B7		mov R0, PC
+  10 0008 0E A2		add LR, R0, #4
+  11 000A 2F 0C		ldr PC, main_addr
+  12 000C FF 5B		b .
+  13           		
+  14           	stack_top_addr:
+  15 000E 28 00		.word stack_top
+  16           	main_addr:
+  17 0010 12 00		.word main
+  18           		.text
+  19           	main:
+  20 0012 01 24		push r1
+  21 0014 A1 00		ldr r1, [ r2, # 2 ]
+  22 0016 A0 A0		add r0, r2, # 1
+  23 0018 A3 2A		strb r3, [ r2, # 5 ]
+  24 001A 24 0C		ldr r4, value
+  25 001C 65 08		ldrb r5, [ r6, # 0 ]
+  26 001E FF 5B		b .
+  27           	
+  28           	value:
+  29 0020 22 00		.word value1
+  30           		.data
+  31           	
+  32           	value1:
+  33 0022 24 00		.word value2
+  34           		;...
+  35           	
+  36           	value2:
+  37 0024 42 13		.word 0x1342
+  38           	
+  39           	.section stack ; ----------------------------------------
+  40           	stack_bottom:
+  41 0026 00 40		.word 0x4000
+  42           	stack_top:
