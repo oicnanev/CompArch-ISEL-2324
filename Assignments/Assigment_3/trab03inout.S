@@ -9,10 +9,10 @@
 ; Definicao dos valores dos simbolos utilizados no programa
 
 .equ	STACK_SIZE, 64		; Dimensao do stack
-.equ 	IDX_MASK, 0xFF38
+.equ 	IDX_MASK, 0x0038
 .equ 	OUT_MASK, 0xFF00
-.equ 	IN_ADDR, 
-.equ 	OUT_ADDR, 
+.equ 	IN_ADDR, 0xF800
+.equ 	OUT_ADDR, 0xFC00
 
 ; ================================================================================
 ; Seccao:    startup
@@ -25,13 +25,13 @@
 _start:
 	ldr		SP, stack_top_addr
 	mov		R0, PC
-	add 	LR, R0							; address 0x0004
+	add 	LR, R0, #4							; LR = PC + 4
 	ldr 	PC, main_addr
 	b		.
 
 stack_top_addr:
 	.word	stack_top
-main_addr
+main_addr:
 	.word	main
 
 ; ================================================================================
@@ -51,19 +51,26 @@ main_addr
 ;---------------------------------------------------------------------------------
 main:
 	push	LR
+	push 	R4
 	mov		R0, #0
 	bl		outport_init
 loop:
 	bl		inport_read
-	mov		R1, #IDX_MASK
+	mov		R1, #IDX_MASK & 0xFF
+	movt 	R1, #IDX_MASK >> 8 & 0xFF
 	and		R0, R0, R1
 	lsr		R0, R0, #3
-	ldr		R1, [array_addr, #0]
+	ldr		R1, array_addr
 	ldrb	R1, [R1, R0]
 	lsl 	R0, R1, #8
+	mov		R4, R0  			; save the value of R0
+	mov		R0, #OUT_MASK & 0xFF
+	movt 	R0, #OUT_MASK>>8 & 0xFF
 	bl		outport_clear_bits
+	mov 	R0, R4				; restore R0
 	bl 		outport_set_bits
 	b 		loop
+	pop 	R4
 	pop		PC
 
 array_addr:
@@ -92,8 +99,8 @@ outport_init:
 outport_write:
 	ldr		r1, outport_img_addr
 	str 	r0, [r1, #0]						; nosso porto é de 16 bit
-	mov		r1, #OUTPORT_ADDRESS & 0xFF
-	movt	r1, #OUTPORT_ADDRESS>>8 & 0xFF
+	mov		r1, #OUT_ADDR & 0xFF
+	movt	r1, #OUT_ADDR >>8 & 0xFF
 	str 	r0, [r1, #0]
 	mov		pc, lr
 
@@ -108,8 +115,8 @@ outport_img_addr:
 ; Efeitos:   
 ;---------------------------------------------------------------------------------	
 inport_read:
-	mov		r0, #INPORT_ADDRESS & 0xFF
-	movt	r0, #INPORT_ADDRESS>>8 & 0xFF
+	mov		r0, #IN_ADDR & 0xFF
+	movt	r0, #IN_ADDR>>8 & 0xFF
 	ldrb	r0, [r0, #0]					; nosso porto é de 8 bit
 	mov		pc, lr
 
@@ -159,7 +166,7 @@ outport_img_address:
 
 	.data
 outport_img:
-	.word
+	.space 2
 array:
 	.byte 1, 2, 4, 8, 16, 32, 64, 128
 

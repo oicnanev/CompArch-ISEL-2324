@@ -1,0 +1,220 @@
+P16 assembler v1.5 (Feb  9 2024)	c:\ac\CompArch-ISEL-2324\Assignments\Assigment_3\trab03inout.lst	Wed May 01 16:35:37 2024
+
+Sections
+Index   Name            Address   Size
+0       startup         0000      0012 18
+1       .text           0012      0068 104
+2       .data           007A      000A 10
+3       .stack          0084      0040 64
+
+Symbols
+Name                    Type      Value       Section
+_start                  LABEL     0004 4      startup
+array                   LABEL     007C 124    .data
+array_addr              LABEL     003C 60     .text
+IDX_MASK                ABSOLUTE  0038 56     startup
+IN_ADDR                 ABSOLUTE  F800 63488  startup
+inport_read             LABEL     0052 82     .text
+line#23                 LABEL     0002 2      startup
+line#30                 LABEL     000C 12     startup
+loop                    LABEL     001A 26     .text
+main                    LABEL     0012 18     .text
+main_addr               LABEL     0010 16     startup
+OUT_ADDR                ABSOLUTE  FC00 64512  startup
+OUT_MASK                ABSOLUTE  FF00 65280  startup
+outport_clear_bits      LABEL     0068 104    .text
+outport_img             LABEL     007A 122    .data
+outport_img_addr        LABEL     0050 80     .text
+outport_img_address     LABEL     0078 120    .text
+outport_init            LABEL     003E 62     .text
+outport_set_bits        LABEL     005A 90     .text
+outport_write           LABEL     0044 68     .text
+STACK_SIZE              ABSOLUTE  0040 64     startup
+stack_top               LABEL     00C4 196    .stack
+stack_top_addr          LABEL     000E 14     startup
+
+Code listing
+   1           	;---------------------------------------------------------------------------------
+   2           	; Ficheiro:  trab03inout.S
+   3           	; Descricao: Programa desenvolvido para no ambito da questão 6 do trabalho prático 3
+   4           	; Autores: Grupo 02 da turma 21N (45824 Nuno Venancio, 48070 Daniel Cabaça)     
+   5           	; Data:      01-05-2024
+   6           	;---------------------------------------------------------------------------------
+   7           	
+   8           	; ================================================================================
+   9           	; Definicao dos valores dos simbolos utilizados no programa
+  10           	
+  11          	.equ	STACK_SIZE, 64		; Dimensao do stack
+  12          	.equ 	IDX_MASK, 0x0038
+  13          	.equ 	OUT_MASK, 0xFF00
+  14          	.equ 	IN_ADDR, 0xF800
+  15          	.equ 	OUT_ADDR, 0xFC00
+  16           	
+  17           	; ================================================================================
+  18           	; Seccao:    startup
+  19           	; Descricao: Guarda o código de arranque do sistema
+  20           	
+  21           		.section startup
+  22 0000 01 58		b		_start
+  23 0002 FF 5B		b		.
+  24           	
+  25           	_start:
+  26 0004 4D 0C		ldr		SP, stack_top_addr
+  27 0006 80 B7		mov		R0, PC
+  28 0008 0E A2		add 	LR, R0, #4							; LR = PC + 4
+  29 000A 2F 0C		ldr 	PC, main_addr
+  30 000C FF 5B		b		.
+  31           	
+  32           	stack_top_addr:
+  33 000E C4 00		.word	stack_top
+  34           	main_addr:
+  35 0010 12 00		.word	main
+  36           	
+  37           	; ================================================================================
+  38           	; Seccao:    text
+  39           	; Descricao: Guarda o código do programa
+  40           	
+  41           		.text
+  42           	;---------------------------------------------------------------------------------
+  43           	; Rotina: main
+  44           	; Descricao: Lê, continuamente, o estado do dispositivo INPORT e utiliza os bits 3 a 5
+  45           	;            obtidos para definir a posição da variável 'array' que contém o valor a
+  46           	; 			 afixar nos 8 bits de maior peso do dispositivo OUTPORT, mantendo inalterados
+  47           	;            os valores dos 8 bits de menos peso.
+  48           	; Entradas: 
+  49           	; Saidas:
+  50           	; Efeitos: 
+  51           	;---------------------------------------------------------------------------------
+  52           	main:
+  53 0012 0E 24		push	LR
+  54 0014 04 24		push 	R4
+  55 0016 00 60		mov		R0, #0
+  56 0018 12 5C		bl		outport_init
+  57           	loop:
+  58 001A 1B 5C		bl		inport_read
+  59 001C 81 63		mov		R1, #IDX_MASK & 0xFF
+  60 001E 01 70		movt 	R1, #IDX_MASK >> 8 & 0xFF
+  61 0020 80 C0		and		R0, R0, R1
+  62 0022 80 E9		lsr		R0, R0, #3
+  63 0024 B1 0C		ldr		R1, array_addr
+  64 0026 11 18		ldrb	R1, [R1, R0]
+  65 0028 10 E4		lsl 	R0, R1, #8
+  66 002A 04 B0		mov		R4, R0  			; save the value of R0
+  67 002C 00 60		mov		R0, #OUT_MASK & 0xFF
+  68 002E F0 7F		movt 	R0, #OUT_MASK>>8 & 0xFF
+  69 0030 1B 5C		bl		outport_clear_bits
+  70 0032 00 B2		mov 	R0, R4				; restore R0
+  71 0034 12 5C		bl 		outport_set_bits
+  72 0036 F1 5B		b 		loop
+  73 0038 04 04		pop 	R4
+  74 003A 0F 04		pop		PC
+  75           	
+  76           	array_addr:
+  77 003C 7C 00		.word array
+  78           	
+  79           	;---------------------------------------------------------------------------------
+  80           	; Rotina: outport_init
+  81           	; Descricao: Faz a iniciacao do sistema, atribuindo o valor value aos pinos do
+  82           	; porto de saida .
+  83           	; Entradas: Valor a escrever no porto
+  84           	; Saidas:
+  85           	; Efeitos: 
+  86           	;---------------------------------------------------------------------------------
+  87           	outport_init:
+  88 003E 0E 24		push lr
+  89 0040 01 5C		bl outport_write
+  90 0042 0F 04		pop pc
+  91           	
+  92           	;---------------------------------------------------------------------------------	
+  93           	; Rotina:    outport_write
+  94           	; Descricao: Atribui aos pinos do porto de saida o valor dos bits correspondentes de value.
+  95           	; Entradas:  Valor a escrever no porto
+  96           	; Saidas:    
+  97           	; Efeitos:   Atualiza o valor da variavel imagem do porto
+  98           	;---------------------------------------------------------------------------------	
+  99           	outport_write:
+ 100 0044 51 0C		ldr		r1, outport_img_addr
+ 101 0046 10 20		str 	r0, [r1, #0]						; nosso porto é de 16 bit
+ 102 0048 01 60		mov		r1, #OUT_ADDR & 0xFF
+ 103 004A C1 7F		movt	r1, #OUT_ADDR >>8 & 0xFF
+ 104 004C 10 20		str 	r0, [r1, #0]
+ 105 004E 0F B7		mov		pc, lr
+ 106           	
+ 107           	outport_img_addr:
+ 108 0050 7A 00		.word	outport_img
+ 109           	
+ 110           	;---------------------------------------------------------------------------------	
+ 111           	; Rotina:    inport_read
+ 112           	; Descricao: Devolve o valor corrente do estado dos pinos do porto de entrada.
+ 113           	; Entradas:  
+ 114           	; Saidas:    Valor corrente do porto
+ 115           	; Efeitos:   
+ 116           	;---------------------------------------------------------------------------------	
+ 117           	inport_read:
+ 118 0052 00 60		mov		r0, #IN_ADDR & 0xFF
+ 119 0054 80 7F		movt	r0, #IN_ADDR>>8 & 0xFF
+ 120 0056 00 08		ldrb	r0, [r0, #0]					; nosso porto é de 8 bit
+ 121 0058 0F B7		mov		pc, lr
+ 122           	
+ 123           	;---------------------------------------------------------------------------------	
+ 124           	; Rotina:    outport_set_bits
+ 125           	; Descricao: Atribui o valor logico '1' aos pinos do porto de saida identificados 
+ 126           	;			 com o valor 1 no argumento passado a rotina. O estado dos restantes 
+ 127           	;			 bits nao e alterado.
+ 128           	; Entradas:  Mascara com os bits a alterar
+ 129           	; Saidas:    
+ 130           	; Efeitos:   Atualiza o valor da variavel imagem do porto
+ 131           	;---------------------------------------------------------------------------------	
+ 132           	outport_set_bits:
+ 133 005A 0E 24		push	lr
+ 134 005C D1 0C		ldr		r1, outport_img_address
+ 135 005E 12 00		ldr 	r2, [r1, #0]
+ 136 0060 20 C8		orr		r0, r2, r0
+ 137 0062 10 20		str 	r0, [r1, #0]
+ 138 0064 EF 5F		bl		outport_write
+ 139 0066 0F 04		pop		pc
+ 140           	
+ 141           	;---------------------------------------------------------------------------------	
+ 142           	; Rotina:    outport_clear_bits
+ 143           	; Descricao: Atribui o valor logico '0' aos pinos do porto de saida identificados 
+ 144           	;			 com o valor 1 no argumento passado a rotina. O estado dos restantes 
+ 145           	;			 bits nao e alterado.
+ 146           	; Entradas:  Mascara com os bits a alterar
+ 147           	; Saidas:    
+ 148           	; Efeitos:   Atualiza o valor da variavel imagem do porto
+ 149           	;---------------------------------------------------------------------------------	
+ 150           	outport_clear_bits:
+ 151 0068 0E 24		push	lr
+ 152 006A 61 0C		ldr		r1, outport_img_address
+ 153 006C 12 00		ldr 	r2, [r1, #0]
+ 154 006E 10 B0		mvn		r0, r0
+ 155 0070 20 C0		and		r0, r2, r0
+ 156 0072 10 20		str 	r0, [r1, #0]
+ 157 0074 E7 5F		bl		outport_write
+ 158 0076 0F 04		pop		pc
+ 159           	
+ 160           	outport_img_address:
+ 161 0078 7A 00		.word	outport_img
+ 162           	
+ 163           	; ================================================================================
+ 164           	; Seccao:    data
+ 165           	; Descricao: Guarda as variáveis globais
+ 166           	
+ 167           		.data
+ 168           	outport_img:
+ 169 007A 00   		.space 2
+ 169 007B 00
+ 170           	array:
+ 171          		.byte 1, 2, 4, 8, 16, 32, 64, 128
+ 171 007C 01 02 04 08 10 20 40 80
+ 172           	
+ 173           	; ================================================================================
+ 174           	; Seccao:    stack
+ 175           	; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+ 176           	
+ 177           		.stack
+ 178 0084 00   		.space	STACK_SIZE
+ 178 .... ..
+ 178 00C3 00
+ 179           	stack_top:
+ 179           	
