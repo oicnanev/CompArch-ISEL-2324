@@ -3,7 +3,7 @@
 ## Análise do mapa de endereçamento
 
 ### 1. Indique, justificando se a capacidade de memória no sistema é plenamente acessível
-
+A memoria instalada mo sistema não é plenamente acessível, pois existe uma zona de conflito entre os endereços 0x2000 e 0x3FFF. Local que é ativado pelo *"Chip Select"* tanto da ROM como da RAM.
 
 
 ### 2. Comente a seguinte afirmação: *"A zona compreendida entre os endereços D000 e DFFF é interdita"*
