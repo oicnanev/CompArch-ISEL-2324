@@ -68,6 +68,7 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 - [First contact with P16 processor](Laboratorial%20activities/lab01)
 - [Translation of P16 assembly to Machine Code](Laboratorial%20activities/lab02)
 - [I/O Ports](Laboratorial%20activities/lab03)
+- [Interrupts](Laboratorial%20activities/lab04)
 
 
 ## Notes
