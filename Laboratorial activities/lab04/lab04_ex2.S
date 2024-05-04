@@ -7,17 +7,9 @@
 ; Definicao dos valores dos simbolos utilizados no programa
 ;
 	.equ	STACK_SIZE, 64                ; Dimensao do stack - 64 B
-
-; *** Inicio de troco para completar ***
-	.equ	ENABLE_EXTINT, 0x????         ; ??
-; *** Fim de troco para completar ***
-
+	.equ	ENABLE_EXTINT, 0x10           ; Colocar o 4º bit do CPSR (I) = 1
 	.equ	OUTPORT_ADDRESS, 0xFFC0       ; Endereco do porto de saida
-
-; *** Inicio de troco para completar ***
-	.equ	FED_ADDRESS, 0xFF40           ; ??
-; *** Fim de troco para completar ***
-
+	.equ	FED_ADDRESS, 0xFF40           ; nCS_EXT1
 	.equ	VAR_INIT_VAL, 0               ; Valor inicial de var
 
 ; Seccao:    startup
