@@ -1,3 +1,99 @@
+# Answers
+
+## Análise do mapa de endereçamento
+
+### 1. Indique, justificando se a capacidade de memória no sistema é plenamente acessível
+
+
+
+### 2. Comente a seguinte afirmação: *"A zona compreendida entre os endereços D000 e DFFF é interdita"*
+
+A afirmação está errada uma vez que a zona referida é a zona de *"chip select" dos portos de entrada e saída.
+
+
+
+## Defenição do logigrama do sistema
+
+### 3. Comente a seguinte armação: *"Para implementar o módulo de memória associado às regiões identicadas no mapa de endereçamento por #2 é preferível utilizar circuitos de memória RAM de 4 K × 8 ao invés de circuitos de 2 K × 8 ou 8 K × 16."*
+
+Por um lado se compararmos 4K x 8 com 2K x 8, neste nosso mapa de memória, os primeiros seriam preferíveis pois são mais eficientes em termos de espaço. para alcançar a mesma capacidade, precisariamos do dobro dos módulos.
+Por questões de flexibilidade de design e custo-benefício, usar módulos de 4K x 8 é preferível aos módulos de 8K x 16.
+Existe também a questão da compatiblidade com o ISA do processador, módulos de 8K x 16 não permitiriam o endereçamento a 8 bits. 
+
+### 4. Sabendo que dispõem de circuitos RAM de 4 K × 8, ROM de 16 K × 16, registos do tipo latchD, com 8 bits e 16 bits, e tri-state buers, com 8 bits e 16 bits, 
+
+- ### a) Desenhe o logigrama do sistema na parte respeitante às zonas de endereçamento identicadas com #1, explicitando todos os sinais envolvidos. 
+
+​	<img src="ROM.PNG" alt="ROM" style="zoom:75%;" />
+
+- ### b) Desenhe o logigrama do sistema na parte respeitante às zonas de endereçamento identicadas com #2, explicitando todos os sinais envolvidos. 
+
+  ![RAM](RAM.PNG)
+
+- ### c) Desenhe o logigrama do sistema na parte respeitante às zonas de endereçamento identicadas com #3, explicitando todos os sinais envolvidos. 
+
+​	![OUT](OUT.PNG)
+
+- ### d) Desenhe o logigrama do sistema na parte respeitante às zonas de endereçamento identicadas com #4, explicitando todos os sinais envolvidos
+
+​	![IN](IN.PNG)
+
+## Caracterização da actividade dos barramentos
+
+### 5. Numa tabela com o formato indicado na Tabela 1, apresente a atividade dos sinais em referência dos barramentos do processador, quando observados passo-a-passo, para a execução do troço de código apresentado na Listagem 1 sobre o sistema objeto de estudo. 
+
+### Utilize os símbolos **z** e **conf** para identicar a ocorrência de alta impedância e conito, respetivamente, e considere os seguintes valores iniciais para os registos do processador: **R1**=**0x0012**, **R2**=**0x3FFC**, **R3**=**0x2431**, **R6**=**0xBFFE**, **SP**=**0x4000** e **PC**=**0x0000**.
+
+![image-20240504194055403](../../images/image-20240504194055403.png)
+
+```assembly
+	.text
+	push r1
+	ldr  r1, [ r2, # 2 ]
+	add  r0, r2, # 1
+	strb r3, [ r2, # 5 ]
+	ldr  r4, value
+	ldrb r5, [ r6, # 0 ]
+	b 	 .
+value :
+	.word value1
+	.data
+value1 :
+	.word value2
+	...
+value2 :
+	.word 0x1342
+```
+
+> Listagem 1: Código objecto de estudo
+
+
+
+| Instrução         | nRD  | nWRH | nWRL | Address | Data     |
+| ----------------- | ---- | ---- | ---- | ------- | -------- |
+| push r1           | 0    | 1    | 1    | 0x0012  | 0x2401   |
+|                   | 1    | 0    | 0    | 0x3FFE  | 0x0012   |
+| ldr r1, [r2, #2]  | 0    | 1    | 1    | 0x0014  | 0x00A1   |
+|                   | 0    | 1    | 1    | 0x3FFE  | **conf** |
+| add r0, r2, #1    | 0    | 1    | 1    | 0x0016  | 0xA0A0   |
+| strb r3, [r2,#5]  | 0    | 1    | 1    | 0x0018  | 0x2AA3   |
+|                   | 1    | 1    | 0    | 0x4001  | **z**    |
+| ldr r4, value     | 0    | 1    | 1    | 0x001A  | 0x0C24   |
+|                   | 0    | 1    | 1    | 0x0022  | 0x0022   |
+| ldrb r5, [r6, #0] | 0    | 1    | 1    | 0x001C  | 0x0865   |
+|                   | 0    | 1    | 1    | 0xBFFE  | 0x0012   |
+| b .               | 0    | 1    | 1    | 0x001E  | 0x5BFF   |
+| value             |      |      |      | 0x0020  | 0x0022   |
+| value1            |      |      |      | 0x0022  | 0x0024   |
+| value2            |      |      |      | 0x0024  | 0x1342   |
+
+
+
+## Teste do sistema
+
+### 6. Implemente, em linguagem assembly do P16, um programa que, continuamente, lê o estado do dispositivo **INPORT** e utiliza os bits 3 a 5 obtidos para denir a posição da variável **array** que contém o valor a axar nos 8 bits de maior peso do dispositivo **OUTPORT**, devendo os valores dos 8 bits de menor peso manter-se inalterados. Defina todos os símbolos, variáveis e secções que entender necessário e considere a seguinte denição para a variável **array**: **uint8_t array[] = {1, 2, 4, 8, 16, 32, 64, 128}**.
+
+```ass
 ;---------------------------------------------------------------------------------
 ; Ficheiro:  trab03inout.S
 ; Descricao: Programa desenvolvido para no ambito da questão 6 do trabalho prático 3
@@ -180,3 +276,13 @@ array:
 	.stack
 	.space	STACK_SIZE
 stack_top:
+
+```
+
+
+
+## Evolução da arquitetura
+
+### 7. Apresente o mapa de endereçamento do novo conjunto, nele inscrevendo as funcionalidades, as dimensões e os endereços de início e de m do espaço atribuído a cada dispositivo/conjunto de dispositivos e, se for o caso, indicando também a localização de zonas de fold-back ou interditas (também designadas por "conito") e a ocorrência de subaproveitamento em dispositivos.
+
+![evolucao](evolucao.png)
