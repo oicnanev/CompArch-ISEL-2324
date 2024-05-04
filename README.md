@@ -55,7 +55,7 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 
 - [Work 1](Assignments/Assigment_1)
 - [Work 2](Assignments/Assigment_2)
-- [Work 3](Assignmnets/Assigment_3)
+- [Work 3](Assignments/Assigment_3)
 - [Project](Assignments/Assigment_4)
 
 
