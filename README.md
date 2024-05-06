@@ -51,19 +51,14 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 ### 6. Interrupt Mechanism
 
 
-## Assignements
+## Assignments
 
 - [Work 1](Assignments/Assigment_1)
 - [Work 2](Assignments/Assigment_2)
 - [Work 3](Assignments/Assigment_3)
 - [Project](Assignments/Assigment_4)
 
-
-## Practical Classes
-
-- [01 Basic C programming](Practical%20classes/01%20Basic%20C%20programming)
-
-## Laboratorial activities
+## Laboratory activities
 
 - [First contact with P16 processor](Laboratorial%20activities/lab01)
 - [Translation of P16 assembly to Machine Code](Laboratorial%20activities/lab02)
@@ -79,5 +74,6 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 - [Processor Internal Organization](/Theory/3.%20Processor%20Internal%20Organization.md)
 - [Memory Subsystem](/Theory/4.%20Memory%20Subsistem.md)
 - [Input and Output Subsystem](/Theory/5.%20Input%20and%20Output%20Subsystem.md)
-- 
+- [Interrupts Mechanism](/Theory/6.%20Interrupts%20Mechanism.md)
+- [Counters and Timers](/Theory/7.%20Counters%20and%20Timers.md)
 

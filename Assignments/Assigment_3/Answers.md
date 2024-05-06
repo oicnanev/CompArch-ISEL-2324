@@ -103,6 +103,9 @@ value2 :
 ; IMPORTANTE:
 ; No assembler p16as.exe defenir o "address" da secção data para evitar conflitos
 ; p16as.exe -s .data=0x6000 trab03inout.S 
+;
+; No simulador, p16sim.exe
+; p16sim.exe -c trab3.txt
 ;---------------------------------------------------------------------------------
 
 ; ================================================================================

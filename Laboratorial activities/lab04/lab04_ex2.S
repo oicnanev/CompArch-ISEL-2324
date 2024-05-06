@@ -38,10 +38,13 @@ isr_addr:
 	.text
 
 ; Rotina:    main
-; Descricao: *** Para completar ***
-; Entradas:  *** Para completar ***
-; Saidas:    *** Para completar ***
-; Efeitos:   *** Para completar ***
+; Descricao: Inicia com o valor 0 a variável global "var"
+; 			 Escreve o valor dessa vaíavel no OutPort
+; 			 Abilita o atendimento de interrupções
+; 			 Escreve o número de interrupções no OutPort
+; Entradas:  
+; Saidas:    
+; Efeitos:   Conta o número de interupções
 main:
 	mov	r0, #VAR_INIT_VAL
 	ldr	r1, var_addr_main
@@ -79,10 +82,11 @@ outport_addr:
 	.word	OUTPORT_ADDRESS
 
 ; Rotina:    isr
-; Descricao: *** Para completar ***
+; Descricao: Notifica o FED que atendeu o pedido de interrupção
+;			 Incrementa a variável global 'var'
 ; Entradas:  *** Para completar ***
 ; Saidas:    *** Para completar ***
-; Efeitos:   *** Para completar ***
+; Efeitos:   Incrementa, por 1, a variavel global 'var'
 isr:
 	push	r0
 	push	r1
