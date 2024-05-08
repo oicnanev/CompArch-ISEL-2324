@@ -21,7 +21,7 @@
 _start:
 	ldr	sp, stack_top_addr
     mov r0, pc
-    add ld, ro, #4
+    add lr, r0, #4
 	ldr	pc, main_addr
     b   .
 

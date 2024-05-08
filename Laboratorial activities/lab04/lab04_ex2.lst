@@ -1,0 +1,157 @@
+P16 assembler v1.5 (Feb  9 2024)	lab04_ex2.lst	Wed May 08 22:26:09 2024
+
+Sections
+Index   Name            Address   Size
+0       startup         0000      0014 20
+1       .text           0014      0042 66
+2       .data           0056      0001 1
+3       .stack          0058      0040 64
+
+Symbols
+Name                    Type      Value       Section
+_start                  LABEL     0004 4      startup
+ENABLE_EXTINT           ABSOLUTE  0010 16     startup
+fed_addr_isr            LABEL     0054 84     .text
+fed_addr_main           LABEL     0032 50     .text
+FED_ADDRESS             ABSOLUTE  FF40 65344  startup
+isr                     LABEL     003C 60     .text
+isr_addr                LABEL     0012 18     startup
+line#26                 LABEL     000C 12     startup
+main                    LABEL     0014 20     .text
+main_addr               LABEL     0010 16     startup
+main_loop               LABEL     0028 40     .text
+outport_addr            LABEL     003A 58     .text
+OUTPORT_ADDRESS         ABSOLUTE  FFC0 65472  startup
+outport_write           LABEL     0034 52     .text
+STACK_SIZE              ABSOLUTE  0040 64     startup
+stack_top               LABEL     0098 152    .stack
+stack_top_addr          LABEL     000E 14     startup
+var                     LABEL     0056 86     .data
+var_addr_isr            LABEL     0052 82     .text
+var_addr_main           LABEL     0030 48     .text
+VAR_INIT_VAL            ABSOLUTE  0000 0      startup
+
+Code listing
+   1           	; Ficheiro:  lab04_ex2.S
+   2           	; Descricao: Programa para a realização da 4a atividade laboratorial de
+   3           	;            Arquitetura de Computadores.
+   4           	; Autor:     Tiago M Dias (tiago.dias@isel.pt)
+   5           	; Data:      28-04-2024
+   6           	
+   7           	; Definicao dos valores dos simbolos utilizados no programa
+   8           	;
+   9          		.equ	STACK_SIZE, 64                ; Dimensao do stack - 64 B
+  10          		.equ	ENABLE_EXTINT, 0x10           ; Colocar o 4º bit do CPSR (I) = 1
+  11          		.equ	OUTPORT_ADDRESS, 0xFFC0       ; Endereco do porto de saida
+  12          		.equ	FED_ADDRESS, 0xFF40           ; nCS_EXT1
+  13          		.equ	VAR_INIT_VAL, 0               ; Valor inicial de var
+  14           	
+  15           	; Seccao:    startup
+  16           	; Descricao: Guarda o código de arranque do sistema
+  17           	;
+  18           		.section startup
+  19 0000 01 58		b	_start
+  20 0002 7F 0C		ldr	pc, isr_addr
+  21           	_start:
+  22 0004 4D 0C		ldr	sp, stack_top_addr
+  23 0006 80 B7	    mov r0, pc
+  24 0008 0E A2	    add lr, r0, #4
+  25 000A 2F 0C		ldr	pc, main_addr
+  26 000C FF 5B	    b   .
+  27           	
+  28           	stack_top_addr:
+  29 000E 98 00		.word	stack_top
+  30           	main_addr:
+  31 0010 14 00		.word	main
+  32           	isr_addr:
+  33 0012 3C 00		.word	isr
+  34           	
+  35           	; Seccao:    text
+  36           	; Descricao: Guarda o código do programa
+  37           	;
+  38           		.text
+  39           	
+  40           	; Rotina:    main
+  41           	; Descricao: Inicia com o valor 0 a variável global "var"
+  42           	; 			 Escreve o valor dessa vaíavel no OutPort
+  43           	; 			 Abilita o atendimento de interrupções
+  44           	; 			 Escreve o número de interrupções no OutPort
+  45           	; Entradas:  
+  46           	; Saidas:    
+  47           	; Efeitos:   Conta o número de interupções
+  48           	main:
+  49 0014 00 60		mov	r0, #VAR_INIT_VAL
+  50 0016 C1 0C		ldr	r1, var_addr_main
+  51 0018 10 28		strb	r0, [r1, #0]
+  52 001A 0C 5C		bl	outport_write
+  53 001C A0 0C		ldr	r0, fed_addr_main
+  54 001E 00 28		strb	r0, [r0, #0]
+  55 0020 60 B0		mrs	r0, cpsr
+  56 0022 01 61		mov	r1, #ENABLE_EXTINT
+  57 0024 80 C8		orr	r0, r0, r1
+  58 0026 40 B0		msr	cpsr, r0
+  59           	main_loop:
+  60 0028 30 0C		ldr	r0, var_addr_main
+  61 002A 00 08		ldrb	r0, [r0, #0]
+  62 002C 03 5C		bl	outport_write
+  63 002E FC 5B		b	main_loop
+  64           	
+  65           	var_addr_main:
+  66 0030 56 00		.word	var
+  67           	fed_addr_main:
+  68 0032 40 FF		.word	FED_ADDRESS
+  69           	
+  70           	; Rotina:    outport_write
+  71           	; Descricao: Escreve num porto de saida a 8 bits o valor passado como argumento.
+  72           	;            Interface exemplo: void outport_write( uint8_t value );
+  73           	; Entradas:  r0 - valor a escrever no porto de saida
+  74           	; Saidas:    -
+  75           	; Efeitos:   r1 - guarda o endereco do porto alvo da escrita
+  76           	outport_write:
+  77 0034 21 0C		ldr	r1, outport_addr
+  78 0036 10 28		strb	r0, [r1, #0]
+  79 0038 0F B7		mov	pc, lr
+  80           	
+  81           	outport_addr:
+  82 003A C0 FF		.word	OUTPORT_ADDRESS
+  83           	
+  84           	; Rotina:    isr
+  85           	; Descricao: Notifica o FED que atendeu o pedido de interrupção
+  86           	;			 Incrementa a variável global 'var'
+  87           	; Entradas:  *** Para completar ***
+  88           	; Saidas:    *** Para completar ***
+  89           	; Efeitos:   Incrementa, por 1, a variavel global 'var'
+  90           	isr:
+  91 003C 00 24		push	r0
+  92 003E 01 24		push	r1
+  93 0040 90 0C		ldr	r0, fed_addr_isr
+  94 0042 02 28		strb	r2, [r0, #0]
+  95 0044 60 0C		ldr	r0, var_addr_isr
+  96 0046 01 08		ldrb	r1, [r0, #0]
+  97 0048 91 A0		add	r1, r1, #1
+  98 004A 01 28		strb	r1, [r0, #0]
+  99 004C 01 04		pop	r1
+ 100 004E 00 04		pop	r0
+ 101 0050 20 B0		movs	pc, lr
+ 102           	
+ 103           	var_addr_isr:
+ 104 0052 56 00		.word	var
+ 105           	fed_addr_isr:
+ 106 0054 40 FF		.word	FED_ADDRESS
+ 107           	
+ 108           	; Seccao:    data
+ 109           	; Descricao: Guarda as variáveis globais
+ 110           	;
+ 111           		.data
+ 112           	var:
+ 113 0056 00   		.space	1
+ 114           	
+ 115           	; Seccao:    stack
+ 116           	; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+ 117           	;
+ 118           		.stack
+ 119 0058 00   		.space	STACK_SIZE
+ 119 .... ..
+ 119 0097 00
+ 120           	stack_top:
+ 120           	
