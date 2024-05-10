@@ -6,3 +6,5 @@
 2. [Translation of P16 Assembly to machine code](lab02)
 2. [I/O Ports](lab03)
 3. [Interrupts](lab04)
+4. [Pico Timer/Counter](lab05)
+
