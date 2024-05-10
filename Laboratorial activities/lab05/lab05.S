@@ -19,9 +19,7 @@
 	.equ	OUTPORT_INIT_VAL, 0           ; Valor inicial do porto de saida
 
 	; Definicoes do circuito pTC
-; *** Inicio de troco para completar ***
-	.equ	PTC_ADDRESS,  0x????          ; Endereco do circuito pTC
-; *** Fim de troco para completar ***
+	.equ	PTC_ADDRESS,  0xFF78          ; Endereco do circuito pTC
 
 	.equ	PTC_TCR, 0                    ; Deslocamento do registo TCR do pTC
 	.equ	PTC_TMR, 2                    ; Deslocamento do registo TMR do pTC
@@ -31,10 +29,8 @@
 	.equ	PTC_CMD_START, 0              ; Comando para iniciar a contagem no pTC
 	.equ	PTC_CMD_STOP, 1               ; Comando para parar a contagem no pTC
 
-; *** Inicio de troco para completar ***
-	.equ	SYSCLK_FREQ, 0x??             ; Intervalo de contagem do circuito pTC
+	.equ	SYSCLK_FREQ, 0x64             ; Intervalo de contagem do circuito pTC
                                           ; que suporta a implementação do sysclk
-; *** Fim de troco para completar ***
 
 	; Outras definicoes
 	.equ	LED0_MASK, 1                  ; Mascara para o LED O0 da placa SDP16
@@ -98,11 +94,22 @@ main_loop:
 ;            do valor da variável global sysclk. O tempo a esperar, em
 ;            centenas de milissegundos, e passado em R0.
 ;            Interface exemplo: void delay( uint16_t hms );
-; Entradas:  *** Para completar ***
+; Entradas:  R0 - o tempo a esperar em centenas de milisegundos
 ; Saidas:    -
 ; Efeitos:   -
 delay:
 ; *** Inicio de troco para completar ***
+	push 	lr
+	push 	r4
+	mov 	r4, r0				; preservar o tempo a esperar em cent. ms.
+	bl 		ptc_get_value		; valor atual do pTC
+	add 	r4, r4, r0			; somar o valor observado com o tempo a esperar
+while:
+	bl 		ptc_get_value		; reler o valor atual do pTC
+	cmp 	r0, r4				; comparar o valor lido com o valor limite
+	blo 	while				; voltar ao while
+	pop 	r4
+	pop 	pc
 
 ; *** Fim de troco para completar ***
 
@@ -110,10 +117,18 @@ delay:
 ; Descricao: Incrementa o valor da variável global sysclk.
 ; Entradas:  -
 ; Saidas:    -
-; Efeitos:   *** Para completar ***
+; Efeitos:   Incrementa o valor da variável global sysclk
 isr:
 ; *** Inicio de troco para completar ***
-
+	push	r0
+	push	r1
+	ldr		r0, sysclk_addr
+	ldrb	r1, [r0, #0]
+	add		r1, r1, #1
+	strb	r1, [r0, #0]
+	pop		r1
+	pop		r0
+	movs	pc, lr
 ; *** Fim de troco para completar ***
 
 ; Rotina:    sysclk_init
@@ -129,6 +144,36 @@ isr:
 ;            valor zero a variavel global sysclk
 sysclk_init:
 ; *** Inicio de troco para completar ***
+	push 	lr
+	push 	r4
+	mov		r4, r0 			; preserva o valor do intervalo de contagem, em ticks
+	; desablitar as interrupções, penso que não é necessário
+	mrs	r0, cpsr
+	mov	r1, #0x0F
+	and	r0, r0, r1
+	msr	cpsr, r0
+	; ------------------------------------------------------
+	bl 		ptc_clear_irq	; limpar eventuais interrrupts
+	bl 		ptc_stop 		; parar o ptc
+	; iniciar a varável sysclk a 0 -------------------------
+	mov 	r0, #0 && 0xFF
+	movt 	r0, #0 >> 8 & 0xFF
+	ldr     r1, [sysclk_addr, #0]
+	str 	r0, [r1, #0]
+	; ------------------------------------------------------
+	; reabilitar as interrupções, apenas necessário se tiverem desabilitadas
+	mrs	r0, cpsr
+	mov	r1, #CPSR_BIT_I
+	orr	r0, r0, r1
+	msr	cpsr, r0
+	; -------------------------------------------------------
+	mov 	r0, r4			; repor os ticks
+	bl 		ptc_init
+	pop 	r4
+	pop 	pc
+
+sysclk_add:
+	.word sysclk
 
 ; *** Fim de troco para completar ***
 
@@ -136,11 +181,13 @@ sysclk_init:
 ; Descricao: Devolve o valor corrente da variável global sysclk.
 ;            Interface exemplo: uint16_t sysclk_get_ticks ( );
 ; Entradas:  -
-; Saidas:    *** Para completar ***
+; Saidas:    R0 - valor da variável global sysclk
 ; Efeitos:   -
 sysclk_get_ticks:
 ; *** Inicio de troco para completar ***
-
+	ldr     r1, [sysclk_addr, #0]
+	ldr 	r0, [r1, #0]
+	mov 	pc, lr
 ; *** Fim de troco para completar ***
 
 ; Gestor de periférico para o porto de entrada
