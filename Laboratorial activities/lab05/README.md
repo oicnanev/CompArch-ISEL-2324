@@ -173,6 +173,8 @@ O programa pisca o LED 0 do outport da placa SPD16 com um *"duty-cicle"* de 0.5 
 
 ### 4.5  Conceção de programas que interagem com um *system clock*
 
+[Knight Rider KITT Efect](https://www.youtube.com/watch?v=wkRXQpzOe3c)
+
 Tomando como base o código disponibilizado no cheiro *lab05.S*, escreva um programa que realize o seguinte efeito luminoso usando os **LED 'O0' a 'O7'** da placa **SDP16**: deslocamento circular para a esquerda de um ponto luminoso, implementado tendo, em cada momento, um **LED** aceso e os restantes sete **LED** apagados. 
 
 O ritmo de evolução do efeito luminoso é imposto pelos **interruptores 0 a 2 do DIP-switch 'SW1'** instalado na placa **SDP16**, estando compreendido na gama **0,5 s, 1 s, 1,5 s, 2 s, 2,5 s, 3 s, 3,5 s, 4 s**. O **interruptor 7 do DIP-switch 'SW1'** é utilizado para reger o funcionamento do programa, habilitando a realização do efeito luminoso quando está na posição **'ON'** ou suspendendo a sua realização na posição contrária. 
