@@ -62,3 +62,31 @@ uint16_t sysclk_get_ticks();
 void isr();
 ```
 
+
+
+
+
+#### 7. Implemente a rotina **delay**, que realiza uma espera de **hms** milissegundos por teste sucessivo do valor da variável global **sysclk**. Considere a seguinte interface para essa rotina:
+
+```c
+void delay( uint16_t hms );
+```
+
+
+
+
+
+#### 8. Indique a funcionalidade do programa implementado no ficheiro *lab05.S*.
+
+
+
+## To Do in Laboratory
+
+### 4.5  Conceção de programas que interagem com um *system clock*
+
+Tomando como base o código disponibilizado no cheiro *lab05.S*, escreva um programa que realize o seguinte efeito luminoso usando os **LED 'O0' a 'O7'** da placa **SDP16**: deslocamento circular para a esquerda de um ponto luminoso, implementado tendo, em cada momento, um **LED** aceso e os restantes sete **LED** apagados. 
+
+O ritmo de evolução do efeito luminoso é imposto pelos **interruptores 0 a 2 do DIP-switch 'SW1'** instalado na placa **SDP16**, estando compreendido na gama **0,5 s, 1 s, 1,5 s, 2 s, 2,5 s, 3 s, 3,5 s, 4 s**. O **interruptor 7 do DIP-switch 'SW1'** é utilizado para reger o funcionamento do programa, habilitando a realização do efeito luminoso quando está na posição **'ON'** ou suspendendo a sua realização na posição contrária. 
+
+Após o arranque do sistema, o **LED 'O0'** deverá estar aceso, enquanto os **LED 'O1' a 'O7'** deverão estar apagados.
+
