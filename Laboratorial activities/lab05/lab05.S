@@ -29,28 +29,28 @@
 	.equ	PTC_CMD_START, 0              ; Comando para iniciar a contagem no pTC
 	.equ	PTC_CMD_STOP, 1               ; Comando para parar a contagem no pTC
 
-	.equ	SYSCLK_FREQ, 0x64             ; Intervalo de contagem do circuito pTC
+	.equ	SYSCLK_FREQ, 0x0A             ; Intervalo de contagem do circuito pTC
                                           ; que suporta a implementação do sysclk
+										  ; T = 1 / f  
+										  ; 0.001s = 1 / 1000Hz
+										  ; 0.1s   = 1 / f ( f = 10Hz ) 
 
 	; Outras definicoes
 	.equ	LED0_MASK, 1                  ; Mascara para o LED O0 da placa SDP16
-
-; *** Inicio de troco para completar ***
-	.equ	BLINK_TIME, 5                 ; ??
-; *** Fim de troco para completar ***
+	.equ	BLINK_TIME, 5                 ; Número de interrupções a manter o LED no mesmo estado
 
 ; Seccao:    startup
 ; Descricao: Guarda o código de arranque do sistema
 ;
 	.section startup
-	b	_start
-	ldr	pc, isr_addr
+	b		_start
+	ldr		pc, isr_addr
 _start:
-	ldr	sp, stack_top_addr
-    mov r0, pc
-    add lr, r0, #4
-	ldr	pc, main_addr
-    b   .
+	ldr		sp, stack_top_addr
+    mov 	r0, pc
+    add 	lr, r0, #4
+	ldr		pc, main_addr
+    b   	.
 
 stack_top_addr:
 	.word	stack_top
@@ -65,29 +65,30 @@ isr_addr:
 	.text
 
 ; Rotina:    main
-; Descricao: *** Para completar ***
+; Descricao: Inicia o porto de saída e o pTC. 
+			 Em 'loop', acende o LED 0 0.5 segundos e depois apaga-o 0.5 segundos 
 ; Entradas:  -
 ; Saidas:    -
-; Efeitos:   *** Para completar ***
+; Efeitos:   "Pisca" o LED 0 do outport com um "duty-cicle" de 0.5 segundos
 main:
-	mov	r0, #OUTPORT_INIT_VAL
-	bl	outport_init
-	mov	r0, #SYSCLK_FREQ
-	bl	sysclk_init
-	mrs	r0, cpsr
-	mov	r1, #CPSR_BIT_I
-	orr	r0, r0, r1
-	msr	cpsr, r0
+	mov		r0, #OUTPORT_INIT_VAL
+	bl		outport_init
+	mov		r0, #SYSCLK_FREQ
+	bl		sysclk_init
+	mrs		r0, cpsr
+	mov		r1, #CPSR_BIT_I
+	orr		r0, r0, r1
+	msr		cpsr, r0
 main_loop:
-	mov	r0, #LED0_MASK
-	bl	outport_set_bits
-	mov	r0, #BLINK_TIME
-	bl	delay
-	mov	r0, #LED0_MASK
-	bl	outport_clear_bits
-	mov	r0, #BLINK_TIME
-	bl	delay
-	b	main_loop
+	mov		r0, #LED0_MASK
+	bl		outport_set_bits
+	mov		r0, #BLINK_TIME
+	bl		delay
+	mov		r0, #LED0_MASK
+	bl		outport_clear_bits
+	mov		r0, #BLINK_TIME
+	bl		delay
+	b		main_loop
 
 ; Rotina:    delay
 ; Descricao: Rotina bloqueante que realiza uma espera por teste sucessivo
@@ -98,7 +99,6 @@ main_loop:
 ; Saidas:    -
 ; Efeitos:   -
 delay:
-; *** Inicio de troco para completar ***
 	push 	lr
 	push 	r4
 	mov 	r4, r0				; preservar o tempo a esperar em cent. ms.
@@ -111,7 +111,6 @@ while:
 	pop 	r4
 	pop 	pc
 
-; *** Fim de troco para completar ***
 
 ; Rotina:    isr
 ; Descricao: Incrementa o valor da variável global sysclk.
@@ -119,7 +118,6 @@ while:
 ; Saidas:    -
 ; Efeitos:   Incrementa o valor da variável global sysclk
 isr:
-; *** Inicio de troco para completar ***
 	push	r0
 	push	r1
 	ldr		r0, sysclk_addr
@@ -129,7 +127,6 @@ isr:
 	pop		r1
 	pop		r0
 	movs	pc, lr
-; *** Fim de troco para completar ***
 
 ; Rotina:    sysclk_init
 ; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
@@ -143,39 +140,25 @@ isr:
 ;            eventuais pedidos de interrupcao pendentes e iniciando com o
 ;            valor zero a variavel global sysclk
 sysclk_init:
-; *** Inicio de troco para completar ***
 	push 	lr
-	push 	r4
-	mov		r4, r0 			; preserva o valor do intervalo de contagem, em ticks
-	; desablitar as interrupções, penso que não é necessário
-	mrs	r0, cpsr
-	mov	r1, #0x0F
-	and	r0, r0, r1
-	msr	cpsr, r0
-	; ------------------------------------------------------
-	bl 		ptc_clear_irq	; limpar eventuais interrrupts
+	push 	r0 				; preservar valor dos ticks	
 	bl 		ptc_stop 		; parar o ptc
+	bl 		ptc_clear_irq	; limpar eventuais interrrupts	
+
 	; iniciar a varável sysclk a 0 -------------------------
 	mov 	r0, #0 && 0xFF
 	movt 	r0, #0 >> 8 & 0xFF
 	ldr     r1, [sysclk_addr, #0]
 	str 	r0, [r1, #0]
 	; ------------------------------------------------------
-	; reabilitar as interrupções, apenas necessário se tiverem desabilitadas
-	mrs	r0, cpsr
-	mov	r1, #CPSR_BIT_I
-	orr	r0, r0, r1
-	msr	cpsr, r0
-	; -------------------------------------------------------
-	mov 	r0, r4			; repor os ticks
+	
+	pop 	r0 				; repor os ticks
 	bl 		ptc_init
-	pop 	r4
 	pop 	pc
 
 sysclk_add:
 	.word sysclk
 
-; *** Fim de troco para completar ***
 
 ; Rotina:    sysclk_get_ticks
 ; Descricao: Devolve o valor corrente da variável global sysclk.
@@ -184,11 +167,9 @@ sysclk_add:
 ; Saidas:    R0 - valor da variável global sysclk
 ; Efeitos:   -
 sysclk_get_ticks:
-; *** Inicio de troco para completar ***
-	ldr     r1, [sysclk_addr, #0]
+	ldr     r1, sysclk_addr
 	ldr 	r0, [r1, #0]
 	mov 	pc, lr
-; *** Fim de troco para completar ***
 
 ; Gestor de periférico para o porto de entrada
 ;
@@ -200,7 +181,7 @@ sysclk_get_ticks:
 ; Saidas:    R0 - valor adquirido do porto de entrada
 ; Efeitos:   -
 inport_read:
-	ldr	r1, inport_addr
+	ldr		r1, inport_addr
 	ldrb	r0, [r1, #0]
 	mov	pc, lr
 
@@ -219,12 +200,12 @@ inport_addr:
 ; Efeitos:   Altera o valor da variavel global outport_img.
 outport_set_bits:
 	push	lr
-	ldr	r1, outport_img_addr
+	ldr		r1, outport_img_addr
 	ldrb	r2, [r1, #0]
-	orr	r0, r2, r0
+	orr		r0, r2, r0
 	strb	r0, [r1, #0]
-	bl	outport_write
-	pop	pc
+	bl		outport_write
+	pop		pc
 
 ; Rotina:    outport_clear_bits
 ; Descricao: Atribui o valor logico 0 aos bits do porto de saida identificados
@@ -235,13 +216,13 @@ outport_set_bits:
 ; Efeitos:   Altera o valor da variavel global outport_img.
 outport_clear_bits:
 	push	lr
-	ldr	r1, outport_img_addr
+	ldr		r1, outport_img_addr
 	ldrb	r2, [r1, #0]
-	mvn	r0, r0
-	and	r0, r2, r0
+	mvn		r0, r0
+	and		r0, r2, r0
 	strb	r0, [r1]
-	bl	outport_write
-	pop	pc
+	bl		outport_write
+	pop		pc
 
 ; Rotina:    outport_init
 ; Descricao: Faz a iniciacao do porto de saida, nele estabelecendo o valor
@@ -252,10 +233,10 @@ outport_clear_bits:
 ; Efeitos:   Altera o valor da variavel global outport_img.
 outport_init:
 	push	lr
-	ldr	r1, outport_img_addr
+	ldr		r1, outport_img_addr
 	strb	r0, [r1]
-	bl	outport_write
-	pop	pc
+	bl		outport_write
+	pop		pc
 
 outport_img_addr:
 	.word	outport_img
@@ -267,9 +248,9 @@ outport_img_addr:
 ; Saidas:    -
 ; Efeitos:   -
 outport_write:
-	ldr	r1, outport_addr
+	ldr		r1, outport_addr
 	strb	r0, [r1, #0]
-	mov	pc, lr
+	mov		pc, lr
 
 outport_addr:
 	.word	OUTPORT_ADDRESS
@@ -288,14 +269,14 @@ outport_addr:
 ;            o pedido de interrupcao eventualmente pendente.
 ptc_init:
     push    lr
-	ldr	r1, PTC_ADDR
-	mov	r2, #PTC_CMD_STOP
+	ldr		r1, PTC_ADDR
+	mov		r2, #PTC_CMD_STOP
 	strb	r2, [r1, #PTC_TCR]
 	strb	r0, [r1, #PTC_TMR]
-    bl  ptc_clr_irq
-	mov	r2, #PTC_CMD_START
+    bl  	ptc_clr_irq
+	mov		r2, #PTC_CMD_START
 	strb	r2, [r1, #PTC_TCR]
-	pop pc
+	pop 	pc
 
 ; Rotina:    ptc_start
 ; Descricao: Habilita a contagem no periferico pTC.
@@ -304,10 +285,10 @@ ptc_init:
 ; Saidas:    -
 ; Efeitos:   -
 ptc_start:
-	ldr	r0, PTC_ADDR
-	mov	r1, #PTC_CMD_START
+	ldr		r0, PTC_ADDR
+	mov		r1, #PTC_CMD_START
 	strb	r1, [r0, #PTC_TCR]
-	mov	pc, lr
+	mov		pc, lr
 
 ; Rotina:    ptc_stop
 ; Descricao: Para a contagem no periferico pTC.
@@ -316,10 +297,10 @@ ptc_start:
 ; Saidas:    -
 ; Efeitos:   O valor do registo TC do periferico e colocado a zero.
 ptc_stop:
-	ldr	r0, PTC_ADDR
-	mov	r1, #PTC_CMD_STOP
+	ldr		r0, PTC_ADDR
+	mov		r1, #PTC_CMD_STOP
 	strb	r1, [r0, #PTC_TCR]
-	mov	pc, lr
+	mov		pc, lr
 
 ; Rotina:    ptc_get_value
 ; Descricao: Devolve o valor corrente da contagem do periferico pTC.
@@ -328,9 +309,9 @@ ptc_stop:
 ; Saidas:    R0 - O valor corrente do registo TC do periferico.
 ; Efeitos:   -
 ptc_get_value:
-	ldr	r1, PTC_ADDR
+	ldr		r1, PTC_ADDR
 	ldrb	r0, [r1, #PTC_TC]
-	mov	pc, lr
+	mov		pc, lr
 
 ; Rotina:    ptc_clr_irq
 ; Descricao: Sinaliza o periferico pTC que foi atendido um pedido de
@@ -340,9 +321,9 @@ ptc_get_value:
 ; Saidas:    -
 ; Efeitos:   -
 ptc_clr_irq:
-	ldr	r0, PTC_ADDR
+	ldr		r0, PTC_ADDR
 	strb	r1, [r0, #PTC_TIR]
-	mov	pc, lr
+	mov		pc, lr
 
 PTC_ADDR:
 	.word	PTC_ADDRESS
