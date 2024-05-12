@@ -120,10 +120,19 @@ while:
 isr:
 	push	r0
 	push	r1
+
+	; "limpar" a interrupção no pTC
+	ldr		r0, PTC_ADDR
+	strb	r1, [r0, #PTC_TIR]
+	; ---------------------------------
+
+	; incrementar sysclk --------------
 	ldr		r0, sysclk_addr
 	ldrb	r1, [r0, #0]
 	add		r1, r1, #1
 	strb	r1, [r0, #0]
+	; ----------------------------------
+
 	pop		r1
 	pop		r0
 	movs	pc, lr
@@ -143,7 +152,7 @@ sysclk_init:
 	push 	lr
 	push 	r0 				; preservar valor dos ticks	
 	bl 		ptc_stop 		; parar o ptc
-	bl 		ptc_clear_irq	; limpar eventuais interrrupts	
+	bl 		ptc_clear_irq	; limpar eventuais interrupts	
 
 	; iniciar a varável sysclk a 0 -------------------------
 	mov 	r0, #0 && 0xFF
