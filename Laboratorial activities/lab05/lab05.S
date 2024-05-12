@@ -165,7 +165,7 @@ sysclk_init:
 	bl 		ptc_init
 	pop 	pc
 
-sysclk_add:
+sysclk_addr:
 	.word sysclk
 
 
