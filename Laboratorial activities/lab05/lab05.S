@@ -102,10 +102,10 @@ delay:
 	push 	lr
 	push 	r4
 	mov 	r4, r0				; preservar o tempo a esperar em cent. ms.
-	bl 		ptc_get_value		; valor atual do pTC
+	bl 		sysclk_get_ticks	; valor atual do sysclk
 	add 	r4, r4, r0			; somar o valor observado com o tempo a esperar
 while:
-	bl 		ptc_get_value		; reler o valor atual do pTC
+	bl 		sysclk_get_ticks	; valor atual do sysclk
 	cmp 	r0, r4				; comparar o valor lido com o valor limite
 	blo 	while				; voltar ao while
 	pop 	r4
