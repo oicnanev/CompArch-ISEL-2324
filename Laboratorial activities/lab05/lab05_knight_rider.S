@@ -105,8 +105,7 @@ main_loop:
 	mov 	r5, r0 				  ; guardar o valor do ritmo
 	bne     set_new_rhythm        ; configurar e guardar imagem do novo ritmo
 	bne 	sysclk_init 		  ; configurar o sysclk com novo ritmo
-	; ir buscar o valor do bit acesso a outport_img
-	ldr 	r0, outport_img_addr_link
+	ldr 	r0, outport_img_addr_link  ; ir buscar o valor do bit acesso a outport_img
 	ldrb 	r0, [r0, #0]
 	mov 	r4, r0				 ; guardar o valor do bit aceso 
 	bl      outport_clear_bits   ; apagar o LED
@@ -143,10 +142,6 @@ rhythm_img_addr:
 
 outport_img_addr_link:
 	.word outport_img
-
-
-; TODO: falta implementar rotina get_leds_rhythm e ir buscar qual o bit anterior
-; acesso ao outport_img
 
 ; Rotina:    delay -------------------------------------------------------------
 ; Descricao: Rotina bloqueante que realiza uma espera por teste sucessivo
