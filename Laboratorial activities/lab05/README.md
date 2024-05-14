@@ -1,5 +1,7 @@
 # Laboratory Activity 05
 
+> to run the code in simulation use p16sim -c lab05_config.txt
+
 ## Objectives
 
 Este trabalho tem como objetivo principal explorar a utilização do circuito Pico Timer/Counter (pTC) para gerar uma base de tempo num sistema computacional baseado no processador P16, designadamente implementar um system clock. A componente experimental do trabalho incide sobre a placa SDP16 e é apoiada pelas ferramentas p16as e p16dbg.
