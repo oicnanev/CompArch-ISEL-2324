@@ -90,30 +90,29 @@ main:
 	bl	outport_set_bits
 
 main_loop:
-	mov 	r0, #IN_7_MASK
-	mov 	r1, #INPORT_ADDRESS
-	ldr 	r2, [r1, #0]          ; ir buscar o valor que está no inport
-	and 	r1, r2, r0			  ; aplicar a máscara para ficar apenas com o 7 bit
-	cmp 	r1, r0				  ; ver se o 7 bit está activo
+	bl 		inport_read
+	mov 	r1, #IN_7_MASK
+	and 	r2, r1, r0			  ; aplicar a máscara para ficar apenas com o 7 bit
+	cmp 	r1, r2				  ; ver se o 7 bit está activo
 	bne 	main_loop			  ; manter-se no main_loop
 	mov 	r1, #RHYTHM_MASK
-	and 	r2, r2, r1			  ; ver quais os bits 0 a 3 ligados
-	mov 	r1, led_rhythm_addr & 0xFF
-	movt 	r1, led_rhythm_addr >> 8 & 0xFF
+	and 	r2, r0, r1			  ; ver quais os bits 0 a 3 ligados
+	ldr 	r1, led_rhythm_addr
 	ldrb  	r0, [r1, r2]		  ; ritmo do efeito luminoso
-	mov 	r1, rhythm_img_addr & 0xFF
-	movt	r1, rhythm_img_addr >> 8 $ 0xFF
+	ldr 	r1, rhythm_img_addr
 	ldrb 	r1, [r1, #0]		  ; ir buscar o ritmo anterior
 	cmp 	r0, r1				  ; se o ritmo for diferente do anterior
-	mov 	r5, r0 				  ; guardar o valor do ritmo 
+	mov 	r5, r0 				  ; guardar o valor do ritmo
+	bne     set_new_rhythm        ; configurar e guardar imagem do novo ritmo
 	bne 	sysclk_init 		  ; configurar o sysclk com novo ritmo
 	; ir buscar o valor do bit acesso a outport_img
-	mov 	r0, outport_img_addr & 0xFF
-	movt 	r0, outport_img_addr >> 8 & 0xFF
+	ldr 	r0, outport_img_addr_link
+	ldrb 	r0, [r0, #0]
 	mov 	r4, r0				 ; guardar o valor do bit aceso 
 	bl      outport_clear_bits   ; apagar o LED
+	bl 		delay
 	mov 	r0, r4 				 ; repor o valor do bit aceso
-	rox 	r0, r0, #7 		     ; rotate right extended 7 posições
+	ror 	r0, r0, #7 		     ; rotate right, inverse a rotate left (not in microarch)
 	mov 	r1, #0x00			 ; ver se o rotate right deixou o bit na parte alta
 	movt	r1, #0x01
 	cmp 	r0, r1
@@ -126,14 +125,25 @@ main_set_bits:
 	b 		main_loop
 	b 		.
 
+;Rotina set_new_rhythm ---------------------------------------------------------------------
+; R0 tem o valor do novo ritmo
+set_new_rhythm:
+	push 	r0
+	b 	    sysclk_init
+	ldr 	r1, rhythm_img_addr
+	pop 	r0
+	strb    r0,[r1, #0]
+	mov 	pc, lr
+
 led_rhythm_addr:
 	.word led_rhythm
 
 rhythm_img_addr:
-	.word img_addr
+	.word rhythm_img
 
-outport_img_addr:
+outport_img_addr_link:
 	.word outport_img
+
 
 ; TODO: falta implementar rotina get_leds_rhythm e ir buscar qual o bit anterior
 ; acesso ao outport_img
@@ -154,7 +164,7 @@ delay:
 	add 	r4, r4, r0			; somar o valor observado com o tempo a esperar
 while:
 	bl 		sysclk_get_ticks	; reler o valor atual do sysclk
-	cmp 	r0, r4				; comparar o valor lido com o valor limite
+	cmp 	r4, r0				; comparar o valor lido com o valor limite
 	blo 	while				; voltar ao while
 	pop 	r4
 	pop 	pc
@@ -170,7 +180,7 @@ isr:
 	push	r1
 
 	; "limpar" a interrupção no pTC
-	ldr		r0, PTC_ADDR
+	ldr		r0, ptc_addr
 	strb	r1, [r0, #PTC_TIR]
 	; ---------------------------------
 
@@ -184,6 +194,9 @@ isr:
 	pop		r1
 	pop		r0
 	movs	pc, lr
+
+ptc_addr:
+	.word PTC_ADDRESS
 
 ; Rotina:    sysclk_init -------------------------------------------------------
 ; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
@@ -200,21 +213,18 @@ sysclk_init:
 	push 	lr
 	push 	r0 				; preservar valor dos ticks	
 	bl 		ptc_stop 		; parar o ptc
-	bl 		ptc_clear_irq	; limpar eventuais interrupts	
+	bl 		ptc_clr_irq		; limpar eventuais interrupts	
 
 	; iniciar a varável sysclk a 0 -------------------------
 	mov 	r0, #0 && 0xFF
 	movt 	r0, #0 >> 8 & 0xFF
-	ldr     r1, [sysclk_addr, #0]
+	ldr	 	r1, sysclk_addr
 	str 	r0, [r1, #0]
 	; ------------------------------------------------------
 	
 	pop 	r0 				; repor os ticks
 	bl 		ptc_init
 	pop 	pc
-
-sysclk_addr:
-	.word sysclk
 
 ; Rotina:    sysclk_get_ticks --------------------------------------------------
 ; Descricao: Devolve o valor corrente da variável global sysclk.
@@ -339,6 +349,7 @@ ptc_init:
 	strb	r2, [r1, #PTC_TCR]
 	strb	r0, [r1, #PTC_TMR]
     bl  	ptc_clr_irq
+	ldr 	r1, PTC_ADDR
 	mov		r2, #PTC_CMD_START
 	strb	r2, [r1, #PTC_TCR]
 	pop 	pc

@@ -28,4 +28,4 @@ id=4
 addrbits=2
 databus=P16Low
 addrsel=FF40,FF7F
-clk=1000
+clk=1

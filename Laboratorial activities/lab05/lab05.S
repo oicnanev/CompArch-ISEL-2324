@@ -66,7 +66,7 @@ isr_addr:
 
 ; Rotina:    main
 ; Descricao: Inicia o porto de saída e o pTC. 
-			 Em 'loop', acende o LED 0 0.5 segundos e depois apaga-o 0.5 segundos 
+;			 Em 'loop', acende o LED 0 0.5 segundos e depois apaga-o 0.5 segundos 
 ; Entradas:  -
 ; Saidas:    -
 ; Efeitos:   "Pisca" o LED 0 do outport com um "duty-cicle" de 0.5 segundos
@@ -106,7 +106,7 @@ delay:
 	add 	r4, r4, r0			; somar o valor observado com o tempo a esperar
 while:
 	bl 		sysclk_get_ticks	; valor atual do sysclk
-	cmp 	r0, r4				; comparar o valor lido com o valor limite
+	cmp 	r4, r0				; comparar o valor lido com o valor limite
 	blo 	while				; voltar ao while
 	pop 	r4
 	pop 	pc
@@ -122,7 +122,7 @@ isr:
 	push	r1
 
 	; "limpar" a interrupção no pTC
-	ldr		r0, PTC_ADDR
+	ldr		r0, ptc_addr
 	strb	r1, [r0, #PTC_TIR]
 	; ---------------------------------
 
@@ -136,6 +136,9 @@ isr:
 	pop		r1
 	pop		r0
 	movs	pc, lr
+
+ptc_addr:
+	.word PTC_ADDRESS
 
 ; Rotina:    sysclk_init
 ; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
@@ -152,22 +155,18 @@ sysclk_init:
 	push 	lr
 	push 	r0 				; preservar valor dos ticks	
 	bl 		ptc_stop 		; parar o ptc
-	bl 		ptc_clear_irq	; limpar eventuais interrupts	
+	bl 		ptc_clr_irq	; limpar eventuais interrupts	
 
 	; iniciar a varável sysclk a 0 -------------------------
 	mov 	r0, #0 && 0xFF
 	movt 	r0, #0 >> 8 & 0xFF
-	ldr     r1, [sysclk_addr, #0]
+	ldr     r1, sysclk_addr
 	str 	r0, [r1, #0]
 	; ------------------------------------------------------
 	
 	pop 	r0 				; repor os ticks
 	bl 		ptc_init
 	pop 	pc
-
-sysclk_addr:
-	.word sysclk
-
 
 ; Rotina:    sysclk_get_ticks
 ; Descricao: Devolve o valor corrente da variável global sysclk.
@@ -179,6 +178,9 @@ sysclk_get_ticks:
 	ldr     r1, sysclk_addr
 	ldr 	r0, [r1, #0]
 	mov 	pc, lr
+
+sysclk_addr:
+	.word sysclk
 
 ; Gestor de periférico para o porto de entrada
 ;
@@ -283,6 +285,7 @@ ptc_init:
 	strb	r2, [r1, #PTC_TCR]
 	strb	r0, [r1, #PTC_TMR]
     bl  	ptc_clr_irq
+	ldr 	r1, PTC_ADDR
 	mov		r2, #PTC_CMD_START
 	strb	r2, [r1, #PTC_TCR]
 	pop 	pc

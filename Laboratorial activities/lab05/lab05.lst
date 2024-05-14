@@ -1,0 +1,422 @@
+P16 assembler v1.5 (Feb  9 2024)	lab05.lst	Tue May 14 14:38:03 2024
+
+Sections
+Index   Name            Address   Size
+0       startup         0000      0014 20
+1       .text           0014      00D8 216
+2       .data           00EC      0004 4
+3       .stack          00F0      0040 64
+
+Symbols
+Name                    Type      Value       Section
+_start                  LABEL     0004 4      startup
+BLINK_TIME              ABSOLUTE  0005 5      startup
+CPSR_BIT_I              ABSOLUTE  0010 16     startup
+delay                   LABEL     0036 54     .text
+inport_addr             LABEL     0086 134    .text
+INPORT_ADDRESS          ABSOLUTE  FF80 65408  startup
+inport_read             LABEL     0080 128    .text
+isr                     LABEL     004A 74     .text
+isr_addr                LABEL     0012 18     startup
+LED0_MASK               ABSOLUTE  0001 1      startup
+line#53                 LABEL     000C 12     startup
+main                    LABEL     0014 20     .text
+main_addr               LABEL     0010 16     startup
+main_loop               LABEL     0024 36     .text
+outport_addr            LABEL     00B8 184    .text
+OUTPORT_ADDRESS         ABSOLUTE  FFC0 65472  startup
+outport_clear_bits      LABEL     0096 150    .text
+outport_img             LABEL     00EC 236    .data
+outport_img_addr        LABEL     00B0 176    .text
+outport_init            LABEL     00A6 166    .text
+OUTPORT_INIT_VAL        ABSOLUTE  0000 0      startup
+outport_set_bits        LABEL     0088 136    .text
+outport_write           LABEL     00B2 178    .text
+PTC_ADDR                LABEL     00EA 234    .text
+ptc_addr                LABEL     0060 96     .text
+PTC_ADDRESS             ABSOLUTE  FF78 65400  startup
+ptc_clr_irq             LABEL     00E4 228    .text
+PTC_CMD_START           ABSOLUTE  0000 0      startup
+PTC_CMD_STOP            ABSOLUTE  0001 1      startup
+ptc_get_value           LABEL     00DE 222    .text
+ptc_init                LABEL     00BA 186    .text
+ptc_start               LABEL     00CE 206    .text
+ptc_stop                LABEL     00D6 214    .text
+PTC_TC                  ABSOLUTE  0004 4      startup
+PTC_TCR                 ABSOLUTE  0000 0      startup
+PTC_TIR                 ABSOLUTE  0006 6      startup
+PTC_TMR                 ABSOLUTE  0002 2      startup
+STACK_SIZE              ABSOLUTE  0040 64     startup
+stack_top               LABEL     0130 304    .stack
+stack_top_addr          LABEL     000E 14     startup
+sysclk                  LABEL     00EE 238    .data
+sysclk_addr             LABEL     007E 126    .text
+SYSCLK_FREQ             ABSOLUTE  000A 10     startup
+sysclk_get_ticks        LABEL     0078 120    .text
+sysclk_init             LABEL     0062 98     .text
+while                   LABEL     0040 64     .text
+
+Code listing
+   1           	; Ficheiro:  ap05.S
+   2           	; Descricao: Programa de suporte a realizacao da 5a atividade laboratorial de
+   3           	;            Arquitetura de Computadores.
+   4           	; Autor:     Tiago M Dias (tiago.dias@isel.pt)
+   5           	; Data:      03-05-2024
+   6           	
+   7           	; Definicao dos valores dos simbolos utilizados no programa
+   8           	;
+   9          		.equ	CPSR_BIT_I, 0b010000          ; Mascara para o bit I do registo CPSR
+  10           	
+  11          		.equ	STACK_SIZE, 64                ; Dimensao do stack - 64 B
+  12           	
+  13           		; Definicoes do porto de entrada
+  14          		.equ	INPORT_ADDRESS, 0xFF80        ; Endereco do porto de entrada
+  15           	
+  16           		; Definicoes do porto de saida
+  17          		.equ	OUTPORT_ADDRESS, 0xFFC0       ; Endereco do porto de saida
+  18           	
+  19          		.equ	OUTPORT_INIT_VAL, 0           ; Valor inicial do porto de saida
+  20           	
+  21           		; Definicoes do circuito pTC
+  22          		.equ	PTC_ADDRESS,  0xFF78          ; Endereco do circuito pTC
+  23           	
+  24          		.equ	PTC_TCR, 0                    ; Deslocamento do registo TCR do pTC
+  25          		.equ	PTC_TMR, 2                    ; Deslocamento do registo TMR do pTC
+  26          		.equ	PTC_TC,  4                    ; Deslocamento do registo TC do pTC
+  27          		.equ	PTC_TIR, 6                    ; Deslocamento do registo TIR do pTC
+  28           	
+  29          		.equ	PTC_CMD_START, 0              ; Comando para iniciar a contagem no pTC
+  30          		.equ	PTC_CMD_STOP, 1               ; Comando para parar a contagem no pTC
+  31           	
+  32          		.equ	SYSCLK_FREQ, 0x0A             ; Intervalo de contagem do circuito pTC
+  33           	                                          ; que suporta a implementação do sysclk
+  34           											  ; T = 1 / f  
+  35           											  ; 0.001s = 1 / 1000Hz
+  36           											  ; 0.1s   = 1 / f ( f = 10Hz ) 
+  37           	
+  38           		; Outras definicoes
+  39          		.equ	LED0_MASK, 1                  ; Mascara para o LED O0 da placa SDP16
+  40          		.equ	BLINK_TIME, 5                 ; Número de interrupções a manter o LED no mesmo estado
+  41           	
+  42           	; Seccao:    startup
+  43           	; Descricao: Guarda o código de arranque do sistema
+  44           	;
+  45           		.section startup
+  46 0000 01 58		b		_start
+  47 0002 7F 0C		ldr		pc, isr_addr
+  48           	_start:
+  49 0004 4D 0C		ldr		sp, stack_top_addr
+  50 0006 80 B7	    mov 	r0, pc
+  51 0008 0E A2	    add 	lr, r0, #4
+  52 000A 2F 0C		ldr		pc, main_addr
+  53 000C FF 5B	    b   	.
+  54           	
+  55           	stack_top_addr:
+  56 000E 30 01		.word	stack_top
+  57           	main_addr:
+  58 0010 14 00		.word	main
+  59           	isr_addr:
+  60 0012 4A 00		.word	isr
+  61           	
+  62           	; Seccao:    text
+  63           	; Descricao: Guarda o código do programa
+  64           	;
+  65           		.text
+  66           	
+  67           	; Rotina:    main
+  68           	; Descricao: Inicia o porto de saída e o pTC. 
+  69           	;			 Em 'loop', acende o LED 0 0.5 segundos e depois apaga-o 0.5 segundos 
+  70           	; Entradas:  -
+  71           	; Saidas:    -
+  72           	; Efeitos:   "Pisca" o LED 0 do outport com um "duty-cicle" de 0.5 segundos
+  73           	main:
+  74 0014 00 60		mov		r0, #OUTPORT_INIT_VAL
+  75 0016 47 5C		bl		outport_init
+  76 0018 A0 60		mov		r0, #SYSCLK_FREQ
+  77 001A 23 5C		bl		sysclk_init
+  78 001C 60 B0		mrs		r0, cpsr
+  79 001E 01 61		mov		r1, #CPSR_BIT_I
+  80 0020 80 C8		orr		r0, r0, r1
+  81 0022 40 B0		msr		cpsr, r0
+  82           	main_loop:
+  83 0024 10 60		mov		r0, #LED0_MASK
+  84 0026 30 5C		bl		outport_set_bits
+  85 0028 50 60		mov		r0, #BLINK_TIME
+  86 002A 05 5C		bl		delay
+  87 002C 10 60		mov		r0, #LED0_MASK
+  88 002E 33 5C		bl		outport_clear_bits
+  89 0030 50 60		mov		r0, #BLINK_TIME
+  90 0032 01 5C		bl		delay
+  91 0034 F7 5B		b		main_loop
+  92           	
+  93           	; Rotina:    delay
+  94           	; Descricao: Rotina bloqueante que realiza uma espera por teste sucessivo
+  95           	;            do valor da variável global sysclk. O tempo a esperar, em
+  96           	;            centenas de milissegundos, e passado em R0.
+  97           	;            Interface exemplo: void delay( uint16_t hms );
+  98           	; Entradas:  R0 - o tempo a esperar em centenas de milisegundos
+  99           	; Saidas:    -
+ 100           	; Efeitos:   -
+ 101           	delay:
+ 102 0036 0E 24		push 	lr
+ 103 0038 04 24		push 	r4
+ 104 003A 04 B0		mov 	r4, r0				; preservar o tempo a esperar em cent. ms.
+ 105 003C 1D 5C		bl 		sysclk_get_ticks	; valor atual do sysclk
+ 106 003E 44 80		add 	r4, r4, r0			; somar o valor observado com o tempo a esperar
+ 107           	while:
+ 108 0040 1B 5C		bl 		sysclk_get_ticks	; valor atual do sysclk
+ 109 0042 40 B8		cmp 	r4, r0				; comparar o valor lido com o valor limite
+ 110 0044 FD 4F		blo 	while				; voltar ao while
+ 111 0046 04 04		pop 	r4
+ 112 0048 0F 04		pop 	pc
+ 113           	
+ 114           	
+ 115           	; Rotina:    isr
+ 116           	; Descricao: Incrementa o valor da variável global sysclk.
+ 117           	; Entradas:  -
+ 118           	; Saidas:    -
+ 119           	; Efeitos:   Incrementa o valor da variável global sysclk
+ 120           	isr:
+ 121 004A 00 24		push	r0
+ 122 004C 01 24		push	r1
+ 123           	
+ 124           		; "limpar" a interrupção no pTC
+ 125 004E 80 0C		ldr		r0, ptc_addr
+ 126 0050 01 2B		strb	r1, [r0, #PTC_TIR]
+ 127           		; ---------------------------------
+ 128           	
+ 129           		; incrementar sysclk --------------
+ 130 0052 50 0D		ldr		r0, sysclk_addr
+ 131 0054 01 08		ldrb	r1, [r0, #0]
+ 132 0056 91 A0		add		r1, r1, #1
+ 133 0058 01 28		strb	r1, [r0, #0]
+ 134           		; ----------------------------------
+ 135           	
+ 136 005A 01 04		pop		r1
+ 137 005C 00 04		pop		r0
+ 138 005E 20 B0		movs	pc, lr
+ 139           	
+ 140           	ptc_addr:
+ 141 0060 78 FF		.word PTC_ADDRESS
+ 142           	
+ 143           	; Rotina:    sysclk_init
+ 144           	; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
+ 145           	;            contagem recebido em R0, em ticks, limpando eventuais pedidos de
+ 146           	;            interrupcao pendentes e iniciando com o valor zero a variavel
+ 147           	;            global sysclk.
+ 148           	;            Interface exemplo: void sysclk_init( uint8_t interval );
+ 149           	; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
+ 150           	; Saidas:    -
+ 151           	; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
+ 152           	;            eventuais pedidos de interrupcao pendentes e iniciando com o
+ 153           	;            valor zero a variavel global sysclk
+ 154           	sysclk_init:
+ 155 0062 0E 24		push 	lr
+ 156 0064 00 24		push 	r0 				; preservar valor dos ticks	
+ 157 0066 37 5C		bl 		ptc_stop 		; parar o ptc
+ 158 0068 3D 5C		bl 		ptc_clr_irq	; limpar eventuais interrupts	
+ 159           	
+ 160           		; iniciar a varável sysclk a 0 -------------------------
+ 161 006A 00 60		mov 	r0, #0 && 0xFF
+ 162 006C 00 70		movt 	r0, #0 >> 8 & 0xFF
+ 163 006E 71 0C		ldr     r1, sysclk_addr
+ 164 0070 10 20		str 	r0, [r1, #0]
+ 165           		; ------------------------------------------------------
+ 166           		
+ 167 0072 00 04		pop 	r0 				; repor os ticks
+ 168 0074 22 5C		bl 		ptc_init
+ 169 0076 0F 04		pop 	pc
+ 170           	
+ 171           	; Rotina:    sysclk_get_ticks
+ 172           	; Descricao: Devolve o valor corrente da variável global sysclk.
+ 173           	;            Interface exemplo: uint16_t sysclk_get_ticks ( );
+ 174           	; Entradas:  -
+ 175           	; Saidas:    R0 - valor da variável global sysclk
+ 176           	; Efeitos:   -
+ 177           	sysclk_get_ticks:
+ 178 0078 21 0C		ldr     r1, sysclk_addr
+ 179 007A 10 00		ldr 	r0, [r1, #0]
+ 180 007C 0F B7		mov 	pc, lr
+ 181           	
+ 182           	sysclk_addr:
+ 183 007E EE 00		.word sysclk
+ 184           	
+ 185           	; Gestor de periférico para o porto de entrada
+ 186           	;
+ 187           	
+ 188           	; Rotina:    inport_read
+ 189           	; Descricao: Adquire e devolve o valor corrente do porto de entrada.
+ 190           	;            Interface exemplo: uint8_t inport_read( );
+ 191           	; Entradas:  -
+ 192           	; Saidas:    R0 - valor adquirido do porto de entrada
+ 193           	; Efeitos:   -
+ 194           	inport_read:
+ 195 0080 21 0C		ldr		r1, inport_addr
+ 196 0082 10 08		ldrb	r0, [r1, #0]
+ 197 0084 0F B7		mov	pc, lr
+ 198           	
+ 199           	inport_addr:
+ 200 0086 80 FF		.word	INPORT_ADDRESS
+ 201           	
+ 202           	; Gestor de periférico para o porto de saída
+ 203           	;
+ 204           	
+ 205           	; Rotina:    outport_set_bits
+ 206           	; Descricao: Atribui o valor logico 1 aos bits do porto de saida identificados
+ 207           	;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
+ 208           	;            Interface exemplo: void outport_set_bits( uint8_t pins_mask );
+ 209           	; Entradas:  R0 - Mascara com a especificacao do indice dos bits a alterar.
+ 210           	; Saidas:    -
+ 211           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 212           	outport_set_bits:
+ 213 0088 0E 24		push	lr
+ 214 008A 21 0D		ldr		r1, outport_img_addr
+ 215 008C 12 08		ldrb	r2, [r1, #0]
+ 216 008E 20 C8		orr		r0, r2, r0
+ 217 0090 10 28		strb	r0, [r1, #0]
+ 218 0092 0F 5C		bl		outport_write
+ 219 0094 0F 04		pop		pc
+ 220           	
+ 221           	; Rotina:    outport_clear_bits
+ 222           	; Descricao: Atribui o valor logico 0 aos bits do porto de saida identificados
+ 223           	;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
+ 224           	;            Interface exemplo: void outport_clear_bits( uint8_t pins_mask );
+ 225           	; Entradas:  R0 - Mascara com a especificacao do indice dos bits a alterar.
+ 226           	; Saidas:    -
+ 227           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 228           	outport_clear_bits:
+ 229 0096 0E 24		push	lr
+ 230 0098 B1 0C		ldr		r1, outport_img_addr
+ 231 009A 12 08		ldrb	r2, [r1, #0]
+ 232 009C 10 B0		mvn		r0, r0
+ 233 009E 20 C0		and		r0, r2, r0
+ 234 00A0 10 28		strb	r0, [r1]
+ 235 00A2 07 5C		bl		outport_write
+ 236 00A4 0F 04		pop		pc
+ 237           	
+ 238           	; Rotina:    outport_init
+ 239           	; Descricao: Faz a iniciacao do porto de saida, nele estabelecendo o valor
+ 240           	;            recebido em R0.
+ 241           	;            Interface exemplo: void outport_init( uint8_t value );
+ 242           	; Entradas:  R0 - Valor a atribuir ao porto de saida.
+ 243           	; Saidas:    -
+ 244           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 245           	outport_init:
+ 246 00A6 0E 24		push	lr
+ 247 00A8 31 0C		ldr		r1, outport_img_addr
+ 248 00AA 10 28		strb	r0, [r1]
+ 249 00AC 02 5C		bl		outport_write
+ 250 00AE 0F 04		pop		pc
+ 251           	
+ 252           	outport_img_addr:
+ 253 00B0 EC 00		.word	outport_img
+ 254           	
+ 255           	; Rotina:    outport_write
+ 256           	; Descricao: Escreve no porto de saida o valor recebido em R0.
+ 257           	;            Interface exemplo: void outport_write( uint8_t value );
+ 258           	; Entradas:  R0 - valor a atribuir ao porto de saida.
+ 259           	; Saidas:    -
+ 260           	; Efeitos:   -
+ 261           	outport_write:
+ 262 00B2 21 0C		ldr		r1, outport_addr
+ 263 00B4 10 28		strb	r0, [r1, #0]
+ 264 00B6 0F B7		mov		pc, lr
+ 265           	
+ 266           	outport_addr:
+ 267 00B8 C0 FF		.word	OUTPORT_ADDRESS
+ 268           	
+ 269           	; Gestor de periférico para o Pico Timer/Counter (pTC)
+ 270           	;
+ 271           	
+ 272           	; Rotina:    ptc_init
+ 273           	; Descricao: Faz a iniciacao do periférico pTC, habilitando o seu funcionamento
+ 274           	;            em modo continuo e com o intervalo de contagem recebido em R0, em
+ 275           	;            ticks.
+ 276           	;            Interface exemplo: void ptc_init( uint8_t interval );
+ 277           	; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
+ 278           	; Saidas:    -
+ 279           	; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
+ 280           	;            o pedido de interrupcao eventualmente pendente.
+ 281           	ptc_init:
+ 282 00BA 0E 24	    push    lr
+ 283 00BC 61 0D		ldr		r1, PTC_ADDR
+ 284 00BE 12 60		mov		r2, #PTC_CMD_STOP
+ 285 00C0 12 28		strb	r2, [r1, #PTC_TCR]
+ 286 00C2 10 29		strb	r0, [r1, #PTC_TMR]
+ 287 00C4 0F 5C	    bl  	ptc_clr_irq
+ 288 00C6 11 0D		ldr 	r1, PTC_ADDR
+ 289 00C8 02 60		mov		r2, #PTC_CMD_START
+ 290 00CA 12 28		strb	r2, [r1, #PTC_TCR]
+ 291 00CC 0F 04		pop 	pc
+ 292           	
+ 293           	; Rotina:    ptc_start
+ 294           	; Descricao: Habilita a contagem no periferico pTC.
+ 295           	;            Interface exemplo: void ptc_start( );
+ 296           	; Entradas:  -
+ 297           	; Saidas:    -
+ 298           	; Efeitos:   -
+ 299           	ptc_start:
+ 300 00CE D0 0C		ldr		r0, PTC_ADDR
+ 301 00D0 01 60		mov		r1, #PTC_CMD_START
+ 302 00D2 01 28		strb	r1, [r0, #PTC_TCR]
+ 303 00D4 0F B7		mov		pc, lr
+ 304           	
+ 305           	; Rotina:    ptc_stop
+ 306           	; Descricao: Para a contagem no periferico pTC.
+ 307           	;            Interface exemplo: void ptc_stop( );
+ 308           	; Entradas:  -
+ 309           	; Saidas:    -
+ 310           	; Efeitos:   O valor do registo TC do periferico e colocado a zero.
+ 311           	ptc_stop:
+ 312 00D6 90 0C		ldr		r0, PTC_ADDR
+ 313 00D8 11 60		mov		r1, #PTC_CMD_STOP
+ 314 00DA 01 28		strb	r1, [r0, #PTC_TCR]
+ 315 00DC 0F B7		mov		pc, lr
+ 316           	
+ 317           	; Rotina:    ptc_get_value
+ 318           	; Descricao: Devolve o valor corrente da contagem do periferico pTC.
+ 319           	;            Interface exemplo: uint8_t ptc_get_value( );
+ 320           	; Entradas:  -
+ 321           	; Saidas:    R0 - O valor corrente do registo TC do periferico.
+ 322           	; Efeitos:   -
+ 323           	ptc_get_value:
+ 324 00DE 51 0C		ldr		r1, PTC_ADDR
+ 325 00E0 10 0A		ldrb	r0, [r1, #PTC_TC]
+ 326 00E2 0F B7		mov		pc, lr
+ 327           	
+ 328           	; Rotina:    ptc_clr_irq
+ 329           	; Descricao: Sinaliza o periferico pTC que foi atendido um pedido de
+ 330           	;            interrupção.
+ 331           	;            Interface exemplo: void ptc_clr_irq( );
+ 332           	; Entradas:  -
+ 333           	; Saidas:    -
+ 334           	; Efeitos:   -
+ 335           	ptc_clr_irq:
+ 336 00E4 20 0C		ldr		r0, PTC_ADDR
+ 337 00E6 01 2B		strb	r1, [r0, #PTC_TIR]
+ 338 00E8 0F B7		mov		pc, lr
+ 339           	
+ 340           	PTC_ADDR:
+ 341 00EA 78 FF		.word	PTC_ADDRESS
+ 342           	
+ 343           	; Seccao:    data
+ 344           	; Descricao: Guarda as variáveis globais
+ 345           	;
+ 346           		.data
+ 347           	outport_img:
+ 348 00EC 00   		.space	1
+ 349           	
+ 350 00ED 00  		.align
+ 351           	sysclk:
+ 352 00EE 00   		.space	2
+ 352 00EF 00
+ 353           	
+ 354           	; Seccao:    stack
+ 355           	; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+ 356           	;
+ 357           		.stack
+ 358 00F0 00   		.space	STACK_SIZE
+ 358 .... ..
+ 358 012F 00
+ 359           	stack_top:
+ 359           	
