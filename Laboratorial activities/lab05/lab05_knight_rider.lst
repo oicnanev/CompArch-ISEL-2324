@@ -1,4 +1,4 @@
-P16 assembler v1.5 (Feb  9 2024)	c:\ac\CompArch-ISEL-2324\Laboratorial activities\lab05\lab05_knight_rider.lst	Wed May 15 11:53:47 2024
+P16 assembler v1.5 (Feb  9 2024)	c:\ac\CompArch-ISEL-2324\Laboratorial activities\lab05\lab05_knight_rider.lst	Wed May 15 21:52:17 2024
 
 Sections
 Index   Name            Address   Size
@@ -61,7 +61,7 @@ stack_top               LABEL     017E 382    .stack
 stack_top_addr          LABEL     000E 14     startup
 sysclk                  LABEL     0132 306    .data
 sysclk_addr             LABEL     00C2 194    .text
-SYSCLK_FREQ             ABSOLUTE  000A 10     startup
+SYSCLK_FREQ             ABSOLUTE  0063 99     startup
 sysclk_get_ticks        LABEL     00BC 188    .text
 sysclk_init             LABEL     00A6 166    .text
 while                   LABEL     0084 132    .text
@@ -99,7 +99,7 @@ Code listing
   30          		.equ	PTC_CMD_START, 0              ; Comando para iniciar a contagem no pTC
   31          		.equ	PTC_CMD_STOP, 1               ; Comando para parar a contagem no pTC
   32           	
-  33          		.equ	SYSCLK_FREQ, 0x0A             ; Intervalo de contagem do circuito pTC
+  33          		.equ	SYSCLK_FREQ, 0x63             ; Intervalo de contagem do circuito pTC
   34           	                                          ; que suporta a implementação do sysclk
   35           											  ; T = 1 / f  
   36           											  ; 0.001s = 1 / 1000Hz
@@ -146,7 +146,7 @@ Code listing
   77           	main:
   78 0014 00 60		mov		r0, #OUTPORT_INIT_VAL
   79 0016 69 5C		bl		outport_init
-  80 0018 A0 60		mov		r0, #SYSCLK_FREQ
+  80 0018 30 66		mov		r0, #SYSCLK_FREQ
   81 001A 45 5C		bl		sysclk_init
   82 001C 60 B0		mrs		r0, cpsr
   83 001E 01 61		mov		r1, #CPSR_BIT_I

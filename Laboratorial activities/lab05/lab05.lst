@@ -1,4 +1,4 @@
-P16 assembler v1.5 (Feb  9 2024)	lab05.lst	Tue May 14 14:38:03 2024
+P16 assembler v1.5 (Feb  9 2024)	lab05.lst	Wed May 15 22:51:30 2024
 
 Sections
 Index   Name            Address   Size
@@ -51,7 +51,7 @@ stack_top               LABEL     0130 304    .stack
 stack_top_addr          LABEL     000E 14     startup
 sysclk                  LABEL     00EE 238    .data
 sysclk_addr             LABEL     007E 126    .text
-SYSCLK_FREQ             ABSOLUTE  000A 10     startup
+SYSCLK_FREQ             ABSOLUTE  0063 99     startup
 sysclk_get_ticks        LABEL     0078 120    .text
 sysclk_init             LABEL     0062 98     .text
 while                   LABEL     0040 64     .text
@@ -88,7 +88,7 @@ Code listing
   29          		.equ	PTC_CMD_START, 0              ; Comando para iniciar a contagem no pTC
   30          		.equ	PTC_CMD_STOP, 1               ; Comando para parar a contagem no pTC
   31           	
-  32          		.equ	SYSCLK_FREQ, 0x0A             ; Intervalo de contagem do circuito pTC
+  32          		.equ	SYSCLK_FREQ, 0x63             ; Intervalo de contagem do circuito pTC
   33           	                                          ; que suporta a implementação do sysclk
   34           											  ; T = 1 / f  
   35           											  ; 0.001s = 1 / 1000Hz
@@ -132,7 +132,7 @@ Code listing
   73           	main:
   74 0014 00 60		mov		r0, #OUTPORT_INIT_VAL
   75 0016 47 5C		bl		outport_init
-  76 0018 A0 60		mov		r0, #SYSCLK_FREQ
+  76 0018 30 66		mov		r0, #SYSCLK_FREQ
   77 001A 23 5C		bl		sysclk_init
   78 001C 60 B0		mrs		r0, cpsr
   79 001E 01 61		mov		r1, #CPSR_BIT_I
@@ -165,7 +165,7 @@ Code listing
  106 003E 44 80		add 	r4, r4, r0			; somar o valor observado com o tempo a esperar
  107           	while:
  108 0040 1B 5C		bl 		sysclk_get_ticks	; valor atual do sysclk
- 109 0042 40 B8		cmp 	r4, r0				; comparar o valor lido com o valor limite
+ 109 0042 00 BA		cmp 	r0, r4				; comparar o valor lido com o valor limite
  110 0044 FD 4F		blo 	while				; voltar ao while
  111 0046 04 04		pop 	r4
  112 0048 0F 04		pop 	pc

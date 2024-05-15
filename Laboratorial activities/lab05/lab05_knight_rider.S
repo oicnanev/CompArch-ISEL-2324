@@ -30,7 +30,7 @@
 	.equ	PTC_CMD_START, 0              ; Comando para iniciar a contagem no pTC
 	.equ	PTC_CMD_STOP, 1               ; Comando para parar a contagem no pTC
 
-	.equ	SYSCLK_FREQ, 0x0A             ; Intervalo de contagem do circuito pTC
+	.equ	SYSCLK_FREQ, 0x63             ; Intervalo de contagem do circuito pTC
                                           ; que suporta a implementação do sysclk
 										  ; T = 1 / f  
 										  ; 0.001s = 1 / 1000Hz
