@@ -75,14 +75,14 @@ isr_addr:
 ; Saidas:    -
 ; Efeitos:   *** Para completar ***
 main:
-	mov	r0, #OUTPORT_INIT_VAL
-	bl	outport_init
-	mov	r0, #SYSCLK_FREQ
-	bl	sysclk_init
-	mrs	r0, cpsr
-	mov	r1, #CPSR_BIT_I
-	orr	r0, r0, r1
-	msr	cpsr, r0
+	mov		r0, #OUTPORT_INIT_VAL
+	bl		outport_init
+	mov		r0, #SYSCLK_FREQ
+	bl		sysclk_init
+	mrs		r0, cpsr
+	mov		r1, #CPSR_BIT_I
+	orr		r0, r0, r1
+	msr		cpsr, r0
 
 	; Após o arranque do sistema, o LED 'O0' deverá estar aceso, enquanto os 
 	; LED 'O1' a 'O7' deverão estar apagados.  
