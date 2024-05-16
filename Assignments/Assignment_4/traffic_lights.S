@@ -152,14 +152,33 @@ loop_yellow_off:
 ;
 config_mode:
     push    lr
-    ; LED 01 - amarelo a piscar ao ritmo de 0.5s
-    ; LED 02 - verde a piscar ao ritmo de 0.5s
-    ; LED 03 - amarelo
-config_mode_loop:
-    ; ler crossing_time_arr
-    ; guardar crossing_time
-    ; verificar se CONFIG se mantém a 1
-    ; se sim, b config_mode_loop
+    push    r4
+    push    r5
+    mov     r0, #OUT_MODE_GREEN       ; L3 green
+    bl      outport_clear_bits        ; clear L3
+    mov     r0, #OUT_MODE_YELLOW      ; L3 yellow
+    bl      outport_set_bits          ; set L3
+    mov     r0, #OUT_PEDESTR_RED      ; L2 red
+    bl      outport_clear_bits        ; clear L2
+    mov     r0, #OUT_PEDESTR_GREEN    ; L2 green
+    bl      outport_set_bits          ; set L2
+    mov     r0, #OUT_TRAFFIC_YELLOW   ; L1 yellow
+    bl      outport_set_bits          ; set L1
+    bl      sysclk_get_ticks
+    mov     r1, #BLINK_TIME
+    add     r4, r0, r1                  ; sum observed ticks plus BLINK_TIME 
+    bl      inport_read
+    mov     r5, r0                    ; preservar inport
+    mov     r1, #IN_MODE_MASK         ; check CONFIG    
+    and     r0, r1, r5
+    cmp     r0, r1                    ; check CONFIG is 1
+    bne     end_config_mode
+    .....
+    ; TODO
+
+end_config_mode:
+    pop     r5
+    pop     r4
     pop     pc
 
 
