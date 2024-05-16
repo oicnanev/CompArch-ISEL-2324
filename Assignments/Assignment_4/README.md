@@ -106,3 +106,7 @@ A entrega do trabalho é realizada através da atividade "Entrega do Projeto de 
 ### A data limite para a entrega dos trabalhos é **5 de junho de 2024**.
 
 Após a entrega do trabalho, poderá ser combinado com algum(ns) grupo(s) uma data e hora para a realização de uma discussão para apresentação e defesa do trabalho realizado, situações que serão devidamente justificadas.
+
+## ---- MÁQUINA DE ESTADOS ----
+
+![state_machine](../../images/traffic_lights_state_machine.png)
