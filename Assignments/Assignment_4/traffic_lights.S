@@ -34,7 +34,7 @@
     .equ    PTC_TIR, 6                  ; Deslocamento do registo TIR do pTC
     .equ    PTC_CMD_START, 0            ; Comando para iniciar a contagem no pTC
     .equ    PTC_CMD_STOP, 1             ; Comando para parar a contagem no pTC
-    .equ    SYSCLK_FREQ, 0x0A           ; Intervalo de contagem do circuito pTC
+    .equ    SYSCLK_FREQ, 0x64           ; Intervalo de contagem do circuito pTC
                                         ; que suporta a implementação do sysclk
                                         ; T = 1 / f  
                                         ; 0.001s = 1 / 1000Hz
@@ -87,21 +87,62 @@ main:
     mov     r1, #CPSR_BIT_I
     orr     r0, r0, r1
     msr     cpsr, r0
-main_loop:
-    ; LED L1 amarelo a piscar a ritmo de 0.5 segundos
-    ; LED L2 vermelho
-    ; LED L3 verde
-    ; verificar qual o modo em que está, operação ou configuração
-    ; se modo configuração -> bl config_mode
-    ; ----- OPERATION MODE ------
-operation_mode_loop:
-    ; verificar se há transição ascendente no PEDESTRIAN_BUTTON
-    ; se não -> b main_loop
-    ; LED L1 -> vermelho
-    ; LED L2 -> verde
-    ; ir buscar o CROSSING_TIME para R0
-    delay
-    b operation_mode_loop
+
+    bl      operation_mode
+    b.
+
+; Rotina:    operation_mode ----------------------------------------------------
+; Descricao: *** TODO ***
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   *** TODO ***
+;
+operation_mode:
+    push    lr
+    push    r4
+    push    r5
+    mov     r0, #OUT_MODE_GREEN         ; L3 green
+    bl      outport_set_bits
+    mov     r0, #OUT_PEDESTR_RED        ; L2 red
+    bl      outport_set_bits
+yellow_on:
+    mov     r0, #OUT_TRAFFIC_YELLOW     ; L1 yellow
+    bl      outport_set_bits
+    bl      sysclk_get_ticks
+    mov     r1, #BLINK_TIME
+    add     r4, r0, r1                  ; sum observed ticks plus BLINK_TIME 
+loop_yellow_on:
+    bl      inport_read
+    mov     r5, r0                      ; preserve inport data
+    mov     r1, #IN_MODE_MASK           ; check CONFIG    
+    and     r0, r1, r5
+    cmp     r0, r1                      ; check CONFIG is 1
+    beq     config_mode
+    ; TODO: ver se aconteceu transição de 0 para 1 em PEDESTRIAN
+    bl      sysclk_get_ticks
+    cmp     r0, r4                      ; comparar o valor lido com o valor limite
+    blo     traffic_yellow_on
+yellow_off:
+    mov     r0, #OUT_TRAFFIC_YELLOW     ; L1 yellow
+    bl      outport_clear_bits
+    bl      sysclk_get_ticks            ; start new count
+    mov     r1, #BLINK_TIME
+    add     r4, r0, r1                  ; sum observed ticks plus BLINK_TIME 
+loop_yellow_off:
+    bl      inport_read
+    mov     r5, r0                      ; preserve inport data
+    mov     r1, #IN_MODE_MASK           ; check CONFIG    
+    and     r0, r1, r5
+    cmp     r0, r1                      ; check CONFIG is 1
+    beq     config_mode
+    ; TODO: ver se aconteceu transição de 0 para 1 em PEDESTRIAN
+    bl      sysclk_get_ticks
+    cmp     r0, r4                      ; comparar o valor lido com o valor limite
+    blo     traffic_yellow_off
+    b       yellow_on
+    pop     r5
+    pop     r4
+    pop     pc
 
 ; Rotina:    config_mode -------------------------------------------------------
 ; Descricao: *** TODO ***
@@ -138,7 +179,7 @@ delay:
     add     r4, r4, r0          ; somar o valor observado com o tempo a esperar
 while:
     bl      sysclk_get_ticks    ; reler o valor atual do sysclk
-    cmp     r4, r0              ; comparar o valor lido com o valor limite
+    cmp     r0, r4              ; comparar o valor lido com o valor limite
     blo     while               ; voltar ao while
     pop     r4
     pop     pc
