@@ -53,18 +53,18 @@ Notes, practical works and assignments for the Arquitectura de Computadores disc
 
 ## Assignments
 
-- [Work 1](Assignments/Assigment_1)
-- [Work 2](Assignments/Assigment_2)
-- [Work 3](Assignments/Assigment_3)
-- [Project](Assignments/Assigment_4)
+- [Work 1](Assignments/Assignment_1)
+- [Work 2](Assignments/Assignment_2)
+- [Work 3](Assignments/Assignment_3)
+- [Project](Assignments/Assignment_4)
 
 ## Laboratory activities
 
-- [First contact with P16 processor](Laboratorial%20activities/lab01)
-- [Translation of P16 assembly to Machine Code](Laboratorial%20activities/lab02)
-- [I/O Ports](Laboratorial%20activities/lab03)
-- [Interrupts](Laboratorial%20activities/lab04)
-- [Pico Timer/Counter](Laboratorial%20activities/lab05)
+- [First contact with P16 processor](Laboratory%20activities/lab01)
+- [Translation of P16 assembly to Machine Code](Laboratory%20activities/lab02)
+- [I/O Ports](Laboratory%20activities/lab03)
+- [Interrupts](Laboratory%20activities/lab04)
+- [Pico Timer/Counter](Laboratory%20activities/lab05)
 
 
 ## Notes

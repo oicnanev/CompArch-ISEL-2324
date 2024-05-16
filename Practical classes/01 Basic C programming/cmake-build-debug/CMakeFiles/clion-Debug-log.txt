@@ -1,1 +1,0 @@
-CMakeLists.txt not found in /home/oicnanev/Projects/CompArch-ISEL-2324/Practical classes/01 Basic C development Select CMakeLists.txt
