@@ -18,13 +18,13 @@
 
     ; Definicoes do porto de saida      ----------------------------------------  
     .equ    OUTPORT_ADDRESS, 0xFFC0     ; Endereco do porto de saida
-    .equ    OUT_TRAFFIC_RED, 0x01       ; Mascara traffic light red
-    .equ    OUT_TRAFFIC_GREEN, 0x02     ; Mascara traffic light green
-    .equ    OUT_TRAFFIC_YELLOW, 0x03    ; Mascara traffic light yellow
-    .equ    OUT_PEDESTR_RED, 0x04       ; Mascara pedestrian light red
-    .equ    OUT_PEDESTR_GREEN, 0x08     ; Mascara pedestrian light green
-    .equ    OUT_MODE_RED, 0x10          ; Mascara mode red
-    .equ    OUT_MODE_GREEN, 0x20        ; Mascara mode green
+    .equ    TRAFFIC_YELLOW, 0x03        ; Mascara traffic light yellow
+    .equ    CONFIG_MODE_YELLOW, 0x30    ; Mascara config mode yellow (red_0x10 + green_0x20)
+    .equ    NORMAL_FIXED_LIGHTS, 0x24   ; Mascara PEDESTRIAN_RED 0x04 + NORMAL_MODE_GREEN 0x20
+    .equ    CONFIG_BLIKING_LIGHTS, 0x0B ; Mascara TRAFFIC_YELLOW 0x03 + PEDESTRIAN_GREEN 0x08
+    .equ    CONFIG_LIGHTS_TO_OFF, 0x24  ; Mascara NORMAL_MODE_GREE 0x20 + PEDESTRIAN_RED 0x04
+    .equ    PEDESTRIAN_OFF_LIGHTS, 0x07 ; Mascara TRAFFIC_YELLOW 0x03 + PEDESTRAIN_RED 0x04
+    .equ    PEDESTRIAN_ON_LIGHTS, 0x09  ; Mascara TRAFFIC_RED 0x01 + PEDESTRIAN_GREEN 0x08
 
     ; Definicoes do circuito pTC        ----------------------------------------
     .equ    PTC_ADDRESS,  0xFF78        ; Endereco do circuito pTC
@@ -78,7 +78,6 @@ isr_addr:
 ; Efeitos:   *** TODO ***
 ;
 main:
-    ; TODO
     mov     r0, #0                      ; todos os LEDs apagados
     bl      outport_init
     mov     r0, #SYSCLK_FREQ
@@ -88,99 +87,123 @@ main:
     orr     r0, r0, r1
     msr     cpsr, r0
 
-    bl      operation_mode
-    b.
-
-; Rotina:    operation_mode ----------------------------------------------------
-; Descricao: *** TODO ***
-; Entradas:  -
-; Saidas:    -
-; Efeitos:   *** TODO ***
-;
 operation_mode:
-    push    lr
-    push    r4
-    push    r5
-    mov     r0, #OUT_MODE_GREEN         ; L3 green
-    bl      outport_set_bits
-    mov     r0, #OUT_PEDESTR_RED        ; L2 red
+    mov     r0, #NORMAL_FIXED_LIGHTS    ; L3 green + L2 red
     bl      outport_set_bits
 yellow_on:
-    mov     r0, #OUT_TRAFFIC_YELLOW     ; L1 yellow
+    mov     r0, #TRAFFIC_YELLOW         ; L1 yellow
     bl      outport_set_bits
     bl      sysclk_get_ticks
-    mov     r1, #BLINK_TIME
-    add     r4, r0, r1                  ; sum observed ticks plus BLINK_TIME 
+    mov     r4, #BLINK_TIME
+    add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME 
 loop_yellow_on:
     bl      inport_read
-    mov     r5, r0                      ; preserve inport data
-    mov     r1, #IN_MODE_MASK           ; check CONFIG    
-    and     r0, r1, r5
-    cmp     r0, r1                      ; check CONFIG is 1
+    mov     r6, r0                      ; preserve inport data
+    mov     r7, #IN_MODE_MASK           ; check CONFIG    
+    and     r0, r7, r6
+    cmp     r0, r7                      ; check CONFIG is 1
     beq     config_mode
     ; TODO: ver se aconteceu transição de 0 para 1 em PEDESTRIAN
+    bl      is_button_pressed
+    mov     r1, #IN_PEDESTRIAN_MASK
+    cmp     r0, r1
+    beq     pededestrian_crossing
+
     bl      sysclk_get_ticks
-    cmp     r0, r4                      ; comparar o valor lido com o valor limite
+    cmp     r0, r5                      ; comparar o valor lido com o valor limite (r5)
     blo     traffic_yellow_on
 yellow_off:
-    mov     r0, #OUT_TRAFFIC_YELLOW     ; L1 yellow
+    mov     r0, #TRAFFIC_YELLOW         ; L1 yellow
     bl      outport_clear_bits
     bl      sysclk_get_ticks            ; start new count
-    mov     r1, #BLINK_TIME
-    add     r4, r0, r1                  ; sum observed ticks plus BLINK_TIME 
+    add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME (r4)
 loop_yellow_off:
     bl      inport_read
-    mov     r5, r0                      ; preserve inport data
-    mov     r1, #IN_MODE_MASK           ; check CONFIG    
-    and     r0, r1, r5
-    cmp     r0, r1                      ; check CONFIG is 1
+    mov     r6, r0                      ; preserve inport data 
+    and     r0, r7, r6                  ; r7 = IN_MODE_MASK, r6 = INPORT_DATA
+    cmp     r0, r7                      ; check CONFIG is 1
     beq     config_mode
     ; TODO: ver se aconteceu transição de 0 para 1 em PEDESTRIAN
+    bl      is_button_pressed
+    mov     r1, #IN_PEDESTRIAN_MASK
+    cmp     r0, r1
+    beq     pededestrian_crossing
+
     bl      sysclk_get_ticks
-    cmp     r0, r4                      ; comparar o valor lido com o valor limite
+    cmp     r0, r5                      ; comparar o valor lido com o valor limite (r5)
     blo     traffic_yellow_off
     b       yellow_on
-    pop     r5
-    pop     r4
-    pop     pc
+    b       .
 
-; Rotina:    config_mode -------------------------------------------------------
-; Descricao: *** TODO ***
-; Entradas:  -
-; Saidas:    -
-; Efeitos:   *** TODO ***
-;
 config_mode:
-    push    lr
-    push    r4
-    push    r5
-    mov     r0, #OUT_MODE_GREEN       ; L3 green
-    bl      outport_clear_bits        ; clear L3
-    mov     r0, #OUT_MODE_YELLOW      ; L3 yellow
-    bl      outport_set_bits          ; set L3
-    mov     r0, #OUT_PEDESTR_RED      ; L2 red
-    bl      outport_clear_bits        ; clear L2
-    mov     r0, #OUT_PEDESTR_GREEN    ; L2 green
-    bl      outport_set_bits          ; set L2
-    mov     r0, #OUT_TRAFFIC_YELLOW   ; L1 yellow
-    bl      outport_set_bits          ; set L1
+    mov     r0, #CONFIG_LIGHTS_TO_OFF   ; L3 green + L2 red
+    bl      outport_clear_bits          ; clear L3 + L2
+    mov     r0, #CONFIG_MODE_YELLOW     ; L3 yellow
+    bl      outport_set_bits            ; set L3
+config_lights_on:
+    mov     r0, #CONFIG_BLIKING_LIGHTS  ; L2 green and L1 yellow
+    bl      outport_set_bits            ; set L2 + L1
     bl      sysclk_get_ticks
     mov     r1, #BLINK_TIME
-    add     r4, r0, r1                  ; sum observed ticks plus BLINK_TIME 
+    add     r4, r0, r1                  ; sum observed ticks + BLINK_TIME
+config_lights_on_loop:
     bl      inport_read
-    mov     r5, r0                    ; preservar inport
-    mov     r1, #IN_MODE_MASK         ; check CONFIG    
-    and     r0, r1, r5
-    cmp     r0, r1                    ; check CONFIG is 1
+    mov     r1, #IN_MODE_MASK           ; check CONFIG    
+    and     r0, r1, r0
+    cmp     r0, r1                      ; check CONFIG is 1
+    bne     off_bliking_lights
+    bl      sysclk_get_ticks
+    cmp     r0, r8                      ; comparar o valor lido com o valor limite (r4)
+    blo     config_lights_on_loop
+config_lights_off:
+    mov     r0, #CONFIG_BLIKING_LIGHTS  ; L2 green and L1 yellow
+    bl      outport_clear_bits          ; set L2 + L1
+    bl      sysclk_get_ticks
+    mov     r1, #BLINK_TIME
+    add     r8, r0, r1                  ; sum observed ticks + BLINK_TIME
+config_lights_off_loop:
+    bl      inport_read
+    mov     r1, #IN_MODE_MASK           ; check CONFIG    
+    and     r0, r1, r0
+    cmp     r0, r1                      ; check CONFIG is 1
     bne     end_config_mode
-    .....
-    ; TODO
-
+    bl      sysclk_get_ticks
+    cmp     r0, r8                      ; comparar o valor lido com o valor limite (r4)
+    blo     config_lights_off_loop
+    b       config_lights_on
+off_bliking_lights:
+    mov     r0, #CONFIG_BLIKING_LIGHTS  ; L2 green and L1 yellow
+    bl      outport_clear_bits          ; clear L2 + L1
 end_config_mode:
-    pop     r5
-    pop     r4
-    pop     pc
+    bl      inport_read                 ; ver qual o crossing time configurado
+    mov     r1, #IN_TIME_MASK           ; aplicar mascar
+    and     r1, r0, r1                  ; ficar com os bits que interessa
+    lsr     r1, r1, #5                  ; shiftar bits para a parte baixa
+    ldr     r0, crossing_times_array_addr 
+    ldrb    r1, [r0, r1]                ; novo crossing time no index r1
+    ldr     r0, crossing_time_addr      
+    strb    r1, [r0, #0]                ; guardar novo crossing time
+    mov     r0, #CONFIG_MODE_YELLOW     ; L3 yellow
+    bl      outport_clear_bits          ; clear L3
+    b       operation_mode
 
+pedestrian_crossing:                    ; não faz sentido ver se há config mode devido ao delay bloqueante
+    mov     r0, #PEDESTRIAN_OFF_LIGHTS  ; L1 yellow + L2 red
+    bl      outport_clear_bits          ; clear L1 + L2
+    mov     r0, #PEDESTRIAN_ON_LIGHTS   ; L1 red + L2 green
+    bl      outport_set_bits            ; set L1 + L2
+    ldr     r0, crossing_time_addr
+    ldrb    r0, [r0, #0]                ; ler valor do crossing time
+    delay                               ; delay bloqueante
+    ; ver se aconteceu nova transição de 0 para 1 em pedestrian
+    beq     pededestrian_crossing
+    b       operation_mode
+
+crossing_times_array_addr:
+    .word crossing_times_array
+
+crossing_time_addr:
+    .word crossing_time
 
 ; Rotina:    delay -------------------------------------------------------------
 ; Descricao: Rotina bloqueante que realiza uma espera por teste sucessivo
@@ -449,12 +472,17 @@ PTC_ADDR:
     .data
 outport_img:
     .space  1
-
     .align
+
 sysclk:
     .space  2
 
 crossing_time:
+    .byte 10
+    .align
+
+
+crossing_times_array:
     .byte  10, 20, 30, 40, 50, 60, 60
     ; hex: 00, 01, 02, 03, 04, 05, 06, 28
 
