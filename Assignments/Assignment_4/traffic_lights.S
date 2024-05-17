@@ -189,9 +189,9 @@ end_config_mode:
     and     r1, r0, r1                  ; ficar com os bits que interessa
     lsr     r1, r1, #5                  ; shiftar bits para a parte baixa
     ldr     r0, crossing_times_array_addr 
-    ldrb    r1, [r0, r1]                ; novo crossing time no index r1
+    ldr     r1, [r0, r1]                ; novo crossing time no index r1
     ldr     r0, crossing_time_addr      
-    strb    r1, [r0, #0]                ; guardar novo crossing time
+    str     r1, [r0, #0]                ; guardar novo crossing time
     mov     r0, #CONFIG_MODE_YELLOW     ; L3 yellow
     bl      outport_clear_bits          ; clear L3
     b       operation_mode
@@ -203,7 +203,7 @@ pedestrian_crossing:
     mov     r0, #PEDESTRIAN_ON_LIGHTS   ; L1 red + L2 green
     bl      outport_set_bits            ; set L1 + L2
     ldr     r0, crossing_time_addr
-    ldrb    r0, [r0, #0]                ; ler valor do crossing time
+    ldr     r0, [r0, #0]                ; ler valor do crossing time
     delay                               ; delay bloqueante
     ; Check new PEDESTRIAN ---------------------------------------
     bl      inport_read
@@ -509,13 +509,11 @@ sysclk:
     .space  2
 
 crossing_time:
-    .byte 10
-    .align
-
+    .word 100
 
 crossing_times_array:
-    .byte  10, 20, 30, 40, 50, 60, 60
-    ; hex: 00, 01, 02, 03, 04, 05, 06, 28
+    .word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
+    ; hex: 063, 0C8, 12C, 190, 1F4, 258, 258, 258
 
 
 ; ##############################################################################
