@@ -110,3 +110,6 @@ Após a entrega do trabalho, poderá ser combinado com algum(ns) grupo(s) uma da
 ## ---- MÁQUINA DE ESTADOS ----
 
 ![state_machine](../../images/traffic_lights_state_machine.png)
+
+[Relatorio](report.md)
+

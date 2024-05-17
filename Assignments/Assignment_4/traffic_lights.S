@@ -100,7 +100,7 @@ yellow_on:
     add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME 
 loop_yellow_on:
     ; Check CONFIG -------------------------------------------
-    bl      inport_read
+    bl      inport_readr6
     mov     r6, #CONFIG_SW              ; check CONFIG    
     and     r0, r6, r0
     cmp     r0, r6                      ; check CONFIG is 1
