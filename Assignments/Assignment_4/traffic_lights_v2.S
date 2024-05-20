@@ -1,11 +1,26 @@
-; Ficheiro:  traffic_lights.S
+; Ficheiro:  traffic_lightsv2.S
 ; Descricao: Programa de suporte ao protótipo de um sistema embebido baseado no 
 ;            processador P16 que implementa o controlador de um sistema de 
 ;            semáforos para uma passadeira.
 ; Autores:   Grupo 02 da turma 21N (45824 Nuno Venancio e 48070 Daniel Cabaça) 
 ; Data:      15-05-2024
+;
+; -----------------------------------------------------------------------------
+; |                               APLICAÇÂO                                   |
+; |                              main    isr                                  |
+; |---------------------------------------------------------------------------|
+; |                                 SERVIÇOS                                  |
+; |        sysclk_init sysclk_get_ticks sysctlk-elapsed sw_is_pressed         |
+; |  traffic_light_set_color pedestrian_light_set_color mode_light_set_color  |
+; |---------------------------------------------------------------------------|
+; |                          GESTORES DE PERIFÉRICOS                          |
+; |                               inport_read                                 |
+; |         outport_set_bits outport_clear_bits outport_write_bits            |
+; |         ptc_init ptc_start ptc_stop ptc_get_value ptc_clr_irq             |
+; -----------------------------------------------------------------------------
+;
 ; ##############################################################################
- ; Definicao dos valores dos simbolos utilizados no programa
+; Definicao dos valores dos simbolos utilizados no programa
     .equ    CPSR_BIT_I, 0b010000        ; Mascara para o bit I do registo CPSR
     .equ    STACK_SIZE, 64              ; Dimensao do stack - 64 B
 
@@ -17,6 +32,10 @@
 
     ; Definicoes do porto de saida      ----------------------------------------  
     .equ    OUTPORT_ADDRESS, 0xFFC0     ; Endereco do porto de saida
+    .equ    TRAFFIC_LIGHT, 0x03         ; Mascara para semáforo de trânsito
+    .equ    PEDESTRIAN_LIGHT, 0x0C      ; Mascara para semáforo de peões
+    .equ    MODE_LIGHT, 0x30            ; Mascara para semáforo de modo
+    ; --------------------------------------------------------------------------
     .equ    TRAFFIC_YELLOW, 0x03        ; Mascara traffic light yellow
     .equ    CONFIG_MODE_YELLOW, 0x30    ; Mascara config mode yellow (red_0x10 + green_0x20)
     .equ    NORMAL_FIXED_LIGHTS, 0x24   ; Mascara PEDESTRIAN_RED 0x04 + NORMAL_MODE_GREEN 0x20
@@ -42,6 +61,10 @@
 
     ; Outras definicoes                 ----------------------------------------
     .equ    BLINK_TIME, 0x05            ; Tempo dos LEDs intermitentes 
+    .equ    RED, 0x01                   ; Mascara para o LED vermelho
+    .equ    GREEN, 0x02                 ; Mascara para o LED verde
+    .equ    YELLOW, 0x03                ; Mascara para o LED amarelo
+    .equ    LIGHT_OFF, 0x00             ; Mascara para apagar os LEDs
  
 
 ; ##############################################################################
@@ -219,6 +242,7 @@ crossing_times_array_addr:
 crossing_time_addr:
     .word crossing_time
 
+; SERVIÇOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ; Rotina:    sw_is_pressed -----------------------------------------------------
 ; Descricao: Deteta se existiu uma transicao ascendente no bit identificado em 
 ;            IN_PEDESTRIAN_MASK.
@@ -234,7 +258,7 @@ sw_is_pressed:
     cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
     beq     sw_is_pressed_0
     strb    r0, [r1, #0]                ; sw_state = sw_new_state
-    sub     r0, r0, #0                  ; para testar a flag Z
+    sub     r0, r0, #0                  ; para testar a flag Z, sw_new_state == 0
     beq     sw_is_pressed_0             ; se Z = 1, então r0 = 0    
     mov     r0, #1
     b       sw_is_pressed_end
@@ -245,6 +269,44 @@ sw_is_pressed_end:
 
 sw_state_addr:
     .word sw_state
+
+; Rotina:    traffic_light_set_color -------------------------------------------
+; Descricao: Atribui a cor especificada em R0 ao semáforo de trânsito (L1).
+; Entradas:  R0 - Cor a atribuir ao semáforo de trânsito (L1)
+; Saidas:    -
+; Efeitos:   - 
+traffic_light_set_color:
+    push    lr
+    mov     r1, r0                      ; r1 = color
+    mov     r0, #TRAFFIC_LIGHT          ; r0 = TRAFFIC_LIGHT
+    bl      outport_write
+    pop     pc
+
+; Rotina:    pedestrian_light_set_color ----------------------------------------
+; Descricao: Atribui a cor especificada em R0 ao semáforo de peões (L2).
+; Entradas:  R0 - Cor a atribuir ao semáforo de peões (L2)
+; Saidas:    -
+; Efeitos:   -
+pedestrian_light_set_color:
+    push    lr
+    mov     r1, r0                      ; r1 = color
+    mov     r0, #PEDESTRIAN_LIGHT       ; r0 = PEDESTRIAN_LIGHT
+    lsl     r1, r1, #2                  ; r1 = color << 2
+    bl      outport_write
+    pop     pc
+
+; Rotina:    mode_light_set_color ----------------------------------------------
+; Descricao: Atribui a cor especificada em R0 ao semáforo de modo (L3).
+; Entradas:  R0 - Cor a atribuir ao semáforo de modo (L3)
+; Saidas:    -
+; Efeitos:   -
+mode_light_set_color:
+    push    lr
+    mov     r1, r0                      ; r1 = color
+    mov     r0, #MODE_LIGHT             ; r0 = MODE_LIGHT
+    lsl     r1, r1, #4                  ; r1 = color << 4
+    bl      outport_write
+    pop     pc
 
 ; Rotina:    delay -------------------------------------------------------------
 ; Descricao: Rotina bloqueante que realiza uma espera por teste sucessivo
@@ -332,12 +394,24 @@ sysclk_get_ticks:
     ldr     r0, [r1, #0]
     mov     pc, lr
 
+; Rotina:    sysclk_elapsed ----------------------------------------------------
+; Descricao: Devolve o tempo decorrido, em ticks, desde o instante last_read
+; Entradas:  R0 - valor do instante last_read
+; Saidas:    R0 - tempo decorrido, em ticks, desde o instante last_read
+; Efeitos:   -
+sysclk_elapsed:
+    ldr     r1, sysclk_addr
+    ldr     r2, [r1, #0]            ; r2 = sysclk
+    sub     r0, r2, r0
+    pop     pc
+
 sysclk_addr:
     .word sysclk
 
-; Gestor de periférico para o porto de entrada %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+; GESTORES DE PERIFÉRICOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;
-
+; Gestor de periférico para o porto de entrada =================================
+;
 ; Rotina:    inport_read -------------------------------------------------------
 ; Descricao: Adquire e devolve o valor corrente do porto de entrada.
 ;            Interface exemplo: uint8_t inport_read( );
@@ -352,9 +426,8 @@ inport_read:
 inport_addr:
     .word   INPORT_ADDRESS
 
-; Gestor de periférico para o porto de saída %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+; Gestor de periférico para o porto de saída ===================================
 ;
-
 ; Rotina:    outport_set_bits --------------------------------------------------
 ; Descricao: Atribui o valor logico 1 aos bits do porto de saida identificados
 ;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
@@ -402,6 +475,25 @@ outport_init:
     bl      outport_write
     pop     pc
 
+; Rotina:    outport-write_bits ------------------------------------------------
+; Descricao: Atribui aos pinos do porto de saida identificados com o valor 1 em
+;            pin_mask (R0) o valor correspondente de value (R1). O valor dos
+;            restantes bits nao e alterado.
+; Entradas:  R0 - Mascara com os bits a alterar.
+;            R1 - Valor a atribuir aos bits identificados em R0.
+; Saidas:    -
+; Efeitos:   Altera o valor da variavel global outport_img.
+outport_write_bits:
+    push    lr
+    and     r1, r1, r0                  ; r1 = pin_mask & value
+    ldr     r2, outport_img_addr
+    ldrb    r3, [r2, #0]
+    mvn     r0, r0                      ; r0 = ~pin_mask
+    and     r3, r0, r3                  ; r3 = outport_img &= ~pin_mask
+    orr     r0, r3, r1                  ; r0 = outport_img |= pin_mask & value
+    bl      outport_write
+    pop     pc
+
 outport_img_addr:
     .word   outport_img
 
@@ -419,9 +511,8 @@ outport_write:
 outport_addr:
     .word   OUTPORT_ADDRESS
 
-; Gestor de periférico para o Pico Timer/Counter (pTC) %%%%%%%%%%%%%%%%%%%%%%%%%
+; Gestor de periférico para o Pico Timer/Counter (pTC) =========================
 ;
-
 ; Rotina:    ptc_init ----------------------------------------------------------
 ; Descricao: Faz a iniciacao do periférico pTC, habilitando o seu funcionamento
 ;            em modo continuo e com o intervalo de contagem recebido em R0, em
