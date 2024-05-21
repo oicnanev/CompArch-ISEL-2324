@@ -605,6 +605,15 @@ crossing_times_array:
     .word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
     ; hex: 063, 0C8, 12C, 190, 1F4, 258, 258, 258
 
+in_crossing:     ; flag para saber se ha peao a atravessar
+    .byte 0
+
+traffic_t_on:    ; flag para saber se o semáforo de transito esta aceso
+    .byte 1
+
+config_t_on:      ; flag para saber se o semáforo de transito e peoes esta aceso
+    .byte 1       ; durante o modo de configuracao
+
 
 ; ##############################################################################
 ; Seccao:    stack
