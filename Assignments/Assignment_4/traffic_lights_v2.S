@@ -35,14 +35,6 @@
     .equ    TRAFFIC_LIGHT, 0x03         ; Mascara para semáforo de trânsito
     .equ    PEDESTRIAN_LIGHT, 0x0C      ; Mascara para semáforo de peões
     .equ    MODE_LIGHT, 0x30            ; Mascara para semáforo de modo
-    ; --------------------------------------------------------------------------
-    .equ    TRAFFIC_YELLOW, 0x03        ; Mascara traffic light yellow
-    .equ    CONFIG_MODE_YELLOW, 0x30    ; Mascara config mode yellow (red_0x10 + green_0x20)
-    .equ    NORMAL_FIXED_LIGHTS, 0x24   ; Mascara PEDESTRIAN_RED 0x04 + NORMAL_MODE_GREEN 0x20
-    .equ    CONFIG_BLIKING_LIGHTS, 0x0B ; Mascara TRAFFIC_YELLOW 0x03 + PEDESTRIAN_GREEN 0x08
-    .equ    CONFIG_LIGHTS_TO_OFF, 0x24  ; Mascara NORMAL_MODE_GREE 0x20 + PEDESTRIAN_RED 0x04
-    .equ    PEDESTRIAN_OFF_LIGHTS, 0x07 ; Mascara TRAFFIC_YELLOW 0x03 + PEDESTRAIN_RED 0x04
-    .equ    PEDESTRIAN_ON_LIGHTS, 0x09  ; Mascara TRAFFIC_RED 0x01 + PEDESTRIAN_GREEN 0x08
 
     ; Definicoes do circuito pTC        ----------------------------------------
     .equ    PTC_ADDRESS,  0xFF40        ; Endereco do circuito pTC
@@ -99,7 +91,6 @@ isr_addr:
 ; Entradas:  -
 ; Saidas:    -
 ; Efeitos:   *** TODO ***
-; R4 = BLINK_TIME, R5 = observed_ticks + BLINK_TIME, R6 = CONFIG_SW
 main:
     mov     r0, #0                      ; todos os LEDs apagados
     bl      outport_init
@@ -110,139 +101,344 @@ main:
     orr     r0, r0, r1
     msr     cpsr, r0
 
+    ; default flags to save some clocks
+    mov     r4, #0                     ; False
+    mov     r5, #1                     ; True
+
+main_loop:
+    bl      get_config_sw              ; ler portos de entrada, R0 = CONFIG_SW                    
+    cmp     r0, r4                     ; check CONFIG is 0
+    bne     config_mode
+    mov     r0, #GREEN
+    bl      mode_light_set_color
+    bl      is_pedestrian_crossing
+    cmp     r0, r4                     ; R4 = 0
+    bne     pedestrian_crossing
+    bl      check_pedestrian_button
+    cmp     r0, r4                     ; R4 = 0
+    beq     operation_mode
+pedestrian_ask_to_cross:
+    mov     r0, #RED
+    bl      traffic_light_set_color
+    mov     r0, #GREEN
+    bl      pedestrian_light_set_color
+    ldr     r0, in_crossing_addr
+    strb    r5, [r0, #0]                ; R5 = 1
+    bl      start_pedestrian_timmer
+    b       main_loop
+
 operation_mode:
-    mov     r0, #NORMAL_FIXED_LIGHTS    ; L3 green + L2 red
-    bl      outport_set_bits
+    ldr     r0, is_operation_timmer_running_addr
+    ldrb    r0, [r0, #0]
+    cmp     r0, r4                     ; R4 = 0
+    bne     operation_mode_timmer_running
+    bl      start_operation_timmer
+operation_mode_timmer_running:
+    mov     r0, #RED
+    bl      pedestrian_light_set_color
+    bl      is_traffic_t_on
+    cmp     r0, r4                     ; R4 = 0
+    bne     traffic_t_on
+traffic_t_off:
+    mov     r0, #LIGHT_OFF
+    bl      traffic_light_set_color
+    bl      is_operation_time_finished
+    cmp     r0, r4                     ; R4 = 0
+    bne     main_loop
+    ldr     r0, traffic_t_on_addr
+    strb    r5, [r0, #0]                ; R5 = 1
+    b       main_loop
+traffic_t_on:
+    mov     r0, #YELLOW
+    bl      traffic_light_set_color
+    bl      is_operation_time_finished
+    cmp     r0, r4                     ; R4 = 0
+    bne     main_loop
+    ldr     r0, traffic_t_on_addr
+    strb    r4, [r0, #0]               ; R4 = 0
+    b       main_loop    
 
-yellow_on:
-    mov     r0, #TRAFFIC_YELLOW         ; L1 yellow
-    bl      outport_set_bits
-    bl      sysclk_get_ticks
-    mov     r4, #BLINK_TIME
-    add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME 
-loop_yellow_on:
-    ; Check CONFIG -------------------------------------------
-    bl      inport_readr6
-    mov     r6, #CONFIG_SW              ; check CONFIG    
-    and     r0, r6, r0
-    cmp     r0, r6                      ; check CONFIG is 1
-    beq     config_mode
-    ; Check PEDESTRIAN ---------------------------------------
-    bl      inport_read  
-    mov     r1, #PEDESTRIAN_BUTTON
-    bl      sw_is_pressed
-    mov     r1, #1
-    cmp     r0, r1
-    beq     pededestrian_crossing       ; se sw_is_pressed == 1, houve transição ascendente
-    ; Check if time is up ------------------------------------
-    bl      sysclk_get_ticks
-    cmp     r0, r5                      ; comparar o valor lido com o valor limite (r5)
-    blo     traffic_yellow_on
-
-yellow_off:
-    mov     r0, #TRAFFIC_YELLOW         ; L1 yellow
-    bl      outport_clear_bits
-    bl      sysclk_get_ticks            ; start new count
-    add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME (R4)
-loop_yellow_off:
-    ; Check CONFIG -------------------------------------------
-    bl      inport_read
-    and     r0, r6, r0                  ; R6 = CONFIG_SW
-    cmp     r0, r6                      ; check CONFIG is 1
-    beq     config_mode
-    ; Check PEDESTRIAN ---------------------------------------
-    bl      inport_read                 ; ler porto de entrada
-    mov     r1, #PEDESTRIAN_BUTTON
-    bl      sw_is_pressed
-    mov     r1, #1
-    cmp     r0, r1
-    beq     pededestrian_crossing       ; se sw_is_pressed == 1, houve transição ascendente
-
-    bl      sysclk_get_ticks
-    cmp     r0, r5                      ; comparar o valor lido com o valor limite (R5)
-    blo     traffic_yellow_off
-    b       yellow_on
-    b       .
+pedestrian_crossing:
+    bl      is_crossing_time_finished
+    cmp     r0, r4                     ; R4 = 0
+    beq     main_loop
+    ldr     r0, in_crossing_addr
+    strb    r4, [r0, #0]               ; R4 = 0
+    b       main_loop
 
 config_mode:
-    mov     r0, #CONFIG_LIGHTS_TO_OFF   ; L3 green + L2 red
-    bl      outport_clear_bits          ; clear L3 + L2
-    mov     r0, #CONFIG_MODE_YELLOW     ; L3 yellow
-    bl      outport_set_bits            ; set L3
-config_lights_on:
-    mov     r0, #CONFIG_BLIKING_LIGHTS  ; L2 green and L1 yellow
-    bl      outport_set_bits            ; set L2 + L1
-    bl      sysclk_get_ticks
-    add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME (R4)
-config_lights_on_loop:
-    ; Check CONFIG -------------------------------------------
-    bl      inport_read   
-    and     r0, r0, r6                  ; R6 = CONFIG_SW
-    cmp     r0, r6                      ; check CONFIG is 1
-    bne     off_bliking_lights
-    ; Check if time is up ------------------------------------
-    bl      sysclk_get_ticks
-    cmp     r0, r5                      ; comparar o valor lido com o valor limite (R5)
-    blo     config_lights_on_loop
+    ldr     r0, is_config_timmer_running_addr
+    ldrb    r0, [r0, #0]
+    cmp     r0, r4                     ; R4 = 0
+    bne     config_timmer_running
+    bl      start_config_timmer
+config_timmer_running:
+    mov     r0, #YELLOW
+    bl      mode_light_set_color
+    bl      is_config_t_on
+    cmp     r0, r4                     ; R4 = 0
+    bne     config_t_on
+config_t_off:
+    mov     r0, #LIGHT_OFF
+    bl      traffic_light_set_color
+    mov     r0, #LIGHT_OFF
+    bl      pedestrian_light_set_color
+    bl      is_config_time_finished
+    cmp     r0, r4                     ; R4 = 0
+    bl      set_crossing_time
+    bne     main_loop
+    ldr     r0, config_t_on_addr
+    strb    r5, [r0, #0]                ; R5 = 1
+    bl      set_crossing_time
+    b       main_loop
+config_t_on:
+    mov     r0, #YELLOW
+    bl      traffic_light_set_color
+    mov     r0, #GREEN
+    bl      pedestrian_light_set_color
+    bl      is_config_time_finished
+    cmp     r0, r4                     ; R4 = 0
+    bl      set_crossing_time
+    bne     main_loop
+    ldr     r0, config_t_on_addr
+    strb    r4, [r0, #0]               ; R4 = 0
+    bl      set_crossing_time
+    b       main_loop
 
-config_lights_off:
-    mov     r0, #CONFIG_BLIKING_LIGHTS  ; L2 green and L1 yellow
-    bl      outport_clear_bits          ; set L2 + L1
-    bl      sysclk_get_ticks
-    add     r5, r0, r4                  ; sum observed ticks + BLINK_TIME (R4)
-config_lights_off_loop:
-    ; Check CONFIG -------------------------------------------
-    bl      inport_read
-    and     r0, r6, r0                  ; R6 = CONFIG_SW
-    cmp     r0, r6                      ; check CONFIG is 1
-    bne     end_config_mode
-    ; Check if time is up ------------------------------------
-    bl      sysclk_get_ticks
-    cmp     r0, r5                      ; comparar o valor lido com o valor limite (R5)
-    blo     config_lights_off_loop
-    b       config_lights_on
+is_operation_timmer_running_addr:
+    .word is_operation_timmer_running
 
-off_bliking_lights:
-    mov     r0, #CONFIG_BLIKING_LIGHTS  ; L2 green and L1 yellow
-    bl      outport_clear_bits          ; clear L2 + L1
-end_config_mode:
-    bl      inport_read                 ; ver qual o crossing time configurado
-    mov     r1, #TIME_SWS               ; aplicar mascara
-    and     r1, r0, r1                  ; ficar com os bits que interessa
-    lsr     r1, r1, #5                  ; shiftar bits para a parte baixa
-    ldr     r0, crossing_times_array_addr 
-    ldr     r1, [r0, r1]                ; novo crossing time no index r1
-    ldr     r0, crossing_time_addr      
-    str     r1, [r0, #0]                ; guardar novo crossing time
-    mov     r0, #CONFIG_MODE_YELLOW     ; L3 yellow
-    bl      outport_clear_bits          ; clear L3
-    b       operation_mode
+traffic_t_on_addr:
+    .word traffic_t_on
 
-pedestrian_crossing:                    
-    ; não faz sentido ver se há config mode devido ao delay bloqueante
-    mov     r0, #PEDESTRIAN_OFF_LIGHTS  ; L1 yellow + L2 red
-    bl      outport_clear_bits          ; clear L1 + L2
-    mov     r0, #PEDESTRIAN_ON_LIGHTS   ; L1 red + L2 green
-    bl      outport_set_bits            ; set L1 + L2
-    ldr     r0, crossing_time_addr
-    ldr     r0, [r0, #0]                ; ler valor do crossing time
-    delay                               ; delay bloqueante
-    ; Check new PEDESTRIAN ---------------------------------------
-    bl      inport_read
-    mov     r1, #PEDESTRIAN_BUTTON
-    bl      sw_is_pressed
+is_config_timmer_running_addr:
+    .word is_config_timmer_running
+
+config_t_on_addr:
+    .word config_t_on
+
+
+; Rotina:    is_pedestrian_crossing ------------------------------------------------
+; Descricao: Devolve se um peão está a atravessar a passadeira.
+; Entradas:  -
+; Saidas:    R0 - 1 se um peão está a atravessar a passadeira, 0 caso contrário
+; Efeitos:   -
+is_pedestrian_crossing:
+    ldr     r0, in_crossing_addr
+    ldrb    r0, [r0, #0]
+    mov     pc, lr
+
+in_crossing_addr:
+    .word in_crossing
+
+; Rotina:    start_pedestrian_timmer ------------------------------------------------
+; Descricao: Inicia a contagem do tempo de travessia.
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   crossing_time_start_tick = sysclk
+start_pedestrian_timmer:
+    push    lr
+    bl      sysclk_get_ticks
+    ldr     r1, crossing_time_start_tick_addr
+    str     r0, [r1, #0]
+    pop     pc
+
+crossing_time_start_tick_addr:
+    .word crossing_time_start_tick
+
+; Rotina:   start_operation_timmer ------------------------------------------------
+; Descricao: Inicia a contagem do tempo de operação sem travessia de peao.
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   operation_time_start_tick = sysclk
+start_operation_timmer:
+    push    lr
+    ldr     r0, in_operation_addr    ; set flag in_operation
     mov     r1, #1
+    strb    r1, [r0, #0]
+    ldr     r0, in_config_addr       ; clear flag in_config
+    mov     r1, #0
+    strb    r1, [r0, #0]
+    bl      sysclk_get_ticks         ; R0 = sysclk
+    ldr     r1, operation_time_start_tick_addr
+    str     r0, [r1, #0]             ; operation_time_start_tick = sysclk
+    pop     pc
+
+; Rotina:    is_traffic_t_on ------------------------------------------------
+; Descricao: Devolve se o LED amarelo do semáforo de trânsito está aceso.
+; Entradas:  -
+; Saidas:    R0 - 1 se o LED amarelo do semáforo de trânsito está aceso, 0 caso contrário
+; Efeitos:   -
+is_traffic_t_on:
+    ldr     r0, traffic_t_on_addr
+    ldrb    r0, [r0, #0]
+    mov     pc, lr
+
+; Rotina:    is_operation_time_finished ---------------------------------------------
+; Descricao: Devolve se passaram 500ms desde o inicio do tempo de operação.
+; Entradas:  -
+; Saidas:    R0 - 1 se passaram 500ms desde o inicio do tempo de operação, 0 caso contrário
+; Efeitos:   -
+is_operation_time_finished:
+    push    lr
+    ldr     r0, operation_time_start_tick_addr
+    ldr     r0, [r0, #0]
+    bl      sysclk_elapsed              ; R0 = sysclk - operation_time_start_tick
+    mov     r1, #BLINK_TIME && 0xFF
     cmp     r0, r1
-    beq     pededestrian_crossing
-    b       operation_mode
+    blo     is_operation_time_finished_0    
+    bl      start_operation_timmer      ; restart operation timer
+    mov     r0, #1
+    b       is_operation_time_finished_end
+is_operation_time_finished_0:
+    mov     r0, #0
+is_operation_time_finished_end:
+    
+    pop     pc
+
+; Rotina:    is_crossing_time_finished ---------------------------------------------
+; Descricao: Devolve se passou o tempo de travessia.
+; Entradas:  -
+; Saidas:    R0 - 1 se passou o tempo de travessia, 0 caso contrário
+; Efeitos:   -
+is_crossing_time_finished:
+    push    lr
+    ldr     r0, crossing_time_start_tick_addr
+    ldr     r0, [r0, #0]
+    bl      sysclk_elapsed              ; R0 = sysclk - crossing_time_start_tick
+    ldr     r1, crossing_time_addr
+    ldr     r1, [r1, #0]
+    cmp     r0, r1
+    blo     is_crossing_time_finished_0
+    mov     r0, #1
+    b       is_crossing_time_finished_end
+is_crossing_time_finished_0:
+    mov     r0, #0
+is_crossing_time_finished_end:
+    pop     pc
+
+; Rotina:    start_config_timmer ------------------------------------------------
+; Descricao: Inicia a contagem do tempo de configuração.
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   config_time_start_tick = sysclk
+start_config_timmer:
+    push    lr
+    ldr     r0, in_config_addr        ; set flag in_config
+    mov     r1, #1
+    strb    r1, [r0, #0]
+    ldr     r0, in_operation_addr     ; clear flag in_operation
+    mov     r1, #0
+    strb    r1, [r0, #0]
+    bl      sysclk_get_ticks          ; R0 = sysclk
+    ldr     r1, config_time_start_tick_addr
+    str     r0, [r1, #0]              ; config_time_start_tick = sysclk
+    pop     pc
+
+; Rotina:    is_config_t_on ------------------------------------------------
+; Descricao: Devolve se os LEDs dos semáforos de peao e transito estao acesos.
+; Entradas:  -
+; Saidas:    R0 - 1 se os LEDs dos semaforos de peao e transito estao acesos, 0 caso contrário
+; Efeitos:   -
+is_config_t_on:
+    ldr     r0, config_t_on_addr
+    ldrb    r0, [r0, #0]
+    mov     pc, lr
+
+; Rotina:    is_config_time_finished ------------------------------------------------
+; Descricao: Devolve se passaram 500ms desde o inicio do tempo de configuração.
+; Entradas:  -
+; Saidas:    R0 - 1 se passaram 500ms desde o inicio do tempo de configuração, 0 caso contrário
+; Efeitos:   -
+is_config_time_finished:
+    push    lr
+    ldr     r0, config_time_start_tick_addr
+    ldr     r0, [r0, #0]
+    bl      sysclk_elapsed              ; R0 = sysclk - config_time_start_tick
+    ldr     r1, #BLINK_TIME && 0xFF
+    cmp     r0, r1
+    blo     is_config_time_finished_0
+    bl      start_config_timmer         ; restart config timer
+    mov     r0, #1
+    b       is_config_time_finished_end
+is_config_time_finished_0:
+    mov     r0, #0
+is_config_time_finished_end:
+    pop     pc
+
+; Rotina:    isr ---------------------------------------------------------------
+; Descricao: Incrementa o valor da variável global sysclk.
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   Incrementa o valor da variável global sysclk
+isr:
+    push    r0
+    push    r1
+
+    ; "limpar" a interrupção no pTC
+    ldr     r0, ptc_addr
+    strb    r1, [r0, #PTC_TIR]
+
+    ; incrementar sysclk
+    ldr     r0, sysclk_addr
+    ldrb    r1, [r0, #0]
+    add     r1, r1, #1
+    strb    r1, [r0, #0]
+
+    pop     r1
+    pop     r0
+    movs    pc, lr
+
+ptc_addr:
+    .word PTC_ADDRESS
+
+
+; SERVIÇOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+; Rotina:    set_crossing_time ------------------------------------------------
+; Descricao: Atribui o tempo de travessia especificado à variável crossing_time.
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   crossing_time = crossing_times_array[TIME_SWS]
+set_crossing_time:
+    push    lr
+    mov     r1, #TIME_SWS && 0xFF
+    bl      inport_read
+    and     r1, r0, r1                      ; selecionar apenas bits dos Time switches
+    ldr     r0, crossing_times_array_addr   
+    ldr     r1, [r0, r1]                    ; transferir o valor da array de times, index = r1
+    ldr     r0, crossing_time_addr
+    str     r1, [r0, #0]                    ; crossing_time = crossing_times_array[index]
+    pop     pc
 
 crossing_times_array_addr:
     .word crossing_times_array
 
 crossing_time_addr:
     .word crossing_time
+; Rotina:    check_pedestrian_button -------------------------------------------
+; Descricao: Devolve se um peão pressionou o botão de peão.
+; Entradas:  -
+; Saidas:    R0 - 1 se o botão de peão foi pressionado, 0 caso contrário
+; Efeitos:   -
+check_pedestrian_button:
+    push    lr
+    bl      inport_read
+    mov     r1, #PEDESTRIAN_BUTTON
+    bl      sw_is_pressed
+    pop     pc
 
-; SERVIÇOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+; Rotina:    get_config_sw -----------------------------------------------------
+; Descricao: Devolve se um peão pressionou o botão de peão.
+; Entradas:  -
+; Saidas:    R0 - 1 se o botão de peão foi pressionado, 0 caso contrário
+; Efeitos:   -
+get_config_sw:
+    push    lr
+    bl      inport_read
+    mov     r1, #CONFIG_SW
+    and     r0, r0, r1
+    pop     pc
+
 ; Rotina:    sw_is_pressed -----------------------------------------------------
 ; Descricao: Deteta se existiu uma transicao ascendente no bit identificado em 
 ;            IN_PEDESTRIAN_MASK.
@@ -279,7 +475,7 @@ traffic_light_set_color:
     push    lr
     mov     r1, r0                      ; r1 = color
     mov     r0, #TRAFFIC_LIGHT          ; r0 = TRAFFIC_LIGHT
-    bl      outport_write
+    bl      outport_write_bits
     pop     pc
 
 ; Rotina:    pedestrian_light_set_color ----------------------------------------
@@ -292,7 +488,7 @@ pedestrian_light_set_color:
     mov     r1, r0                      ; r1 = color
     mov     r0, #PEDESTRIAN_LIGHT       ; r0 = PEDESTRIAN_LIGHT
     lsl     r1, r1, #2                  ; r1 = color << 2
-    bl      outport_write
+    bl      outport_write_bits
     pop     pc
 
 ; Rotina:    mode_light_set_color ----------------------------------------------
@@ -305,56 +501,8 @@ mode_light_set_color:
     mov     r1, r0                      ; r1 = color
     mov     r0, #MODE_LIGHT             ; r0 = MODE_LIGHT
     lsl     r1, r1, #4                  ; r1 = color << 4
-    bl      outport_write
+    bl      outport_write_bits
     pop     pc
-
-; Rotina:    delay -------------------------------------------------------------
-; Descricao: Rotina bloqueante que realiza uma espera por teste sucessivo
-;            do valor da variável global sysclk. O tempo a esperar, em
-;            centenas de milissegundos, e passado em R0.
-;            Interface exemplo: void delay( uint16_t hms );
-; Entradas:  R0 - o tempo a esperar em centenas de milisegundos
-; Saidas:    -
-; Efeitos:   -
-delay:
-    push    lr
-    push    r4
-    mov     r4, r0              ; preservar o tempo a esperar em cent. ms.
-    bl      sysclk_get_ticks    ; valor atual do sysclk
-    add     r4, r4, r0          ; somar o valor observado com o tempo a esperar
-while:
-    bl      sysclk_get_ticks    ; reler o valor atual do sysclk
-    cmp     r0, r4              ; comparar o valor lido com o valor limite
-    blo     while               ; voltar ao while
-    pop     r4
-    pop     pc
-
-
-; Rotina:    isr ---------------------------------------------------------------
-; Descricao: Incrementa o valor da variável global sysclk.
-; Entradas:  -
-; Saidas:    -
-; Efeitos:   Incrementa o valor da variável global sysclk
-isr:
-    push    r0
-    push    r1
-
-    ; "limpar" a interrupção no pTC
-    ldr     r0, ptc_addr
-    strb    r1, [r0, #PTC_TIR]
-
-    ; incrementar sysclk
-    ldr     r0, sysclk_addr
-    ldrb    r1, [r0, #0]
-    add     r1, r1, #1
-    strb    r1, [r0, #0]
-
-    pop     r1
-    pop     r0
-    movs    pc, lr
-
-ptc_addr:
-    .word PTC_ADDRESS
 
 ; Rotina:    sysclk_init -------------------------------------------------------
 ; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
@@ -607,6 +755,22 @@ crossing_times_array:
 
 in_crossing:     ; flag para saber se ha peao a atravessar
     .byte 0
+
+in_config:       ; flag para saber se o modo de configuracao esta ativo
+    .byte 0
+
+in_operation:    ; flag para saber se o modo de operacao esta ativo
+    .byte 0
+    .align
+
+crossing_time_start_tick:
+    .space 2
+
+operation_time_start_tick:
+    .space 2
+
+config_time_start_tick:
+    .space 2
 
 traffic_t_on:    ; flag para saber se o semáforo de transito esta aceso
     .byte 1
