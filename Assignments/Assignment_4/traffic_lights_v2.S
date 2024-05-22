@@ -122,17 +122,24 @@ pedestrian_ask_to_cross:
     bl      traffic_light_set_color
     mov     r0, #GREEN
     bl      pedestrian_light_set_color
-    ldr     r0, in_crossing_addr
+    ldr     r0, in_crossing_addr0
     strb    r5, [r0, #0]                ; R5 = 1
     bl      start_pedestrian_timmer
     b       main_loop
 
+in_crossing_addr0:
+    .word in_crossing
+
 operation_mode:
-    ldr     r0, is_operation_timmer_running_addr
+    ldr     r0, is_operation_timmer_running_addr0
     ldrb    r0, [r0, #0]
     cmp     r0, r4                     ; R4 = 0
     bne     operation_mode_timmer_running
     bl      start_operation_timmer
+
+is_operation_timmer_running_addr0:
+    .word is_operation_timmer_running
+    
 operation_mode_timmer_running:
     mov     r0, #RED
     bl      pedestrian_light_set_color
@@ -145,7 +152,7 @@ traffic_t_off:
     bl      is_operation_time_finished
     cmp     r0, r4                     ; R4 = 0
     bne     main_loop
-    ldr     r0, traffic_t_on_addr
+    ldr     r0, traffic_t_on_addr0
     strb    r5, [r0, #0]                ; R5 = 1
     b       main_loop
 traffic_t_on:
@@ -154,7 +161,7 @@ traffic_t_on:
     bl      is_operation_time_finished
     cmp     r0, r4                     ; R4 = 0
     bne     main_loop
-    ldr     r0, traffic_t_on_addr
+    ldr     r0, traffic_t_on_addr0
     strb    r4, [r0, #0]               ; R4 = 0
     b       main_loop    
 
@@ -187,7 +194,7 @@ config_t_off:
     cmp     r0, r4                     ; R4 = 0
     bl      set_crossing_time
     bne     main_loop
-    ldr     r0, config_t_on_addr
+    ldr     r0, config_t_on_addr0
     strb    r5, [r0, #0]                ; R5 = 1
     bl      set_crossing_time
     b       main_loop
@@ -200,7 +207,7 @@ config_t_on:
     cmp     r0, r4                     ; R4 = 0
     bl      set_crossing_time
     bne     main_loop
-    ldr     r0, config_t_on_addr
+    ldr     r0, config_t_on_addr0
     strb    r4, [r0, #0]               ; R4 = 0
     bl      set_crossing_time
     b       main_loop
@@ -208,15 +215,14 @@ config_t_on:
 is_operation_timmer_running_addr:
     .word is_operation_timmer_running
 
-traffic_t_on_addr:
-    .word traffic_t_on
-
 is_config_timmer_running_addr:
     .word is_config_timmer_running
 
-config_t_on_addr:
-    .word config_t_on
+traffic_t_on_addr0:
+    .word traffic_t_on
 
+config_t_on_addr0:
+    .word config_t_on
 
 ; Rotina:    is_pedestrian_crossing ------------------------------------------------
 ; Descricao: Devolve se um peão está a atravessar a passadeira.
@@ -242,9 +248,6 @@ start_pedestrian_timmer:
     ldr     r1, crossing_time_start_tick_addr
     str     r0, [r1, #0]
     pop     pc
-
-crossing_time_start_tick_addr:
-    .word crossing_time_start_tick
 
 ; Rotina:   start_operation_timmer ------------------------------------------------
 ; Descricao: Inicia a contagem do tempo de operação sem travessia de peao.
@@ -274,6 +277,9 @@ is_traffic_t_on:
     ldrb    r0, [r0, #0]
     mov     pc, lr
 
+traffic_t_on_addr:
+    .word traffic_led_on
+
 ; Rotina:    is_operation_time_finished ---------------------------------------------
 ; Descricao: Devolve se passaram 500ms desde o inicio do tempo de operação.
 ; Entradas:  -
@@ -292,9 +298,11 @@ is_operation_time_finished:
     b       is_operation_time_finished_end
 is_operation_time_finished_0:
     mov     r0, #0
-is_operation_time_finished_end:
-    
+is_operation_time_finished_end:    
     pop     pc
+
+operation_time_start_tick_addr:
+    .word operation_time_start_tick
 
 ; Rotina:    is_crossing_time_finished ---------------------------------------------
 ; Descricao: Devolve se passou o tempo de travessia.
@@ -317,6 +325,9 @@ is_crossing_time_finished_0:
 is_crossing_time_finished_end:
     pop     pc
 
+crossing_time_start_tick_addr:
+    .word crossing_time_start_tick
+
 ; Rotina:    start_config_timmer ------------------------------------------------
 ; Descricao: Inicia a contagem do tempo de configuração.
 ; Entradas:  -
@@ -335,6 +346,12 @@ start_config_timmer:
     str     r0, [r1, #0]              ; config_time_start_tick = sysclk
     pop     pc
 
+in_config_addr:
+    .word in_config
+
+in_operation_addr:
+    .word in_operation
+
 ; Rotina:    is_config_t_on ------------------------------------------------
 ; Descricao: Devolve se os LEDs dos semáforos de peao e transito estao acesos.
 ; Entradas:  -
@@ -344,6 +361,9 @@ is_config_t_on:
     ldr     r0, config_t_on_addr
     ldrb    r0, [r0, #0]
     mov     pc, lr
+
+config_t_on_addr:
+    .word config_led_on
 
 ; Rotina:    is_config_time_finished ------------------------------------------------
 ; Descricao: Devolve se passaram 500ms desde o inicio do tempo de configuração.
@@ -355,7 +375,7 @@ is_config_time_finished:
     ldr     r0, config_time_start_tick_addr
     ldr     r0, [r0, #0]
     bl      sysclk_elapsed              ; R0 = sysclk - config_time_start_tick
-    ldr     r1, #BLINK_TIME && 0xFF
+    mov     r1, #BLINK_TIME && 0xFF
     cmp     r0, r1
     blo     is_config_time_finished_0
     bl      start_config_timmer         ; restart config timer
@@ -365,6 +385,9 @@ is_config_time_finished_0:
     mov     r0, #0
 is_config_time_finished_end:
     pop     pc
+
+config_time_start_tick_addr:
+    .word config_time_start_tick
 
 ; Rotina:    isr ---------------------------------------------------------------
 ; Descricao: Incrementa o valor da variável global sysclk.
@@ -380,7 +403,7 @@ isr:
     strb    r1, [r0, #PTC_TIR]
 
     ; incrementar sysclk
-    ldr     r0, sysclk_addr
+    ldr     r0, sysclk_addr0
     ldrb    r1, [r0, #0]
     add     r1, r1, #1
     strb    r1, [r0, #0]
@@ -391,6 +414,9 @@ isr:
 
 ptc_addr:
     .word PTC_ADDRESS
+
+sysclk_addr0:
+    .word sysclk_addr
 
 
 ; SERVIÇOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -772,11 +798,17 @@ operation_time_start_tick:
 config_time_start_tick:
     .space 2
 
-traffic_t_on:    ; flag para saber se o semáforo de transito esta aceso
+traffic_led_on:    ; flag para saber se o semaforo de transito esta aceso
     .byte 1
 
-config_t_on:      ; flag para saber se o semáforo de transito e peoes esta aceso
+config_led_on:      ; flag para saber se o semaforo de transito e peoes esta aceso
     .byte 1       ; durante o modo de configuracao
+
+is_operation_timmer_running:
+    .byte 0
+
+is_config_timmer_running:
+    .byte 0
 
 
 ; ##############################################################################
