@@ -48,7 +48,7 @@
     .equ    PTC_TIR, 6                  ; Deslocamento do registo TIR do pTC
     .equ    PTC_CMD_START, 0            ; Comando para iniciar a contagem no pTC
     .equ    PTC_CMD_STOP, 1             ; Comando para parar a contagem no pTC
-    .equ    SYSCLK_FREQ, 0x64           ; Intervalo de contagem do circuito pTC
+    .equ    SYSCLK_FREQ, 0x63           ; Intervalo de contagem do circuito pTC
                                         ; que suporta a implementação do sysclk
                                         ; T = 1 / f  
                                         ; 0.001s = 1 / 1000Hz
@@ -172,6 +172,10 @@ traffic_t_on:
 pedestrian_crossing:
     bl      is_crossing_time_finished
     cmp     r0, r4                     ; R4 = 0
+    ; ver se carregou no botao
+    ;bl      check_pedestrian_button
+    ;cmp     r0, r5                     ; R5 = 1
+    ;beq     extend_crossing_time
     beq     main_loop
     ldr     r0, in_crossing_addr
     strb    r4, [r0, #0]               ; R4 = 0
@@ -180,7 +184,7 @@ pedestrian_crossing:
 config_mode:
     ldr     r0, is_config_timmer_running_addr
     ldrb    r0, [r0, #0]
-    cmp     r0, r4                     ; R4 = 0
+    cmp     r4, r0                     ; R4 = 0
     bne     config_timmer_running
     bl      start_config_timmer
 config_timmer_running:
@@ -194,9 +198,10 @@ config_t_off:
     bl      traffic_light_set_color
     mov     r0, #LIGHT_OFF
     bl      pedestrian_light_set_color
+    bl      set_crossing_time
     bl      is_config_time_finished
     cmp     r0, r4                     ; R4 = 0
-    bl      set_crossing_time
+    
     bne     main_loop
     ldr     r0, config_t_on_addr0
     strb    r5, [r0, #0]                ; R5 = 1
@@ -207,10 +212,11 @@ config_t_on:
     bl      traffic_light_set_color
     mov     r0, #GREEN
     bl      pedestrian_light_set_color
-    bl      is_config_time_finished
-    cmp     r0, r4                     ; R4 = 0
     bl      set_crossing_time
-    bne     main_loop
+    bl      is_config_time_finished
+    cmp     r0, r4                     ; r4 = 0
+    
+    beq     main_loop
     ldr     r0, config_t_on_addr0
     strb    r4, [r0, #0]               ; R4 = 0
     bl      set_crossing_time
@@ -581,7 +587,7 @@ sysclk_elapsed:
     ldr     r1, sysclk_addr
     ldr     r2, [r1, #0]            ; r2 = sysclk
     sub     r0, r2, r0
-    pop     pc
+    mov     pc, lr
 
 sysclk_addr:
     .word sysclk
@@ -672,9 +678,6 @@ outport_write_bits:
     bl      outport_write
     pop     pc
 
-outport_img_addr:
-    .word   outport_img
-
 ; Rotina:    outport_write -----------------------------------------------------
 ; Descricao: Escreve no porto de saida o valor recebido em R0.
 ;            Interface exemplo: void outport_write( uint8_t value );
@@ -684,10 +687,15 @@ outport_img_addr:
 outport_write:
     ldr     r1, outport_addr
     strb    r0, [r1, #0]
+    ldr     r2, outport_img_addr
+    strb    r0, [r2, #0]
     mov     pc, lr
 
 outport_addr:
     .word   OUTPORT_ADDRESS
+
+outport_img_addr:
+    .word   outport_img
 
 ; Gestor de periférico para o Pico Timer/Counter (pTC) =========================
 ;
@@ -702,7 +710,7 @@ outport_addr:
 ;            o pedido de interrupcao eventualmente pendente.
 ptc_init:
     push    lr
-    ldr     r1, PTC_ADDR
+    ldr     r1, PTC_ADDR0
     mov     r2, #PTC_CMD_STOP
     strb    r2, [r1, #PTC_TCR]
     strb    r0, [r1, #PTC_TMR]
@@ -711,6 +719,9 @@ ptc_init:
     mov     r2, #PTC_CMD_START
     strb    r2, [r1, #PTC_TCR]
     pop     pc
+
+PTC_ADDR0:
+    .word   PTC_ADDRESS
 
 ; Rotina:    ptc_start ---------------------------------------------------------
 ; Descricao: Habilita a contagem no periferico pTC.
