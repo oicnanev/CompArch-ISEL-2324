@@ -8,10 +8,14 @@
 ; -----------------------------------------------------------------------------
 ; |                               APLICAÇÂO                                   |
 ; |                              main    isr                                  |
+; | is_pedestrian_crossing start_pedestrian_timmer is_crossing_time_finished  |
+; |     start_operation_timmer is_operation_time_finished is_traffic_t_on     |
+; |        start_config_timmer is_config_t_on is_config_time_finished         |
 ; |---------------------------------------------------------------------------|
 ; |                                 SERVIÇOS                                  |
-; |        sysclk_init sysclk_get_ticks sysctlk-elapsed sw_is_pressed         |
+; |   set_crossing_time check_pedestrian_button get_config_sw sw_is_pressed   |
 ; |  traffic_light_set_color pedestrian_light_set_color mode_light_set_color  |
+; |               sysclk_init sysclk_get_ticks sysclk_elapsed                 | 
 ; |---------------------------------------------------------------------------|
 ; |                          GESTORES DE PERIFÉRICOS                          |
 ; |                               inport_read                                 |
