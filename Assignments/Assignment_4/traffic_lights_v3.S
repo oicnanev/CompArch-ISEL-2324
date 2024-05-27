@@ -106,25 +106,25 @@ operation_mode:
     mov     r5, #1                              ; True
 
     ; check if is the first time in operation mode --------
-    ldr     r0, in_operation_addr
+    ldr     r0, in_operation_addr0
     ldrb    r0, [r0]
     cmp     r0, r5
     beq     not_first_time_in_operation_mode
     ; set in_config to 0, in_operation to 1 and in_crossing to 0
     strb    r4, [r0]                            ; in_config = 0
-    ldr     r0, in_config_addr
+    ldr     r0, in_config_addr0
     strb    r4, [r0, #0]                        ; in_config = 0
-    ldr     r0, in_crossing_addr
+    ldr     r0, in_crossing_addr0
     strb    r4, [r0, #0]                        ; in_crossing = 0
     ; set operation first time on phase to 1 -------------
-    ldr     r0, op_first_time_on_phase_addr
+    ldr     r0, op_first_time_on_phase_addr0
     strb    r5, [r0, #0]                        ; op_first_time_on_phase = 1
     ; turn on mode light L3 to green ---------------------
     mov     r1, #GREEN
     bl      mode_light_set_color
 not_first_time_in_operation_mode:
     ; check if a pedestrian is crossing ------------------
-    ldr     r0, in_crossing_addr
+    ldr     r0, in_crossing_addr0
     ldrb    r0, [r0, #0]
     cmp     r0, r5
     beq     pedestrian_crossing
@@ -133,7 +133,7 @@ not_first_time_in_operation_mode:
     cmp     r0, r5
     beq     pedestrian_ask_to_cross
     ; check if is the first time in operation mode --------
-    ldr     r0, op_first_time_on_phase_addr
+    ldr     r0, op_first_time_on_phase_addr0
     ldrb    r0, [r0, #0]
     cmp     r0, r4
     beq     not_first_time_on_op
@@ -144,11 +144,11 @@ not_first_time_in_operation_mode:
     bl      pedestrian_light_set_color
     ; start timer to turn ON/OFF L1 LED -------------------
     bl      sysclk_get_ticks                    ; get actual tick number to start timer
-    ldr     r1, operation_time_start_tick_addr
+    ldr     r1, operation_time_start_tick_addr0
     str     r0, [r1, #0]                        ; operation_time_start_tick = sysclk_get_ticks
 not_first_time_on_op:
     ; check if L1 LED are in ON or OFF phase --------------
-    ldr     r0, op_led_phase_addr
+    ldr     r0, op_led_phase_addr0
     ldrb    r0, [r0, #0]
     cmp     r0, r5
     beq     led_on_phase
@@ -163,12 +163,27 @@ led_on_phase:
     bl      operation_mode_led_phases
     b       end_operation_mode
 
+in_operation_addr0:
+    .word   in_operation
+
+in_config_addr0:
+    .word   in_config
+
+op_first_time_on_phase_addr0:
+    .word   op_first_time_on_phase
+
+operation_time_start_tick_addr0:
+    .word operation_time_start_tick
+
+op_led_phase_addr0:
+    .word op_led_phase
+
 pedestrian_ask_to_cross:
     mov     r0, #RED
     bl      traffic_light_set_color
     mov     r0, #GREEN
     bl      pedestrian_light_set_color
-    ldr     r0, in_crossing_addr
+    ldr     r0, in_crossing_addr0
     strb    r5, [r0, #0]                          ; R5 = 1, in_crossing = 1
     bl      start_pedestrian_timmer
     b       end_operation_mode
@@ -178,7 +193,7 @@ pedestrian_crossing:
     ldr     r0, crossing_time_start_tick_addr
     ldr     r0, [r1, #0]
     bl      sysclk_elapsed
-    ldr     r1, crossing_time_addr
+    ldr     r1, crossing_time_addr0
     ldr     r1, [r1, #0]
     cmp     r0, r1
     bhs     pedestrian_time_finished
@@ -188,13 +203,19 @@ pedestrian_crossing:
     beq     pedestrian_ask_to_cross
     b       end_operation_mode
 pedestrian_time_finished:
-    ldr     r0, in_crossing_addr
+    ldr     r0, in_crossing_addr0
     strb    r4, [r0, #0]                          ; R4 = 0, in_crossing = 0
 
 end_operation_mode:
     pop     r5
     pop     r4
     pop     pc
+    
+in_crossing_addr0:  
+    .word   in_crossing
+
+crossing_time_addr0:
+    .word   crossing_time
 
 ; Rotina:    operation_mode_led_phases ---------------------------------------
 ; Descricao : *** TODO ***
@@ -233,6 +254,12 @@ operation_mode_led_phases_end:
     pop     r4
     pop     pc
 
+op_first_time_on_phase_addr:
+    .word   op_first_time_on_phase
+
+op_led_phase_addr:
+    .word   op_led_phase
+
 ; Rotina:    start_pedestrian_timmer ------------------------------------------------
 ; Descricao: Inicia a contagem do tempo de travessia.
 ; Entradas:  -
@@ -247,6 +274,9 @@ start_pedestrian_timmer:
 
 operation_time_start_tick_addr:
     .word operation_time_start_tick
+
+crossing_time_start_tick_addr:
+    .word crossing_time_start_tick
 
 ; Rotina:    config_mode -------------------------------------------------------
 ; Descricao: *** TODO ***
@@ -359,6 +389,35 @@ config_time_start_tick_addr:
 conf_leds_phase_addr:
     .word   conf_leds_phase
 
+; Rotina:    isr ---------------------------------------------------------------
+; Descricao: Incrementa o valor da variável global sysclk.
+; Entradas:  -
+; Saidas:    -
+; Efeitos:   Incrementa o valor da variável global sysclk
+isr:
+    push    r0
+    push    r1
+
+    ; "limpar" a interrupção no pTC
+    ldr     r0, ptc_addr
+    strb    r1, [r0, #PTC_TIR]
+
+    ; incrementar sysclk
+    ldr     r0, sysclk_addr0
+    ldrb    r1, [r0, #0]
+    add     r1, r1, #1
+    strb    r1, [r0, #0]
+
+    pop     r1
+    pop     r0
+    movs    pc, lr
+
+ptc_addr:
+    .word PTC_ADDRESS
+
+sysclk_addr0:
+    .word sysclk_addr
+
 ; SERVICOS ####################################################################
 ; Rotina:    set_crossing_time ------------------------------------------------
 ; Descricao: Atribui o tempo de travessia especificado à variável crossing_time.
@@ -469,6 +528,58 @@ mode_light_set_color:
     lsl     r1, r1, #4                  ; r1 = color << 4
     bl      outport_write_bits
     pop     pc
+
+; Rotina:    sysclk_init -------------------------------------------------------
+; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
+;            contagem recebido em R0, em ticks, limpando eventuais pedidos de
+;            interrupcao pendentes e iniciando com o valor zero a variavel
+;            global sysclk.
+;            Interface exemplo: void sysclk_init( uint8_t interval );
+; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
+; Saidas:    -
+; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
+;            eventuais pedidos de interrupcao pendentes e iniciando com o
+;            valor zero a variavel global sysclk
+sysclk_init:
+    push    lr
+    push    r0              ; preservar valor dos ticks 
+    bl      ptc_stop        ; parar o ptc
+    bl      ptc_clr_irq     ; limpar eventuais interrupts   
+
+    ; iniciar a varável sysclk a 0 -------------------------
+    mov     r0, #0 && 0xFF
+    movt    r0, #0 >> 8 & 0xFF
+    ldr     r1, sysclk_addr
+    str     r0, [r1, #0]
+    
+    pop     r0              ; repor os ticks
+    bl      ptc_init
+    pop     pc
+
+; Rotina:    sysclk_get_ticks --------------------------------------------------
+; Descricao: Devolve o valor corrente da variável global sysclk.
+;            Interface exemplo: uint16_t sysclk_get_ticks ( );
+; Entradas:  -
+; Saidas:    R0 - valor da variável global sysclk
+; Efeitos:   -
+sysclk_get_ticks:
+    ldr     r1, sysclk_addr
+    ldr     r0, [r1, #0]
+    mov     pc, lr
+
+; Rotina:    sysclk_elapsed ----------------------------------------------------
+; Descricao: Devolve o tempo decorrido, em ticks, desde o instante last_read
+; Entradas:  R0 - valor do instante last_read
+; Saidas:    R0 - tempo decorrido, em ticks, desde o instante last_read
+; Efeitos:   -
+sysclk_elapsed:
+    ldr     r1, sysclk_addr
+    ldr     r2, [r1, #0]            ; r2 = sysclk
+    sub     r0, r2, r0
+    mov     pc, lr
+
+sysclk_addr:
+    .word sysclk
 
 ; GESTORES DE PERIFÉRICOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ;
@@ -657,6 +768,9 @@ outport_img:
 
 sw_state:
     .space  1
+
+sysclk:
+    .space  2
 
 ; operation mode variables -----------------------------------------------------
 crossing_time:
