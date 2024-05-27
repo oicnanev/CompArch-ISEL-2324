@@ -12,7 +12,8 @@
 3. Testar CONFIG antes de PEDESTRIAN_BUTTON ou ao contrário?
 4. Na elaboração da rotina main, decidimos fixar 3 registos a valores recorrentemente usados de forma a poupar alguns clocks. R4 - BLINK_TIME (tempo da intermitẽncia do semáforos, 500ms), R5 - ticks observados + BLINK_TIME, e R6 - CONFIG_SW (máscara para o switch config do inport).
 5. Máquina de estados utilizada
-   ![traffic_lights1.drawio](../../images/traffic_lights1.drawio.png)
+   ![stateMachine](./stateMachine.drawio.png)
+
 
 ### Respostas às perguntas formuladas no enunciado
 
