@@ -81,7 +81,7 @@ main:
 
 main_loop:
     bl      get_config_sw              ; verificar a posicao do switch de mode
-    mov     r1, #1
+    mov     r1, #1 && 0xFF
     cmp     r0, r1
     beq     main_config_mode
     bl      operation_mode
@@ -111,7 +111,7 @@ operation_mode:
     cmp     r0, r5
     beq     not_first_time_in_operation_mode
     ; set in_config to 0, in_operation to 1 and in_crossing to 0
-    strb    r4, [r0]                            ; in_config = 0
+    strb    r5, [r0]                            ; in_operation = 1
     ldr     r0, in_config_addr0
     strb    r4, [r0, #0]                        ; in_config = 0
     ldr     r0, in_crossing_addr0
@@ -235,7 +235,7 @@ operation_mode_led_phases:
     cmp     r2, r5
     bne     op_not_first_time_in_phase
     strb    r4, [r3, #0]                        ; set first_time_in_phase = False
-    bl      traffic_light_set_color
+    ;bl      traffic_light_set_color
 op_not_first_time_in_phase:
     ldr     r0, operation_time_start_tick_addr
     bl      sysclk_elapsed
@@ -307,7 +307,7 @@ config_mode:
     ldr     r0, conf_first_time_on_phase_addr
     strb    r5, [r0, #0]                        ; conf_first_time_on_phase = 1
     ; turn on mode light L3 to yellow ------------------
-    mov     r1, #YELLOW
+    mov     r0, #YELLOW
     bl      mode_light_set_color
     ; start timer to turn ON/OFF L1 and L2 LEDS ------------
     bl      sysclk_get_ticks                    ; get actual tick number to start timer
@@ -357,13 +357,13 @@ config_mode_leds_phases:
     ldr     r3, conf_first_time_on_phase_addr
     ldrb    r2, [r3, #0]
     cmp     r2, r5
-    bne     not_first_time_in_phase
-    mov     r0, #0
-    strb    r0, [r3, #0]                        ; set first_time_in_phase = False
-    mov     r4, r1                              ; R1 = cor a colocar no L2 (peoes)
+    bne     not_first_time_in_phase  
+    mov     r4, r1                              ; R1 = cor a colocar no L2 (peoes), guardada em R4
     bl      traffic_light_set_color             ; R0 = cor a colocar no L1 (transito)
     mov     r0, r4                              ; R0 = cor a colocar no L2 (peoes)
     bl      pedestrian_light_set_color
+    mov     r0, #0
+    strb    r0, [r3, #0]                        ; set first_time_in_phase = False
 not_first_time_in_phase:
     ldr     r0, config_time_start_tick_addr
     bl      sysclk_elapsed
