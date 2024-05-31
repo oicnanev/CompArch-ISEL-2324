@@ -82,6 +82,7 @@ main:
 main_loop:
     bl      get_config_sw              ; verificar a posicao do switch de mode
     mov     r1, #1 && 0xFF
+    movt    r1, #1 >> 8 & 0xFF
     cmp     r0, r1
     beq     main_config_mode
     bl      operation_mode
@@ -107,11 +108,11 @@ operation_mode:
 
     ; check if is the first time in operation mode --------
     ldr     r0, in_operation_addr0
-    ldrb    r0, [r0]
-    cmp     r0, r5
+    ldrb    r1, [r0, #0]
+    cmp     r1, r5
     beq     not_first_time_in_operation_mode
     ; set in_config to 0, in_operation to 1 and in_crossing to 0
-    strb    r5, [r0]                            ; in_operation = 1
+    strb    r5, [r0, #0]                        ; in_operation = 1
     ldr     r0, in_config_addr0
     strb    r4, [r0, #0]                        ; in_config = 0
     ldr     r0, in_crossing_addr0
@@ -134,8 +135,8 @@ not_first_time_in_operation_mode:
     beq     pedestrian_ask_to_cross
     ; check if is the first time in operation mode --------
     ldr     r0, op_first_time_on_phase_addr0
-    ldrb    r0, [r0, #0]
-    cmp     r0, r4
+    ldrb    r1, [r0, #0]
+    cmp     r1, r4
     beq     not_first_time_on_op
     ; first time in operation mode to 0 ------------------
     strb    r4, [r0, #0]                        ; first_time_on_op = 0
@@ -191,7 +192,7 @@ pedestrian_ask_to_cross:
 pedestrian_crossing:
     ; check if crossing time finished ---------------------
     ldr     r0, crossing_time_start_tick_addr
-    ldr     r0, [r1, #0]
+    ldr     r0, [r0, #0]
     bl      sysclk_elapsed
     ldr     r1, crossing_time_addr0
     ldr     r1, [r1, #0]
@@ -230,14 +231,15 @@ operation_mode_led_phases:
     mov     r4, #0                              ; False
     mov     r5, #1                              ; True
 
-    ldr     r3, op_first_time_on_phase_addr
-    ldrb    r2, [r3, #0]
-    cmp     r2, r5
+    ldr     r0, op_first_time_on_phase_addr
+    ldrb    r1, [r0, #0]
+    cmp     r1, r5
     bne     op_not_first_time_in_phase
-    strb    r4, [r3, #0]                        ; set first_time_in_phase = False
+    strb    r4, [r1, #0]                        ; set first_time_in_phase = False
     ;bl      traffic_light_set_color
 op_not_first_time_in_phase:
     ldr     r0, operation_time_start_tick_addr
+    ldr     r0, [r0, #0]
     bl      sysclk_elapsed
     mov     r1, #BLINK_TIME
     cmp     r0, r1
@@ -294,11 +296,11 @@ config_mode:
 
     ; check if is the first time in config mode --------
     ldr     r0, in_config_addr
-    ldrb    r0, [r0]
-    cmp     r0, r5
+    ldrb    r1, [r0, #0]
+    cmp     r1, r5
     beq     not_first_time_in_config_mode
     ; set in_config to 1, in_operation to 0 and in_crossing to 0
-    strb    r5, [r0]                            ; in_config = 1     
+    strb    r5, [r0, #0]                            ; in_config = 1     
     ldr     r0, in_operation_addr
     strb    r4, [r0, #0]                        ; in_operation = 0
     ldr     r0, in_crossing_addr
@@ -362,10 +364,13 @@ config_mode_leds_phases:
     bl      traffic_light_set_color             ; R0 = cor a colocar no L1 (transito)
     mov     r0, r4                              ; R0 = cor a colocar no L2 (peoes)
     bl      pedestrian_light_set_color
-    mov     r0, #0
+    mov     r0, #0 && 0xFF
+    movt    r0, #0 >> 8 & 0xFF
+    ldr     r3, conf_first_time_on_phase_addr
     strb    r0, [r3, #0]                        ; set first_time_in_phase = False
 not_first_time_in_phase:
     ldr     r0, config_time_start_tick_addr
+    ldr     r0, [r0, #0]
     bl      sysclk_elapsed
     mov     r1, #BLINK_TIME
     cmp     r0, r1
@@ -398,15 +403,15 @@ isr:
     push    r0
     push    r1
 
-    ; "limpar" a interrupção no pTC
-    ldr     r0, ptc_addr
-    strb    r1, [r0, #PTC_TIR]
-
     ; incrementar sysclk
     ldr     r0, sysclk_addr0
     ldrb    r1, [r0, #0]
     add     r1, r1, #1
     strb    r1, [r0, #0]
+
+    ; "limpar" a interrupção no pTC
+    ldr     r0, ptc_addr
+    strb    r1, [r0, #PTC_TIR]
 
     pop     r1
     pop     r0
@@ -427,10 +432,11 @@ sysclk_addr0:
 set_crossing_time:
     push    lr
     mov     r1, #TIME_SWS && 0xFF
+    movt    r1, #TIME_SWS >> 8 & 0xFF
     bl      inport_read
-    and     r1, r0, r1                      ; selecionar apenas bits dos Time switches
+    and     r2, r0, r1                      ; selecionar apenas bits dos Time switches
     ldr     r0, crossing_times_array_addr   
-    ldr     r1, [r0, r1]                    ; transferir o valor da array de times, index = r1
+    ldr     r1, [r0, r2]                    ; transferir o valor da array de times, index = r2
     ldr     r0, crossing_time_addr
     str     r1, [r0, #0]                    ; crossing_time = crossing_times_array[index]
     pop     pc
@@ -630,7 +636,7 @@ outport_clear_bits:
     ldrb    r2, [r1, #0]
     mvn     r0, r0
     and     r0, r2, r0
-    strb    r0, [r1]
+    strb    r0, [r1, #0]
     bl      outport_write
     pop     pc
 
@@ -644,7 +650,7 @@ outport_clear_bits:
 outport_init:
     push    lr
     ldr     r1, outport_img_addr
-    strb    r0, [r1]
+    strb    r0, [r1, #0]
     bl      outport_write
     pop     pc
 
@@ -702,10 +708,14 @@ ptc_init:
     push    r0                  ; guardar o valor do intervalo
     bl      ptc_stop
     pop     r0                  ; recuperar o valor do intervalo
+    ldr     r1, ptc_addr0
     strb    r0, [r1, #PTC_TMR]
     bl      ptc_clr_irq
     bl      ptc_start
     pop     pc
+
+ptc_addr0:
+    .word   PTC_ADDRESS
 
 ; Rotina:    ptc_start ---------------------------------------------------------
 ; Descricao: Habilita a contagem no periferico pTC.
