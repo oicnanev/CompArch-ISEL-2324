@@ -28,6 +28,7 @@
                                         ; 0.001s = 1 / 1000Hz
                                         ; 0.1s   = 1 / f ( f = 10Hz )
                                         ; 1000Hz / 10Hz = 100Hz = 0x64
+    ;.equ    SYSCLK_FREQ, 0x01           ; PARA O SIMULADOR APAGAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ; Outras definicoes                 ----------------------------------------
     .equ    BLINK_TIME, 0x05            ; Tempo dos LEDs intermitentes 
@@ -466,7 +467,8 @@ check_pedestrian_button:
 get_config_sw:
     push    lr
     bl      inport_read
-    mov     r1, #CONFIG_SW
+    mov     r1, #CONFIG_SW && 0xFF
+    movt    r1, #CONFIG_SW >> 8 & 0xFF ; penso que é desnecessário
     and     r0, r0, r1
     pop     pc
 
