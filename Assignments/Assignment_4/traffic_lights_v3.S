@@ -82,8 +82,7 @@ main:
 
 main_loop:
     bl      get_config_sw              ; verificar a posicao do switch de mode
-    mov     r1, #1 && 0xFF
-    movt    r1, #1 >> 8 & 0xFF
+    mov     r1, #CONFIG_SW
     cmp     r0, r1
     beq     main_config_mode
     bl      operation_mode
@@ -122,7 +121,7 @@ operation_mode:
     ldr     r0, op_first_time_on_phase_addr0
     strb    r5, [r0, #0]                        ; op_first_time_on_phase = 1
     ; turn on mode light L3 to green ---------------------
-    mov     r1, #GREEN
+    mov     r0, #GREEN
     bl      mode_light_set_color
 not_first_time_in_operation_mode:
     ; check if a pedestrian is crossing ------------------
@@ -142,7 +141,7 @@ not_first_time_in_operation_mode:
     ; first time in operation mode to 0 ------------------
     strb    r4, [r0, #0]                        ; first_time_on_op = 0
     ; turn on pedestrian light L2 to red ------------------
-    mov     r1, #RED
+    mov     r0, #RED
     bl      pedestrian_light_set_color
     ; start timer to turn ON/OFF L1 LED -------------------
     bl      sysclk_get_ticks                    ; get actual tick number to start timer
@@ -197,8 +196,8 @@ pedestrian_crossing:
     bl      sysclk_elapsed
     ldr     r1, crossing_time_addr0
     ldr     r1, [r1, #0]
-    cmp     r0, r1
-    bhs     pedestrian_time_finished
+    cmp     r1, r0
+    blo     pedestrian_time_finished
     ; check if anothers pedestrian pressed the button to cross
     bl      check_pedestrian_button
     cmp     r0, r5
@@ -467,8 +466,8 @@ check_pedestrian_button:
 get_config_sw:
     push    lr
     bl      inport_read
-    mov     r1, #CONFIG_SW && 0xFF
-    movt    r1, #CONFIG_SW >> 8 & 0xFF ; penso que é desnecessário
+    mov     r1, #CONFIG_SW
+    ;movt    r1, #CONFIG_SW >> 8 & 0xFF ; penso que é desnecessário
     and     r0, r0, r1
     pop     pc
 
@@ -786,11 +785,11 @@ sysclk:
 
 ; operation mode variables -----------------------------------------------------
 crossing_time:
-    .word 100
+    .word 0x0064
 
 crossing_times_array:
-    .word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
-    ; hex: 063, 0C8, 12C, 190, 1F4, 258, 258, 258
+    ;.word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
+    .word  0x0064, 0x00C8, 0x012C, 0x0190, 0x01F4, 0x0258, 0x0258, 0x0258
 
 in_crossing:     ; flag para saber se ha peao a atravessar
     .byte 0
