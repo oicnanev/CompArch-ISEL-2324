@@ -22,13 +22,13 @@
     .equ    PTC_TIR, 6                  ; Deslocamento do registo TIR do pTC
     .equ    PTC_CMD_START, 0            ; Comando para iniciar a contagem no pTC
     .equ    PTC_CMD_STOP, 1             ; Comando para parar a contagem no pTC
-    .equ    SYSCLK_FREQ, 0x63           ; Intervalo de contagem do circuito pTC
+    ;.equ    SYSCLK_FREQ, 0x63           ; Intervalo de contagem do circuito pTC
                                         ; que suporta a implementação do sysclk
                                         ; T = 1 / f  
                                         ; 0.001s = 1 / 1000Hz
                                         ; 0.1s   = 1 / f ( f = 10Hz )
                                         ; 1000Hz / 10Hz = 100Hz = 0x64
-    ;.equ    SYSCLK_FREQ, 0x01           ; PARA O SIMULADOR APAGAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    .equ    SYSCLK_FREQ, 100           ; Intervalo de contagem do circuito pTC
 
     ; Outras definicoes                 ----------------------------------------
     .equ    BLINK_TIME, 0x05            ; Tempo dos LEDs intermitentes 
@@ -421,7 +421,7 @@ ptc_addr:
     .word PTC_ADDRESS
 
 sysclk_addr0:
-    .word sysclk_addr
+    .word sysclk
 
 ; SERVICOS ####################################################################
 ; Rotina:    set_crossing_time ------------------------------------------------
@@ -455,7 +455,7 @@ check_pedestrian_button:
     push    lr
     bl      inport_read
     mov     r1, #PEDESTRIAN_BUTTON
-    bl      sw_is_pressed
+    bl      sw_is_released
     pop     pc
 
 ; Rotina:    get_config_sw -----------------------------------------------------
@@ -481,7 +481,7 @@ get_config_sw:
 sw_is_pressed:
     push    lr
     and     r0, r0, r1                  ; r0 = sw_new_state = inport_value & pin_mask
-    ldr     r1, sw_state_addr
+    ldr     r1, sw_state_addr0
     ldrb    r2, [r1, #0]                ; r2 = sw_state
     cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
     beq     sw_is_pressed_0
@@ -495,7 +495,7 @@ sw_is_pressed_0:
 sw_is_pressed_end:
     pop     pc
 
-sw_state_addr:
+sw_state_addr0:
     .word sw_state
 
 ; Rotina:    sw_is_released -----------------------------------------------------
@@ -516,12 +516,12 @@ sw_is_released:
     mov     r1, #1
     cmp     r0, r1                      ; r0 = sw_new_state
     bne     sw_is_released_1
-sw_is_pressed_0:
+sw_is_released_0:
     mov     r0, #0
     b       sw_is_released_end
 sw_is_released_1:
     mov     r0, #1
-sw_is_pressed_end:
+sw_is_released_end:
     pop     pc
 
 sw_state_addr:
@@ -822,9 +822,11 @@ crossing_times_array:
 
 in_crossing:     ; flag para saber se ha peao a atravessar
     .byte 0
+    .align
 
 in_operation:    ; flag para saber se o modo de operacao esta ativo
     .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
+    .align
 
 crossing_time_start_tick: ; para ter o valor do tick em que o peao comecou a atravessar
     .space 2
@@ -834,25 +836,31 @@ operation_time_start_tick: ; para ter o valor do tick em que o semaforo de trans
 
 first_time_on_op:  ; flag para saber se e para acender ou nao o led dos peoes
     .byte 1
+    .align
 
 op_led_phase:      ; flag para saber se e para acender ou nao o led do transito
     .byte 1
+    .align
 
 op_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
     .byte 1
+    .align
 
 ; config mode variables --------------------------------------------------------
 in_config:       ; flag para saber se o modo de configuracao esta ativo
     .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
+    .align
 
 config_time_start_tick: ; para ter o valor do tick em que os semaforos apagaram ou acenderam
     .space 2
 
 conf_leds_phase:  ; flag para saber se e para acender ou nao os leds
     .byte 1
+    .align
 
 conf_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
     .byte 1
+    .align
 
 ; ##############################################################################
 ; Seccao:    stack
