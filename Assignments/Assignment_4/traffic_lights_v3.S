@@ -110,7 +110,7 @@ operation_mode:
     ldr     r0, in_operation_addr0
     ldrb    r1, [r0, #0]
     cmp     r1, r5
-    beq     not_first_time_in_operation_mode
+    beq     not_first_time_in_operation_mode    ; TEST IF THIS IS CORRECT ################################################################
     ; set in_config to 0, in_operation to 1 and in_crossing to 0
     strb    r5, [r0, #0]                        ; in_operation = 1
     ldr     r0, in_config_addr0
@@ -492,6 +492,35 @@ sw_is_pressed:
     b       sw_is_pressed_end
 sw_is_pressed_0:
     mov     r0, #0
+sw_is_pressed_end:
+    pop     pc
+
+sw_state_addr:
+    .word sw_state
+
+; Rotina:    sw_is_released -----------------------------------------------------
+; Descricao: Deteta se existiu uma transicao descendente no bit identificado em 
+;            IN_PEDESTRIAN_MASK.
+; Entradas:  R0 - valor do porto de entrada
+;            R1 - bit a analisar
+; Saidas:    R0 - 1 se houve transicao descendente, 0 caso contrario
+; Efeitos:   -
+sw_is_released:
+    push    lr
+    and     r0, r0, r1                  ; r0 = sw_new_state = inport_value & pin_mask
+    ldr     r1, sw_state_addr
+    ldrb    r2, [r1, #0]                ; r2 = sw_state
+    cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
+    beq     sw_is_released_0
+    strb    r0, [r1, #0]                ; sw_state = sw_new_state
+    mov     r1, #1
+    cmp     r0, r1                      ; r0 = sw_new_state
+    bne     sw_is_released_1
+sw_is_pressed_0:
+    mov     r0, #0
+    b       sw_is_released_end
+sw_is_released_1:
+    mov     r0, #1
 sw_is_pressed_end:
     pop     pc
 
