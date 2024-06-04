@@ -28,10 +28,10 @@
                                         ; 0.001s = 1 / 1000Hz
                                         ; 0.1s   = 1 / f ( f = 10Hz )
                                         ; 1000Hz / 10Hz = 100Hz = 0x64
-    .equ    SYSCLK_FREQ, 100           ; Intervalo de contagem do circuito pTC
+    .equ    SYSCLK_FREQ, 100            ; Intervalo de contagem do circuito pTC
 
     ; Outras definicoes                 ----------------------------------------
-    .equ    BLINK_TIME, 0x05            ; Tempo dos LEDs intermitentes 
+    .equ    BLINK_TIME, 0x0005          ; Tempo dos LEDs intermitentes 
     .equ    RED, 0x01                   ; Mascara para o LED vermelho
     .equ    GREEN, 0x02                 ; Mascara para o LED verde
     .equ    YELLOW, 0x03                ; Mascara para o LED amarelo
@@ -110,7 +110,7 @@ operation_mode:
     ldr     r0, in_operation_addr0
     ldrb    r1, [r0, #0]
     cmp     r1, r5
-    beq     not_first_time_in_operation_mode    ; TEST IF THIS IS CORRECT ################################################################
+    beq     not_first_time_in_operation_mode
     ; set in_config to 0, in_operation to 1 and in_crossing to 0
     strb    r5, [r0, #0]                        ; in_operation = 1
     ldr     r0, in_config_addr0
@@ -241,7 +241,8 @@ op_not_first_time_in_phase:
     ldr     r0, operation_time_start_tick_addr
     ldr     r0, [r0, #0]
     bl      sysclk_elapsed
-    mov     r1, #BLINK_TIME
+    mov     r1, #BLINK_TIME & 0xFF
+    movt    r1, #BLINK_TIME >> 8 & 0xFF
     cmp     r0, r1
     blo     operation_mode_led_phases_end
     ldr     r0, op_led_phase_addr
@@ -300,7 +301,7 @@ config_mode:
     cmp     r1, r5
     beq     not_first_time_in_config_mode
     ; set in_config to 1, in_operation to 0 and in_crossing to 0
-    strb    r5, [r0, #0]                            ; in_config = 1     
+    strb    r5, [r0, #0]                        ; in_config = 1     
     ldr     r0, in_operation_addr
     strb    r4, [r0, #0]                        ; in_operation = 0
     ldr     r0, in_crossing_addr
@@ -372,7 +373,8 @@ not_first_time_in_phase:
     ldr     r0, config_time_start_tick_addr
     ldr     r0, [r0, #0]
     bl      sysclk_elapsed
-    mov     r1, #BLINK_TIME
+    mov     r1, #BLINK_TIME & 0xFF
+    movt    r1, #BLINK_TIME >> 8 & 0xFF
     cmp     r0, r1
     blo     config_mode_leds_phase_end
     ldr     r0, conf_leds_phase_addr
