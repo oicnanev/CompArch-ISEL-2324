@@ -22,12 +22,6 @@
     .equ    PTC_TIR, 6                  ; Deslocamento do registo TIR do pTC
     .equ    PTC_CMD_START, 0            ; Comando para iniciar a contagem no pTC
     .equ    PTC_CMD_STOP, 1             ; Comando para parar a contagem no pTC
-    ;.equ    SYSCLK_FREQ, 0x63           ; Intervalo de contagem do circuito pTC
-                                        ; que suporta a implementação do sysclk
-                                        ; T = 1 / f  
-                                        ; 0.001s = 1 / 1000Hz
-                                        ; 0.1s   = 1 / f ( f = 10Hz )
-                                        ; 1000Hz / 10Hz = 100Hz = 0x64
     .equ    SYSCLK_FREQ, 100            ; Intervalo de contagem do circuito pTC
 
     ; Outras definicoes                 ----------------------------------------
@@ -312,10 +306,6 @@ config_mode:
     ; turn on mode light L3 to yellow ------------------
     mov     r0, #YELLOW
     bl      mode_light_set_color
-    ; start timer to turn ON/OFF L1 and L2 LEDS ------------
-    ;bl      sysclk_get_ticks                    ; get actual tick number to start timer
-    ;ldr     r1, config_time_start_tick_addr
-    ;str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
 not_first_time_in_config_mode:
     ; check if L1 and L2 LEDS are in ON or OFF phase ---
     ldr     r0, conf_leds_phase_addr
@@ -420,9 +410,9 @@ isr:
 
     ; incrementar sysclk
     ldr     r0, sysclk_addr0
-    ldrb    r1, [r0, #0]
+    ldr     r1, [r0, #0]
     add     r1, r1, #1
-    strb    r1, [r0, #0]
+    str     r1, [r0, #0]
 
     ; "limpar" a interrupção no pTC
     ldr     r0, ptc_addr
@@ -484,36 +474,8 @@ get_config_sw:
     push    lr
     bl      inport_read
     mov     r1, #CONFIG_SW
-    ;movt    r1, #CONFIG_SW >> 8 & 0xFF ; penso que é desnecessário
     and     r0, r0, r1
     pop     pc
-
-; Rotina:    sw_is_pressed -----------------------------------------------------
-; Descricao: Deteta se existiu uma transicao ascendente no bit identificado em 
-;            IN_PEDESTRIAN_MASK.
-; Entradas:  R0 - valor do porto de entrada
-;            R1 - bit a analisar
-; Saidas:    R0 - 1 se houve transicao ascendente, 0 caso contrario
-; Efeitos:   -
-sw_is_pressed:
-    push    lr
-    and     r0, r0, r1                  ; r0 = sw_new_state = inport_value & pin_mask
-    ldr     r1, sw_state_addr0
-    ldrb    r2, [r1, #0]                ; r2 = sw_state
-    cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
-    beq     sw_is_pressed_0
-    strb    r0, [r1, #0]                ; sw_state = sw_new_state
-    sub     r0, r0, #0                  ; para testar a flag Z, sw_new_state == 0
-    beq     sw_is_pressed_0             ; se Z = 1, então r0 = 0    
-    mov     r0, #1
-    b       sw_is_pressed_end
-sw_is_pressed_0:
-    mov     r0, #0
-sw_is_pressed_end:
-    pop     pc
-
-sw_state_addr0:
-    .word sw_state
 
 ; Rotina:    sw_is_released -----------------------------------------------------
 ; Descricao: Deteta se existiu uma transicao descendente no bit identificado em 
@@ -839,11 +801,9 @@ crossing_times_array:
 
 in_crossing:     ; flag para saber se ha peao a atravessar
     .byte 0
-    .align
 
 in_operation:    ; flag para saber se o modo de operacao esta ativo
     .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
-    .align
 
 crossing_time_start_tick: ; para ter o valor do tick em que o peao comecou a atravessar
     .space 2
@@ -853,31 +813,25 @@ operation_time_start_tick: ; para ter o valor do tick em que o semaforo de trans
 
 first_time_on_op:  ; flag para saber se e para acender ou nao o led dos peoes
     .byte 1
-    .align
 
 op_led_phase:      ; flag para saber se e para acender ou nao o led do transito
     .byte 1
-    .align
 
 op_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
     .byte 1
-    .align
 
 ; config mode variables --------------------------------------------------------
 in_config:       ; flag para saber se o modo de configuracao esta ativo
     .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
-    .align
 
 config_time_start_tick: ; para ter o valor do tick em que os semaforos apagaram ou acenderam
     .space 2
 
 conf_leds_phase:  ; flag para saber se e para acender ou nao os leds
     .byte 1
-    .align
 
 conf_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
     .byte 1
-    .align
 
 ; ##############################################################################
 ; Seccao:    stack

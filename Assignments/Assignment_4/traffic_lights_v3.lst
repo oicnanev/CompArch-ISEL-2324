@@ -1,20 +1,20 @@
-P16 assembler v1.5 (Feb  9 2024)	traffic_lights_v3.lst	Tue Jun 04 20:10:51 2024
+P16 assembler v1.5 (Feb  9 2024)	.\traffic_lights_v3.lst	Wed Jun 05 20:54:10 2024
 
 Sections
 Index   Name            Address   Size
 0       startup         0000      0014 20
-1       .text           0014      02F2 754
-2       .data           0306      002C 44
-3       .stack          0332      0040 64
+1       .text           0014      02D6 726
+2       .data           02EA      0024 36
+3       .stack          030E      0040 64
 
 Symbols
 Name                    Type      Value       Section
 _start                  LABEL     0004 4      startup
 BLINK_TIME              ABSOLUTE  0005 5      startup
 check_pedestrian_button LABEL     01EE 494    .text
-conf_first_time_on_phase LABEL     0330 816    .data
+conf_first_time_on_phase LABEL     030D 781    .data
 conf_first_time_on_phase_addr LABEL     01B2 434    .text
-conf_leds_phase         LABEL     032E 814    .data
+conf_leds_phase         LABEL     030C 780    .data
 conf_leds_phase_addr    LABEL     01B6 438    .text
 config_mode             LABEL     011A 282    .text
 config_mode_end         LABEL     0154 340    .text
@@ -22,87 +22,87 @@ config_mode_leds_on_phase LABEL     014E 334    .text
 config_mode_leds_phase_end LABEL     01AA 426    .text
 config_mode_leds_phases LABEL     0162 354    .text
 CONFIG_SW               ABSOLUTE  0010 16     startup
-config_time_start_tick  LABEL     032C 812    .data
+config_time_start_tick  LABEL     030A 778    .data
 config_time_start_tick_addr LABEL     01B4 436    .text
 CPSR_BIT_I              ABSOLUTE  0010 16     startup
-crossing_time           LABEL     030A 778    .data
+crossing_time           LABEL     02EE 750    .data
 crossing_time_addr      LABEL     01EC 492    .text
 crossing_time_addr0     LABEL     00D0 208    .text
-crossing_time_start_tick LABEL     0320 800    .data
+crossing_time_start_tick LABEL     0302 770    .data
 crossing_time_start_tick_addr LABEL     0118 280    .text
-crossing_times_array    LABEL     030C 780    .data
+crossing_times_array    LABEL     02F0 752    .data
 crossing_times_array_addr LABEL     01EA 490    .text
 end_operation_mode      LABEL     00C8 200    .text
-first_time_on_op        LABEL     0324 804    .data
+first_time_on_op        LABEL     0306 774    .data
 get_config_sw           LABEL     01F8 504    .text
 GREEN                   ABSOLUTE  0002 2      startup
-in_config               LABEL     032A 810    .data
+in_config               LABEL     0309 777    .data
 in_config_addr          LABEL     015C 348    .text
 in_config_addr0         LABEL     0096 150    .text
-in_crossing             LABEL     031C 796    .data
+in_crossing             LABEL     0300 768    .data
 in_crossing_addr        LABEL     0160 352    .text
 in_crossing_addr0       LABEL     00CE 206    .text
-in_operation            LABEL     031E 798    .data
+in_operation            LABEL     0301 769    .data
 in_operation_addr       LABEL     015E 350    .text
 in_operation_addr0      LABEL     0094 148    .text
-inport_addr             LABEL     028A 650    .text
+inport_addr             LABEL     026E 622    .text
 INPORT_ADDRESS          ABSOLUTE  FF80 65408  startup
-inport_read             LABEL     0284 644    .text
+inport_read             LABEL     0268 616    .text
 isr                     LABEL     01B8 440    .text
 isr_addr                LABEL     0012 18     startup
 led_on_phase            LABEL     008C 140    .text
 LIGHT_OFF               ABSOLUTE  0000 0      startup
-line#53                 LABEL     000C 12     startup
-line#93                 LABEL     0034 52     .text
+line#47                 LABEL     000C 12     startup
+line#87                 LABEL     0034 52     .text
 main                    LABEL     0014 20     .text
 main_addr               LABEL     0010 16     startup
 main_config_mode        LABEL     0030 48     .text
 main_loop               LABEL     0024 36     .text
 MODE_LIGHT              ABSOLUTE  0030 48     startup
-mode_light_set_color    LABEL     0252 594    .text
+mode_light_set_color    LABEL     0236 566    .text
 not_first_time_in_config_mode LABEL     013E 318    .text
 not_first_time_in_operation_mode LABEL     005A 90     .text
 not_first_time_in_phase LABEL     018E 398    .text
 not_first_time_on_op    LABEL     007C 124    .text
-op_first_time_on_phase  LABEL     0328 808    .data
+op_first_time_on_phase  LABEL     0308 776    .data
 op_first_time_on_phase_addr LABEL     0108 264    .text
 op_first_time_on_phase_addr0 LABEL     0098 152    .text
-op_led_phase            LABEL     0326 806    .data
+op_led_phase            LABEL     0307 775    .data
 op_led_phase_addr       LABEL     010A 266    .text
 op_led_phase_addr0      LABEL     009C 156    .text
 op_not_first_time_in_phase LABEL     00E6 230    .text
 operation_mode          LABEL     0036 54     .text
 operation_mode_led_phases LABEL     00D2 210    .text
 operation_mode_led_phases_end LABEL     0102 258    .text
-operation_time_start_tick LABEL     0322 802    .data
+operation_time_start_tick LABEL     0304 772    .data
 operation_time_start_tick_addr LABEL     0116 278    .text
 operation_time_start_tick_addr0 LABEL     009A 154    .text
-outport_addr            LABEL     02D0 720    .text
+outport_addr            LABEL     02B4 692    .text
 OUTPORT_ADDRESS         ABSOLUTE  FFC0 65472  startup
-outport_clear_bits      LABEL     029A 666    .text
-outport_img             LABEL     0306 774    .data
-outport_img_addr        LABEL     02D2 722    .text
-outport_init            LABEL     02AA 682    .text
-outport_set_bits        LABEL     028C 652    .text
-outport_write           LABEL     02C6 710    .text
-outport_write_bits      LABEL     02B4 692    .text
+outport_clear_bits      LABEL     027E 638    .text
+outport_img             LABEL     02EA 746    .data
+outport_img_addr        LABEL     02B6 694    .text
+outport_init            LABEL     028E 654    .text
+outport_set_bits        LABEL     0270 624    .text
+outport_write           LABEL     02AA 682    .text
+outport_write_bits      LABEL     0298 664    .text
 pedestrian_ask_to_cross LABEL     009E 158    .text
 PEDESTRIAN_BUTTON       ABSOLUTE  0001 1      startup
 pedestrian_crossing     LABEL     00AE 174    .text
 PEDESTRIAN_LIGHT        ABSOLUTE  000C 12     startup
-pedestrian_light_set_color LABEL     0246 582    .text
+pedestrian_light_set_color LABEL     022A 554    .text
 pedestrian_time_finished LABEL     00C4 196    .text
 ptc_addr                LABEL     01CE 462    .text
-PTC_ADDR                LABEL     0304 772    .text
-ptc_addr0               LABEL     02E6 742    .text
+PTC_ADDR                LABEL     02E8 744    .text
+ptc_addr0               LABEL     02CA 714    .text
 PTC_ADDRESS             ABSOLUTE  FF40 65344  startup
-ptc_clr_irq             LABEL     02FE 766    .text
+ptc_clr_irq             LABEL     02E2 738    .text
 PTC_CMD_START           ABSOLUTE  0000 0      startup
 PTC_CMD_STOP            ABSOLUTE  0001 1      startup
-ptc_get_value           LABEL     02F8 760    .text
-ptc_init                LABEL     02D4 724    .text
-ptc_start               LABEL     02E8 744    .text
-ptc_stop                LABEL     02F0 752    .text
+ptc_get_value           LABEL     02DC 732    .text
+ptc_init                LABEL     02B8 696    .text
+ptc_start               LABEL     02CC 716    .text
+ptc_stop                LABEL     02D4 724    .text
 PTC_TC                  ABSOLUTE  0004 4      startup
 PTC_TCR                 ABSOLUTE  0000 0      startup
 PTC_TIR                 ABSOLUTE  0006 6      startup
@@ -110,29 +110,25 @@ PTC_TMR                 ABSOLUTE  0002 2      startup
 RED                     ABSOLUTE  0001 1      startup
 set_crossing_time       LABEL     01D2 466    .text
 STACK_SIZE              ABSOLUTE  0040 64     startup
-stack_top               LABEL     0372 882    .stack
+stack_top               LABEL     034E 846    .stack
 stack_top_addr          LABEL     000E 14     startup
 start_pedestrian_timmer LABEL     010C 268    .text
-sw_is_pressed           LABEL     0202 514    .text
-sw_is_pressed_0         LABEL     0218 536    .text
-sw_is_pressed_end       LABEL     021A 538    .text
-sw_is_released          LABEL     021E 542    .text
-sw_is_released_0        LABEL     0232 562    .text
-sw_is_released_1        LABEL     0236 566    .text
-sw_is_released_end      LABEL     0238 568    .text
-sw_state                LABEL     0307 775    .data
-sw_state_addr           LABEL     023A 570    .text
-sw_state_addr0          LABEL     021C 540    .text
-sysclk                  LABEL     0308 776    .data
-sysclk_addr             LABEL     0282 642    .text
+sw_is_released          LABEL     0202 514    .text
+sw_is_released_0        LABEL     0216 534    .text
+sw_is_released_1        LABEL     021A 538    .text
+sw_is_released_end      LABEL     021C 540    .text
+sw_state                LABEL     02EB 747    .data
+sw_state_addr           LABEL     021E 542    .text
+sysclk                  LABEL     02EC 748    .data
+sysclk_addr             LABEL     0266 614    .text
 sysclk_addr0            LABEL     01D0 464    .text
-sysclk_elapsed          LABEL     027A 634    .text
+sysclk_elapsed          LABEL     025E 606    .text
 SYSCLK_FREQ             ABSOLUTE  0064 100    startup
-sysclk_get_ticks        LABEL     0274 628    .text
-sysclk_init             LABEL     025E 606    .text
+sysclk_get_ticks        LABEL     0258 600    .text
+sysclk_init             LABEL     0242 578    .text
 TIME_SWS                ABSOLUTE  00E0 224    startup
 TRAFFIC_LIGHT           ABSOLUTE  0003 3      startup
-traffic_light_set_color LABEL     023C 572    .text
+traffic_light_set_color LABEL     0220 544    .text
 YELLOW                  ABSOLUTE  0003 3      startup
 
 Code listing
@@ -160,875 +156,829 @@ Code listing
   22          	    .equ    PTC_TIR, 6                  ; Deslocamento do registo TIR do pTC
   23          	    .equ    PTC_CMD_START, 0            ; Comando para iniciar a contagem no pTC
   24          	    .equ    PTC_CMD_STOP, 1             ; Comando para parar a contagem no pTC
-  25           	    ;.equ    SYSCLK_FREQ, 0x63           ; Intervalo de contagem do circuito pTC
-  26           	                                        ; que suporta a implementação do sysclk
-  27           	                                        ; T = 1 / f  
-  28           	                                        ; 0.001s = 1 / 1000Hz
-  29           	                                        ; 0.1s   = 1 / f ( f = 10Hz )
-  30           	                                        ; 1000Hz / 10Hz = 100Hz = 0x64
-  31          	    .equ    SYSCLK_FREQ, 100            ; Intervalo de contagem do circuito pTC
-  32           	
-  33           	    ; Outras definicoes                 ----------------------------------------
-  34          	    .equ    BLINK_TIME, 0x0005          ; Tempo dos LEDs intermitentes 
-  35          	    .equ    RED, 0x01                   ; Mascara para o LED vermelho
-  36          	    .equ    GREEN, 0x02                 ; Mascara para o LED verde
-  37          	    .equ    YELLOW, 0x03                ; Mascara para o LED amarelo
-  38          	    .equ    LIGHT_OFF, 0x00             ; Mascara para apagar os LEDs
-  39           	 
-  40           	
-  41           	; ##############################################################################
-  42           	; Seccao:    startup
-  43           	; Descricao: Guarda o código de arranque do sistema
-  44           	;
-  45           	    .section startup
-  46 0000 01 58	    b       _start
-  47 0002 7F 0C	    ldr     pc, isr_addr
-  48           	_start:
-  49 0004 4D 0C	    ldr     sp, stack_top_addr
-  50 0006 80 B7	    mov     r0, pc
-  51 0008 0E A2	    add     lr, r0, #4
-  52 000A 2F 0C	    ldr     pc, main_addr
-  53 000C FF 5B	    b       .
-  54           	
-  55           	stack_top_addr:
-  56 000E 72 03	    .word   stack_top
-  57           	main_addr:
-  58 0010 14 00	    .word   main
-  59           	isr_addr:
-  60 0012 B8 01	    .word   isr
+  25          	    .equ    SYSCLK_FREQ, 100            ; Intervalo de contagem do circuito pTC
+  26           	
+  27           	    ; Outras definicoes                 ----------------------------------------
+  28          	    .equ    BLINK_TIME, 0x0005          ; Tempo dos LEDs intermitentes 
+  29          	    .equ    RED, 0x01                   ; Mascara para o LED vermelho
+  30          	    .equ    GREEN, 0x02                 ; Mascara para o LED verde
+  31          	    .equ    YELLOW, 0x03                ; Mascara para o LED amarelo
+  32          	    .equ    LIGHT_OFF, 0x00             ; Mascara para apagar os LEDs
+  33           	 
+  34           	
+  35           	; ##############################################################################
+  36           	; Seccao:    startup
+  37           	; Descricao: Guarda o código de arranque do sistema
+  38           	;
+  39           	    .section startup
+  40 0000 01 58	    b       _start
+  41 0002 7F 0C	    ldr     pc, isr_addr
+  42           	_start:
+  43 0004 4D 0C	    ldr     sp, stack_top_addr
+  44 0006 80 B7	    mov     r0, pc
+  45 0008 0E A2	    add     lr, r0, #4
+  46 000A 2F 0C	    ldr     pc, main_addr
+  47 000C FF 5B	    b       .
+  48           	
+  49           	stack_top_addr:
+  50 000E 4E 03	    .word   stack_top
+  51           	main_addr:
+  52 0010 14 00	    .word   main
+  53           	isr_addr:
+  54 0012 B8 01	    .word   isr
+  55           	
+  56           	; ##############################################################################
+  57           	; Seccao:    text
+  58           	; Descricao: Guarda o código do programa
+  59           	;
+  60           	    .text
   61           	
-  62           	; ##############################################################################
-  63           	; Seccao:    text
-  64           	; Descricao: Guarda o código do programa
-  65           	;
-  66           	    .text
-  67           	
-  68           	; Rotina:    main --------------------------------------------------------------
-  69           	; Descricao: *** TODO ***
-  70           	; Entradas:  -
-  71           	; Saidas:    -
-  72           	; Efeitos:   *** TODO ***
-  73           	main:
-  74 0014 00 60	    mov     r0, #0                      ; todos os LEDs apagados
-  75 0016 49 5D	    bl      outport_init
-  76 0018 40 66	    mov     r0, #SYSCLK_FREQ            ; frequencia para o pTC
-  77 001A 21 5D	    bl      sysclk_init
-  78 001C 60 B0	    mrs     r0, cpsr                    ; habilitar interrupcoes
-  79 001E 01 61	    mov     r1, #CPSR_BIT_I
-  80 0020 80 C8	    orr     r0, r0, r1
-  81 0022 40 B0	    msr     cpsr, r0
-  82           	
-  83           	main_loop:
-  84 0024 E9 5C	    bl      get_config_sw              ; verificar a posicao do switch de mode
-  85 0026 01 61	    mov     r1, #CONFIG_SW
-  86 0028 80 B8	    cmp     r0, r1
-  87 002A 02 40	    beq     main_config_mode
-  88 002C 04 5C	    bl      operation_mode
-  89 002E FA 5B	    b       main_loop
-  90           	main_config_mode:
-  91 0030 74 5C	    bl      config_mode
-  92 0032 F8 5B	    b       main_loop
-  93 0034 FF 5B	    b       .
-  94           	
-  95           	; Rotina:    operation_mode ----------------------------------------------------
-  96           	; Descricao: *** TODO ***
-  97           	; Entradas:  -
-  98           	; Saidas:    -
-  99           	; Efeitos:   *** TODO ***
- 100           	operation_mode:
- 101 0036 0E 24	    push   lr
- 102 0038 04 24	    push   r4
- 103 003A 05 24	    push   r5
- 104           	
- 105           	    ; values 1 and 0 to use in flags to save clocks ---
- 106 003C 04 60	    mov     r4, #0                              ; False
- 107 003E 15 60	    mov     r5, #1                              ; True
- 108           	
- 109           	    ; check if is the first time in operation mode --------
- 110 0040 90 0E	    ldr     r0, in_operation_addr0
- 111 0042 01 08	    ldrb    r1, [r0, #0]
- 112 0044 90 BA	    cmp     r1, r5
- 113 0046 09 40	    beq     not_first_time_in_operation_mode
- 114           	    ; set in_config to 0, in_operation to 1 and in_crossing to 0
- 115 0048 05 28	    strb    r5, [r0, #0]                        ; in_operation = 1
- 116 004A 50 0E	    ldr     r0, in_config_addr0
- 117 004C 04 28	    strb    r4, [r0, #0]                        ; in_config = 0
- 118 004E F0 0F	    ldr     r0, in_crossing_addr0
- 119 0050 04 28	    strb    r4, [r0, #0]                        ; in_crossing = 0
- 120           	    ; set operation first time on phase to 1 -------------
- 121 0052 20 0E	    ldr     r0, op_first_time_on_phase_addr0
- 122 0054 05 28	    strb    r5, [r0, #0]                        ; op_first_time_on_phase = 1
- 123           	    ; turn on mode light L3 to green ---------------------
- 124 0056 20 60	    mov     r0, #GREEN
- 125 0058 FC 5C	    bl      mode_light_set_color
- 126           	not_first_time_in_operation_mode:
- 127           	    ; check if a pedestrian is crossing ------------------
- 128 005A 90 0F	    ldr     r0, in_crossing_addr0
- 129 005C 00 08	    ldrb    r0, [r0, #0]
- 130 005E 80 BA	    cmp     r0, r5
- 131 0060 26 40	    beq     pedestrian_crossing
- 132           	    ; check if a pedestrian pressed the button to cross --
- 133 0062 C5 5C	    bl      check_pedestrian_button
- 134 0064 80 BA	    cmp     r0, r5
- 135 0066 1B 40	    beq     pedestrian_ask_to_cross
- 136           	    ; check if is the first time in operation mode --------
- 137 0068 70 0D	    ldr     r0, op_first_time_on_phase_addr0
- 138 006A 01 08	    ldrb    r1, [r0, #0]
- 139 006C 10 BA	    cmp     r1, r4
- 140 006E 06 40	    beq     not_first_time_on_op
- 141           	    ; first time in operation mode to 0 ------------------
- 142 0070 04 28	    strb    r4, [r0, #0]                        ; first_time_on_op = 0
- 143           	    ; turn on pedestrian light L2 to red ------------------
- 144 0072 10 60	    mov     r0, #RED
- 145 0074 E8 5C	    bl      pedestrian_light_set_color
- 146           	    ; start timer to turn ON/OFF L1 LED -------------------
- 147 0076 FE 5C	    bl      sysclk_get_ticks                    ; get actual tick number to start timer
- 148 0078 01 0D	    ldr     r1, operation_time_start_tick_addr0
- 149 007A 10 20	    str     r0, [r1, #0]                        ; operation_time_start_tick = sysclk_get_ticks
- 150           	not_first_time_on_op:
- 151           	    ; check if L1 LED are in ON or OFF phase --------------
- 152 007C F0 0C	    ldr     r0, op_led_phase_addr0
- 153 007E 00 08	    ldrb    r0, [r0, #0]
- 154 0080 80 BA	    cmp     r0, r5
- 155 0082 04 40	    beq     led_on_phase
- 156           	; leds are in OFF phase
- 157 0084 00 60	    mov     r0, #LIGHT_OFF                      ; turn OFF traffic light
- 158 0086 DA 5C	    bl      traffic_light_set_color
- 159 0088 24 5C	    bl      operation_mode_led_phases
- 160 008A 1E 58	    b       end_operation_mode
- 161           	led_on_phase:
- 162 008C 30 60	    mov     r0, #YELLOW                          ; turn ON traffic green
- 163 008E D6 5C	    bl      traffic_light_set_color
- 164 0090 20 5C	    bl      operation_mode_led_phases
- 165 0092 1A 58	    b       end_operation_mode
+  62           	; Rotina:    main --------------------------------------------------------------
+  63           	; Descricao: *** TODO ***
+  64           	; Entradas:  -
+  65           	; Saidas:    -
+  66           	; Efeitos:   *** TODO ***
+  67           	main:
+  68 0014 00 60	    mov     r0, #0                      ; todos os LEDs apagados
+  69 0016 3B 5D	    bl      outport_init
+  70 0018 40 66	    mov     r0, #SYSCLK_FREQ            ; frequencia para o pTC
+  71 001A 13 5D	    bl      sysclk_init
+  72 001C 60 B0	    mrs     r0, cpsr                    ; habilitar interrupcoes
+  73 001E 01 61	    mov     r1, #CPSR_BIT_I
+  74 0020 80 C8	    orr     r0, r0, r1
+  75 0022 40 B0	    msr     cpsr, r0
+  76           	
+  77           	main_loop:
+  78 0024 E9 5C	    bl      get_config_sw              ; verificar a posicao do switch de mode
+  79 0026 01 61	    mov     r1, #CONFIG_SW
+  80 0028 80 B8	    cmp     r0, r1
+  81 002A 02 40	    beq     main_config_mode
+  82 002C 04 5C	    bl      operation_mode
+  83 002E FA 5B	    b       main_loop
+  84           	main_config_mode:
+  85 0030 74 5C	    bl      config_mode
+  86 0032 F8 5B	    b       main_loop
+  87 0034 FF 5B	    b       .
+  88           	
+  89           	; Rotina:    operation_mode ----------------------------------------------------
+  90           	; Descricao: *** TODO ***
+  91           	; Entradas:  -
+  92           	; Saidas:    -
+  93           	; Efeitos:   *** TODO ***
+  94           	operation_mode:
+  95 0036 0E 24	    push   lr
+  96 0038 04 24	    push   r4
+  97 003A 05 24	    push   r5
+  98           	
+  99           	    ; values 1 and 0 to use in flags to save clocks ---
+ 100 003C 04 60	    mov     r4, #0                              ; False
+ 101 003E 15 60	    mov     r5, #1                              ; True
+ 102           	
+ 103           	    ; check if is the first time in operation mode --------
+ 104 0040 90 0E	    ldr     r0, in_operation_addr0
+ 105 0042 01 08	    ldrb    r1, [r0, #0]
+ 106 0044 90 BA	    cmp     r1, r5
+ 107 0046 09 40	    beq     not_first_time_in_operation_mode
+ 108           	    ; set in_config to 0, in_operation to 1 and in_crossing to 0
+ 109 0048 05 28	    strb    r5, [r0, #0]                        ; in_operation = 1
+ 110 004A 50 0E	    ldr     r0, in_config_addr0
+ 111 004C 04 28	    strb    r4, [r0, #0]                        ; in_config = 0
+ 112 004E F0 0F	    ldr     r0, in_crossing_addr0
+ 113 0050 04 28	    strb    r4, [r0, #0]                        ; in_crossing = 0
+ 114           	    ; set operation first time on phase to 1 -------------
+ 115 0052 20 0E	    ldr     r0, op_first_time_on_phase_addr0
+ 116 0054 05 28	    strb    r5, [r0, #0]                        ; op_first_time_on_phase = 1
+ 117           	    ; turn on mode light L3 to green ---------------------
+ 118 0056 20 60	    mov     r0, #GREEN
+ 119 0058 EE 5C	    bl      mode_light_set_color
+ 120           	not_first_time_in_operation_mode:
+ 121           	    ; check if a pedestrian is crossing ------------------
+ 122 005A 90 0F	    ldr     r0, in_crossing_addr0
+ 123 005C 00 08	    ldrb    r0, [r0, #0]
+ 124 005E 80 BA	    cmp     r0, r5
+ 125 0060 26 40	    beq     pedestrian_crossing
+ 126           	    ; check if a pedestrian pressed the button to cross --
+ 127 0062 C5 5C	    bl      check_pedestrian_button
+ 128 0064 80 BA	    cmp     r0, r5
+ 129 0066 1B 40	    beq     pedestrian_ask_to_cross
+ 130           	    ; check if is the first time in operation mode --------
+ 131 0068 70 0D	    ldr     r0, op_first_time_on_phase_addr0
+ 132 006A 01 08	    ldrb    r1, [r0, #0]
+ 133 006C 10 BA	    cmp     r1, r4
+ 134 006E 06 40	    beq     not_first_time_on_op
+ 135           	    ; first time in operation mode to 0 ------------------
+ 136 0070 04 28	    strb    r4, [r0, #0]                        ; first_time_on_op = 0
+ 137           	    ; turn on pedestrian light L2 to red ------------------
+ 138 0072 10 60	    mov     r0, #RED
+ 139 0074 DA 5C	    bl      pedestrian_light_set_color
+ 140           	    ; start timer to turn ON/OFF L1 LED -------------------
+ 141 0076 F0 5C	    bl      sysclk_get_ticks                    ; get actual tick number to start timer
+ 142 0078 01 0D	    ldr     r1, operation_time_start_tick_addr0
+ 143 007A 10 20	    str     r0, [r1, #0]                        ; operation_time_start_tick = sysclk_get_ticks
+ 144           	not_first_time_on_op:
+ 145           	    ; check if L1 LED are in ON or OFF phase --------------
+ 146 007C F0 0C	    ldr     r0, op_led_phase_addr0
+ 147 007E 00 08	    ldrb    r0, [r0, #0]
+ 148 0080 80 BA	    cmp     r0, r5
+ 149 0082 04 40	    beq     led_on_phase
+ 150           	; leds are in OFF phase
+ 151 0084 00 60	    mov     r0, #LIGHT_OFF                      ; turn OFF traffic light
+ 152 0086 CC 5C	    bl      traffic_light_set_color
+ 153 0088 24 5C	    bl      operation_mode_led_phases
+ 154 008A 1E 58	    b       end_operation_mode
+ 155           	led_on_phase:
+ 156 008C 30 60	    mov     r0, #YELLOW                          ; turn ON traffic green
+ 157 008E C8 5C	    bl      traffic_light_set_color
+ 158 0090 20 5C	    bl      operation_mode_led_phases
+ 159 0092 1A 58	    b       end_operation_mode
+ 160           	
+ 161           	in_operation_addr0:
+ 162 0094 01 03	    .word   in_operation
+ 163           	
+ 164           	in_config_addr0:
+ 165 0096 09 03	    .word   in_config
  166           	
- 167           	in_operation_addr0:
- 168 0094 1E 03	    .word   in_operation
+ 167           	op_first_time_on_phase_addr0:
+ 168 0098 08 03	    .word   op_first_time_on_phase
  169           	
- 170           	in_config_addr0:
- 171 0096 2A 03	    .word   in_config
+ 170           	operation_time_start_tick_addr0:
+ 171 009A 04 03	    .word operation_time_start_tick
  172           	
- 173           	op_first_time_on_phase_addr0:
- 174 0098 28 03	    .word   op_first_time_on_phase
+ 173           	op_led_phase_addr0:
+ 174 009C 07 03	    .word op_led_phase
  175           	
- 176           	operation_time_start_tick_addr0:
- 177 009A 22 03	    .word operation_time_start_tick
- 178           	
- 179           	op_led_phase_addr0:
- 180 009C 26 03	    .word op_led_phase
- 181           	
- 182           	pedestrian_ask_to_cross:
- 183 009E 10 60	    mov     r0, #RED
- 184 00A0 CD 5C	    bl      traffic_light_set_color
- 185 00A2 20 60	    mov     r0, #GREEN
- 186 00A4 D0 5C	    bl      pedestrian_light_set_color
- 187 00A6 30 0D	    ldr     r0, in_crossing_addr0
- 188 00A8 05 28	    strb    r5, [r0, #0]                          ; R5 = 1, in_crossing = 1
- 189 00AA 30 5C	    bl      start_pedestrian_timmer
- 190 00AC 0D 58	    b       end_operation_mode
- 191           	
- 192           	pedestrian_crossing:
- 193           	    ; check if crossing time finished ---------------------
- 194 00AE 40 0F	    ldr     r0, crossing_time_start_tick_addr
- 195 00B0 00 00	    ldr     r0, [r0, #0]
- 196 00B2 E3 5C	    bl      sysclk_elapsed
- 197 00B4 D1 0C	    ldr     r1, crossing_time_addr0
- 198 00B6 11 00	    ldr     r1, [r1, #0]
- 199 00B8 80 B8	    cmp     r0, r1
- 200 00BA 04 48	    bhs     pedestrian_time_finished
- 201           	    ; check if anothers pedestrian pressed the button to cross
- 202 00BC 98 5C	    bl      check_pedestrian_button
- 203 00BE 80 BA	    cmp     r0, r5
- 204 00C0 EE 43	    beq     pedestrian_ask_to_cross
- 205 00C2 02 58	    b       end_operation_mode
- 206           	pedestrian_time_finished:
- 207 00C4 40 0C	    ldr     r0, in_crossing_addr0
- 208 00C6 04 28	    strb    r4, [r0, #0]                          ; R4 = 0, in_crossing = 0
- 209           	
- 210           	end_operation_mode:
- 211 00C8 05 04	    pop     r5
- 212 00CA 04 04	    pop     r4
- 213 00CC 0F 04	    pop     pc
- 214           	    
- 215           	in_crossing_addr0:  
- 216 00CE 1C 03	    .word   in_crossing
- 217           	
- 218           	crossing_time_addr0:
- 219 00D0 0A 03	    .word   crossing_time
- 220           	
- 221           	; Rotina:    operation_mode_led_phases ---------------------------------------
- 222           	; Descricao : *** TODO ***
- 223           	; Entradas  : R0 - cor a colocar no L1 (transito)
- 224           	; Saidas    : -
- 225           	; Efeitos   : -
- 226           	operation_mode_led_phases:
- 227 00D2 0E 24	    push    lr
- 228 00D4 04 24	    push    r4
- 229 00D6 05 24	    push    r5
- 230           	
- 231 00D8 04 60	    mov     r4, #0                              ; False
- 232 00DA 15 60	    mov     r5, #1                              ; True
- 233           	
- 234 00DC 50 0D	    ldr     r0, op_first_time_on_phase_addr
- 235 00DE 01 08	    ldrb    r1, [r0, #0]
- 236 00E0 90 BA	    cmp     r1, r5
- 237 00E2 01 44	    bne     op_not_first_time_in_phase
- 238 00E4 14 28	    strb    r4, [r1, #0]                        ; set first_time_in_phase = False
- 239           	    ;bl      traffic_light_set_color
- 240           	op_not_first_time_in_phase:
- 241 00E6 70 0D	    ldr     r0, operation_time_start_tick_addr
- 242 00E8 00 00	    ldr     r0, [r0, #0]
- 243 00EA C7 5C	    bl      sysclk_elapsed
- 244 00EC 51 60	    mov     r1, #BLINK_TIME & 0xFF
- 245 00EE 01 70	    movt    r1, #BLINK_TIME >> 8 & 0xFF
- 246 00F0 80 B8	    cmp     r0, r1
- 247 00F2 07 4C	    blo     operation_mode_led_phases_end
- 248 00F4 A0 0C	    ldr     r0, op_led_phase_addr
- 249 00F6 01 08	    ldrb    r1, [r0, #0]
- 250 00F8 91 B0	    mvn     r1, r1                              ; R1 = ~r1
- 251 00FA 91 C2	    and     r1, r1, r5                          ; R1 = r1 & 1, mascara para ficar só com o último bit
- 252 00FC 01 28	    strb    r1, [r0, #0]                        ; op_led_phase = r1
- 253 00FE 40 0C	    ldr     r0, op_first_time_on_phase_addr
- 254 0100 05 28	    strb    r5, [r0, #0]                        ; first_time_in_phase = True
- 255           	operation_mode_led_phases_end:
- 256 0102 05 04	    pop     r5
- 257 0104 04 04	    pop     r4
- 258 0106 0F 04	    pop     pc
+ 176           	pedestrian_ask_to_cross:
+ 177 009E 10 60	    mov     r0, #RED
+ 178 00A0 BF 5C	    bl      traffic_light_set_color
+ 179 00A2 20 60	    mov     r0, #GREEN
+ 180 00A4 C2 5C	    bl      pedestrian_light_set_color
+ 181 00A6 30 0D	    ldr     r0, in_crossing_addr0
+ 182 00A8 05 28	    strb    r5, [r0, #0]                          ; R5 = 1, in_crossing = 1
+ 183 00AA 30 5C	    bl      start_pedestrian_timmer
+ 184 00AC 0D 58	    b       end_operation_mode
+ 185           	
+ 186           	pedestrian_crossing:
+ 187           	    ; check if crossing time finished ---------------------
+ 188 00AE 40 0F	    ldr     r0, crossing_time_start_tick_addr
+ 189 00B0 00 00	    ldr     r0, [r0, #0]
+ 190 00B2 D5 5C	    bl      sysclk_elapsed
+ 191 00B4 D1 0C	    ldr     r1, crossing_time_addr0
+ 192 00B6 11 00	    ldr     r1, [r1, #0]
+ 193 00B8 80 B8	    cmp     r0, r1
+ 194 00BA 04 48	    bhs     pedestrian_time_finished
+ 195           	    ; check if anothers pedestrian pressed the button to cross
+ 196 00BC 98 5C	    bl      check_pedestrian_button
+ 197 00BE 80 BA	    cmp     r0, r5
+ 198 00C0 EE 43	    beq     pedestrian_ask_to_cross
+ 199 00C2 02 58	    b       end_operation_mode
+ 200           	pedestrian_time_finished:
+ 201 00C4 40 0C	    ldr     r0, in_crossing_addr0
+ 202 00C6 04 28	    strb    r4, [r0, #0]                          ; R4 = 0, in_crossing = 0
+ 203           	
+ 204           	end_operation_mode:
+ 205 00C8 05 04	    pop     r5
+ 206 00CA 04 04	    pop     r4
+ 207 00CC 0F 04	    pop     pc
+ 208           	    
+ 209           	in_crossing_addr0:  
+ 210 00CE 00 03	    .word   in_crossing
+ 211           	
+ 212           	crossing_time_addr0:
+ 213 00D0 EE 02	    .word   crossing_time
+ 214           	
+ 215           	; Rotina:    operation_mode_led_phases ---------------------------------------
+ 216           	; Descricao : *** TODO ***
+ 217           	; Entradas  : R0 - cor a colocar no L1 (transito)
+ 218           	; Saidas    : -
+ 219           	; Efeitos   : -
+ 220           	operation_mode_led_phases:
+ 221 00D2 0E 24	    push    lr
+ 222 00D4 04 24	    push    r4
+ 223 00D6 05 24	    push    r5
+ 224           	
+ 225 00D8 04 60	    mov     r4, #0                              ; False
+ 226 00DA 15 60	    mov     r5, #1                              ; True
+ 227           	
+ 228 00DC 50 0D	    ldr     r0, op_first_time_on_phase_addr
+ 229 00DE 01 08	    ldrb    r1, [r0, #0]
+ 230 00E0 90 BA	    cmp     r1, r5
+ 231 00E2 01 44	    bne     op_not_first_time_in_phase
+ 232 00E4 14 28	    strb    r4, [r1, #0]                        ; set first_time_in_phase = False
+ 233           	    ;bl      traffic_light_set_color
+ 234           	op_not_first_time_in_phase:
+ 235 00E6 70 0D	    ldr     r0, operation_time_start_tick_addr
+ 236 00E8 00 00	    ldr     r0, [r0, #0]
+ 237 00EA B9 5C	    bl      sysclk_elapsed
+ 238 00EC 51 60	    mov     r1, #BLINK_TIME & 0xFF
+ 239 00EE 01 70	    movt    r1, #BLINK_TIME >> 8 & 0xFF
+ 240 00F0 80 B8	    cmp     r0, r1
+ 241 00F2 07 4C	    blo     operation_mode_led_phases_end
+ 242 00F4 A0 0C	    ldr     r0, op_led_phase_addr
+ 243 00F6 01 08	    ldrb    r1, [r0, #0]
+ 244 00F8 91 B0	    mvn     r1, r1                              ; R1 = ~r1
+ 245 00FA 91 C2	    and     r1, r1, r5                          ; R1 = r1 & 1, mascara para ficar só com o último bit
+ 246 00FC 01 28	    strb    r1, [r0, #0]                        ; op_led_phase = r1
+ 247 00FE 40 0C	    ldr     r0, op_first_time_on_phase_addr
+ 248 0100 05 28	    strb    r5, [r0, #0]                        ; first_time_in_phase = True
+ 249           	operation_mode_led_phases_end:
+ 250 0102 05 04	    pop     r5
+ 251 0104 04 04	    pop     r4
+ 252 0106 0F 04	    pop     pc
+ 253           	
+ 254           	op_first_time_on_phase_addr:
+ 255 0108 08 03	    .word   op_first_time_on_phase
+ 256           	
+ 257           	op_led_phase_addr:
+ 258 010A 07 03	    .word   op_led_phase
  259           	
- 260           	op_first_time_on_phase_addr:
- 261 0108 28 03	    .word   op_first_time_on_phase
- 262           	
- 263           	op_led_phase_addr:
- 264 010A 26 03	    .word   op_led_phase
- 265           	
- 266           	; Rotina:    start_pedestrian_timmer ------------------------------------------------
- 267           	; Descricao: Inicia a contagem do tempo de travessia.
- 268           	; Entradas:  -
- 269           	; Saidas:    -
- 270           	; Efeitos:   crossing_time_start_tick = sysclk
- 271           	start_pedestrian_timmer:
- 272 010C 0E 24	    push    lr
- 273 010E B2 5C	    bl      sysclk_get_ticks
- 274 0110 31 0C	    ldr     r1, crossing_time_start_tick_addr
- 275 0112 10 20	    str     r0, [r1, #0]
- 276 0114 0F 04	    pop     pc
+ 260           	; Rotina:    start_pedestrian_timmer ------------------------------------------------
+ 261           	; Descricao: Inicia a contagem do tempo de travessia.
+ 262           	; Entradas:  -
+ 263           	; Saidas:    -
+ 264           	; Efeitos:   crossing_time_start_tick = sysclk
+ 265           	start_pedestrian_timmer:
+ 266 010C 0E 24	    push    lr
+ 267 010E A4 5C	    bl      sysclk_get_ticks
+ 268 0110 31 0C	    ldr     r1, crossing_time_start_tick_addr
+ 269 0112 10 20	    str     r0, [r1, #0]
+ 270 0114 0F 04	    pop     pc
+ 271           	
+ 272           	operation_time_start_tick_addr:
+ 273 0116 04 03	    .word operation_time_start_tick
+ 274           	
+ 275           	crossing_time_start_tick_addr:
+ 276 0118 02 03	    .word crossing_time_start_tick
  277           	
- 278           	operation_time_start_tick_addr:
- 279 0116 22 03	    .word operation_time_start_tick
- 280           	
- 281           	crossing_time_start_tick_addr:
- 282 0118 20 03	    .word crossing_time_start_tick
- 283           	
- 284           	; Rotina:    config_mode -------------------------------------------------------
- 285           	; Descricao: *** TODO ***
- 286           	; Entradas:  -
- 287           	; Saidas:    -
- 288           	; Efeitos:   *** TODO ***
- 289           	config_mode:
- 290 011A 0E 24	    push    lr
- 291 011C 04 24	    push    r4
- 292 011E 05 24	    push    r5
- 293           	
- 294           	    ; values 1 and 0 to use in flags to save clocks ---
- 295 0120 04 60	    mov     r4, #0                              ; False  
- 296 0122 15 60	    mov     r5, #1                              ; True
- 297           	
- 298           	    ; check if is the first time in config mode --------
- 299 0124 B0 0D	    ldr     r0, in_config_addr
- 300 0126 01 08	    ldrb    r1, [r0, #0]
- 301 0128 90 BA	    cmp     r1, r5
- 302 012A 09 40	    beq     not_first_time_in_config_mode
- 303           	    ; set in_config to 1, in_operation to 0 and in_crossing to 0
- 304 012C 05 28	    strb    r5, [r0, #0]                        ; in_config = 1     
- 305 012E 70 0D	    ldr     r0, in_operation_addr
- 306 0130 04 28	    strb    r4, [r0, #0]                        ; in_operation = 0
- 307 0132 60 0D	    ldr     r0, in_crossing_addr
- 308 0134 04 28	    strb    r4, [r0, #0]                        ; in_crossing = 0
- 309           	    ; set config first time on phase to 1 -------------
- 310 0136 D0 0F	    ldr     r0, conf_first_time_on_phase_addr
- 311 0138 05 28	    strb    r5, [r0, #0]                        ; conf_first_time_on_phase = 1
- 312           	    ; turn on mode light L3 to yellow ------------------
- 313 013A 30 60	    mov     r0, #YELLOW
- 314 013C 8A 5C	    bl      mode_light_set_color
- 315           	    ; start timer to turn ON/OFF L1 and L2 LEDS ------------
- 316           	    ;bl      sysclk_get_ticks                    ; get actual tick number to start timer
- 317           	    ;ldr     r1, config_time_start_tick_addr
- 318           	    ;str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
- 319           	not_first_time_in_config_mode:
- 320           	    ; check if L1 and L2 LEDS are in ON or OFF phase ---
- 321 013E B0 0F	    ldr     r0, conf_leds_phase_addr
- 322 0140 00 08	    ldrb    r0, [r0, #0]
- 323 0142 80 BA	    cmp     r0, r5
- 324 0144 04 40	    beq     config_mode_leds_on_phase
- 325           	; leds are in OFF phase
- 326 0146 00 60	    mov     r0, #LIGHT_OFF                      ; turn OFF traffic light
- 327 0148 01 60	    mov     r1, #LIGHT_OFF                      ; turn OFF pedestrian light
- 328 014A 0B 5C	    bl      config_mode_leds_phases
- 329 014C 03 58	    b       config_mode_end
- 330           	config_mode_leds_on_phase:
- 331           	    ; check if is first time in ON phase ---------------
- 332 014E 30 60	    mov     r0, #YELLOW                         ; turn ON traffic yellow
- 333 0150 21 60	    mov     r1, #GREEN                          ; turn ON pedestrian green
- 334 0152 07 5C	    bl      config_mode_leds_phases
- 335           	config_mode_end:
- 336 0154 3E 5C	    bl      set_crossing_time
- 337 0156 05 04	    pop     r5
- 338 0158 04 04	    pop     r4
- 339 015A 0F 04	    pop     pc
- 340           	
- 341           	in_config_addr:
- 342 015C 2A 03	    .word   in_config
- 343           	in_operation_addr:
- 344 015E 1E 03	    .word   in_operation
- 345           	in_crossing_addr:    
- 346 0160 1C 03	    .word   in_crossing
- 347           	
- 348           	; Rotina:    config_mode_leds_phases -------------------------------------------
- 349           	; Descricao : *** TODO ***
- 350           	; Entradas  : R0 - cor a colocar no L1 (transito)
- 351           	;             R1 - cor a colocar no L2 (peoes)
- 352           	; Saidas    : -
- 353           	config_mode_leds_phases:
- 354 0162 0E 24	    push    lr
- 355 0164 04 24	    push    r4
- 356 0166 05 24	    push    r5
- 357 0168 06 24	    push    r6
- 358           	
- 359 016A 15 60	    mov     r5, #1                              ; True
- 360           	
- 361 016C 23 0E	    ldr     r3, conf_first_time_on_phase_addr
- 362 016E 32 08	    ldrb    r2, [r3, #0]
- 363 0170 A0 BA	    cmp     r2, r5
- 364 0172 0D 44	    bne     not_first_time_in_phase 
- 365           	
- 366           	    ; save the light colors
- 367 0174 06 B0	    mov     r6, r0                              ; R0 = cor a colocar no L1 (transito), guardada em R6
- 368 0176 84 B0	    mov     r4, r1                              ; R1 = cor a colocar no L2 (peoes), guardada em R4
- 369           	    
- 370           	    ; start timer to turn ON/OFF L1 and L2 LEDS ------------
- 371 0178 7D 5C	    bl      sysclk_get_ticks                    ; get actual tick number to start timer
- 372 017A C1 0D	    ldr     r1, config_time_start_tick_addr
- 373 017C 10 20	    str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
- 374           	
- 375           	    
- 376 017E 00 B3	    mov     r0, r6                              ; R0 = cor a colocar no L1 (transito)
- 377 0180 5D 5C	    bl      traffic_light_set_color             ; R0 = cor a colocar no L1 (transito)
- 378 0182 00 B2	    mov     r0, r4                              ; R0 = cor a colocar no L2 (peoes)
- 379 0184 60 5C	    bl      pedestrian_light_set_color
- 380 0186 00 60	    mov     r0, #0 && 0xFF
- 381 0188 00 70	    movt    r0, #0 >> 8 & 0xFF
- 382 018A 33 0D	    ldr     r3, conf_first_time_on_phase_addr
- 383 018C 30 28	    strb    r0, [r3, #0]                        ; set first_time_in_phase = False
- 384           	not_first_time_in_phase:
- 385 018E 20 0D	    ldr     r0, config_time_start_tick_addr
- 386 0190 00 00	    ldr     r0, [r0, #0]
- 387 0192 73 5C	    bl      sysclk_elapsed
- 388 0194 51 60	    mov     r1, #BLINK_TIME & 0xFF
- 389 0196 01 70	    movt    r1, #BLINK_TIME >> 8 & 0xFF
- 390 0198 80 B8	    cmp     r0, r1
- 391 019A 07 4C	    blo     config_mode_leds_phase_end
- 392 019C C0 0C	    ldr     r0, conf_leds_phase_addr
- 393 019E 01 08	    ldrb    r1, [r0, #0]
- 394 01A0 91 B0	    mvn     r1, r1                              ; R1 = ~r1
- 395 01A2 91 C2	    and     r1, r1, r5                          ; R1 = r1 & 1, mascara para ficar só com o último bit
- 396 01A4 01 28	    strb    r1, [r0, #0]                        ; config_leds_on = r1
- 397 01A6 50 0C	    ldr     r0, conf_first_time_on_phase_addr
- 398 01A8 05 28	    strb    r5, [r0, #0]                        ; first_time_in_phase = True
- 399           	config_mode_leds_phase_end:
- 400 01AA 06 04	    pop     r6
- 401 01AC 05 04	    pop     r5
- 402 01AE 04 04	    pop     r4
- 403 01B0 0F 04	    pop     pc
- 404           	
- 405           	conf_first_time_on_phase_addr:
- 406 01B2 30 03	    .word   conf_first_time_on_phase
- 407           	config_time_start_tick_addr:
- 408 01B4 2C 03	    .word   config_time_start_tick
- 409           	conf_leds_phase_addr:
- 410 01B6 2E 03	    .word   conf_leds_phase
- 411           	
- 412           	; Rotina:    isr ---------------------------------------------------------------
- 413           	; Descricao: Incrementa o valor da variável global sysclk.
- 414           	; Entradas:  -
- 415           	; Saidas:    -
- 416           	; Efeitos:   Incrementa o valor da variável global sysclk
- 417           	isr:
- 418 01B8 00 24	    push    r0
- 419 01BA 01 24	    push    r1
+ 278           	; Rotina:    config_mode -------------------------------------------------------
+ 279           	; Descricao: *** TODO ***
+ 280           	; Entradas:  -
+ 281           	; Saidas:    -
+ 282           	; Efeitos:   *** TODO ***
+ 283           	config_mode:
+ 284 011A 0E 24	    push    lr
+ 285 011C 04 24	    push    r4
+ 286 011E 05 24	    push    r5
+ 287           	
+ 288           	    ; values 1 and 0 to use in flags to save clocks ---
+ 289 0120 04 60	    mov     r4, #0                              ; False  
+ 290 0122 15 60	    mov     r5, #1                              ; True
+ 291           	
+ 292           	    ; check if is the first time in config mode --------
+ 293 0124 B0 0D	    ldr     r0, in_config_addr
+ 294 0126 01 08	    ldrb    r1, [r0, #0]
+ 295 0128 90 BA	    cmp     r1, r5
+ 296 012A 09 40	    beq     not_first_time_in_config_mode
+ 297           	    ; set in_config to 1, in_operation to 0 and in_crossing to 0
+ 298 012C 05 28	    strb    r5, [r0, #0]                        ; in_config = 1     
+ 299 012E 70 0D	    ldr     r0, in_operation_addr
+ 300 0130 04 28	    strb    r4, [r0, #0]                        ; in_operation = 0
+ 301 0132 60 0D	    ldr     r0, in_crossing_addr
+ 302 0134 04 28	    strb    r4, [r0, #0]                        ; in_crossing = 0
+ 303           	    ; set config first time on phase to 1 -------------
+ 304 0136 D0 0F	    ldr     r0, conf_first_time_on_phase_addr
+ 305 0138 05 28	    strb    r5, [r0, #0]                        ; conf_first_time_on_phase = 1
+ 306           	    ; turn on mode light L3 to yellow ------------------
+ 307 013A 30 60	    mov     r0, #YELLOW
+ 308 013C 7C 5C	    bl      mode_light_set_color
+ 309           	not_first_time_in_config_mode:
+ 310           	    ; check if L1 and L2 LEDS are in ON or OFF phase ---
+ 311 013E B0 0F	    ldr     r0, conf_leds_phase_addr
+ 312 0140 00 08	    ldrb    r0, [r0, #0]
+ 313 0142 80 BA	    cmp     r0, r5
+ 314 0144 04 40	    beq     config_mode_leds_on_phase
+ 315           	; leds are in OFF phase
+ 316 0146 00 60	    mov     r0, #LIGHT_OFF                      ; turn OFF traffic light
+ 317 0148 01 60	    mov     r1, #LIGHT_OFF                      ; turn OFF pedestrian light
+ 318 014A 0B 5C	    bl      config_mode_leds_phases
+ 319 014C 03 58	    b       config_mode_end
+ 320           	config_mode_leds_on_phase:
+ 321           	    ; check if is first time in ON phase ---------------
+ 322 014E 30 60	    mov     r0, #YELLOW                         ; turn ON traffic yellow
+ 323 0150 21 60	    mov     r1, #GREEN                          ; turn ON pedestrian green
+ 324 0152 07 5C	    bl      config_mode_leds_phases
+ 325           	config_mode_end:
+ 326 0154 3E 5C	    bl      set_crossing_time
+ 327 0156 05 04	    pop     r5
+ 328 0158 04 04	    pop     r4
+ 329 015A 0F 04	    pop     pc
+ 330           	
+ 331           	in_config_addr:
+ 332 015C 09 03	    .word   in_config
+ 333           	in_operation_addr:
+ 334 015E 01 03	    .word   in_operation
+ 335           	in_crossing_addr:    
+ 336 0160 00 03	    .word   in_crossing
+ 337           	
+ 338           	; Rotina:    config_mode_leds_phases -------------------------------------------
+ 339           	; Descricao : *** TODO ***
+ 340           	; Entradas  : R0 - cor a colocar no L1 (transito)
+ 341           	;             R1 - cor a colocar no L2 (peoes)
+ 342           	; Saidas    : -
+ 343           	config_mode_leds_phases:
+ 344 0162 0E 24	    push    lr
+ 345 0164 04 24	    push    r4
+ 346 0166 05 24	    push    r5
+ 347 0168 06 24	    push    r6
+ 348           	
+ 349 016A 15 60	    mov     r5, #1                              ; True
+ 350           	
+ 351 016C 23 0E	    ldr     r3, conf_first_time_on_phase_addr
+ 352 016E 32 08	    ldrb    r2, [r3, #0]
+ 353 0170 A0 BA	    cmp     r2, r5
+ 354 0172 0D 44	    bne     not_first_time_in_phase 
+ 355           	
+ 356           	    ; save the light colors
+ 357 0174 06 B0	    mov     r6, r0                              ; R0 = cor a colocar no L1 (transito), guardada em R6
+ 358 0176 84 B0	    mov     r4, r1                              ; R1 = cor a colocar no L2 (peoes), guardada em R4
+ 359           	    
+ 360           	    ; start timer to turn ON/OFF L1 and L2 LEDS ------------
+ 361 0178 6F 5C	    bl      sysclk_get_ticks                    ; get actual tick number to start timer
+ 362 017A C1 0D	    ldr     r1, config_time_start_tick_addr
+ 363 017C 10 20	    str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
+ 364           	
+ 365           	    
+ 366 017E 00 B3	    mov     r0, r6                              ; R0 = cor a colocar no L1 (transito)
+ 367 0180 4F 5C	    bl      traffic_light_set_color             ; R0 = cor a colocar no L1 (transito)
+ 368 0182 00 B2	    mov     r0, r4                              ; R0 = cor a colocar no L2 (peoes)
+ 369 0184 52 5C	    bl      pedestrian_light_set_color
+ 370 0186 00 60	    mov     r0, #0 && 0xFF
+ 371 0188 00 70	    movt    r0, #0 >> 8 & 0xFF
+ 372 018A 33 0D	    ldr     r3, conf_first_time_on_phase_addr
+ 373 018C 30 28	    strb    r0, [r3, #0]                        ; set first_time_in_phase = False
+ 374           	not_first_time_in_phase:
+ 375 018E 20 0D	    ldr     r0, config_time_start_tick_addr
+ 376 0190 00 00	    ldr     r0, [r0, #0]
+ 377 0192 65 5C	    bl      sysclk_elapsed
+ 378 0194 51 60	    mov     r1, #BLINK_TIME & 0xFF
+ 379 0196 01 70	    movt    r1, #BLINK_TIME >> 8 & 0xFF
+ 380 0198 80 B8	    cmp     r0, r1
+ 381 019A 07 4C	    blo     config_mode_leds_phase_end
+ 382 019C C0 0C	    ldr     r0, conf_leds_phase_addr
+ 383 019E 01 08	    ldrb    r1, [r0, #0]
+ 384 01A0 91 B0	    mvn     r1, r1                              ; R1 = ~r1
+ 385 01A2 91 C2	    and     r1, r1, r5                          ; R1 = r1 & 1, mascara para ficar só com o último bit
+ 386 01A4 01 28	    strb    r1, [r0, #0]                        ; config_leds_on = r1
+ 387 01A6 50 0C	    ldr     r0, conf_first_time_on_phase_addr
+ 388 01A8 05 28	    strb    r5, [r0, #0]                        ; first_time_in_phase = True
+ 389           	config_mode_leds_phase_end:
+ 390 01AA 06 04	    pop     r6
+ 391 01AC 05 04	    pop     r5
+ 392 01AE 04 04	    pop     r4
+ 393 01B0 0F 04	    pop     pc
+ 394           	
+ 395           	conf_first_time_on_phase_addr:
+ 396 01B2 0D 03	    .word   conf_first_time_on_phase
+ 397           	config_time_start_tick_addr:
+ 398 01B4 0A 03	    .word   config_time_start_tick
+ 399           	conf_leds_phase_addr:
+ 400 01B6 0C 03	    .word   conf_leds_phase
+ 401           	
+ 402           	; Rotina:    isr ---------------------------------------------------------------
+ 403           	; Descricao: Incrementa o valor da variável global sysclk.
+ 404           	; Entradas:  -
+ 405           	; Saidas:    -
+ 406           	; Efeitos:   Incrementa o valor da variável global sysclk
+ 407           	isr:
+ 408 01B8 00 24	    push    r0
+ 409 01BA 01 24	    push    r1
+ 410           	
+ 411           	    ; incrementar sysclk
+ 412 01BC 90 0C	    ldr     r0, sysclk_addr0
+ 413 01BE 01 00	    ldr     r1, [r0, #0]
+ 414 01C0 91 A0	    add     r1, r1, #1
+ 415 01C2 01 20	    str     r1, [r0, #0]
+ 416           	
+ 417           	    ; "limpar" a interrupção no pTC
+ 418 01C4 40 0C	    ldr     r0, ptc_addr
+ 419 01C6 01 2B	    strb    r1, [r0, #PTC_TIR]
  420           	
- 421           	    ; incrementar sysclk
- 422 01BC 90 0C	    ldr     r0, sysclk_addr0
- 423 01BE 01 08	    ldrb    r1, [r0, #0]
- 424 01C0 91 A0	    add     r1, r1, #1
- 425 01C2 01 28	    strb    r1, [r0, #0]
- 426           	
- 427           	    ; "limpar" a interrupção no pTC
- 428 01C4 40 0C	    ldr     r0, ptc_addr
- 429 01C6 01 2B	    strb    r1, [r0, #PTC_TIR]
+ 421 01C8 01 04	    pop     r1
+ 422 01CA 00 04	    pop     r0
+ 423 01CC 20 B0	    movs    pc, lr
+ 424           	
+ 425           	ptc_addr:
+ 426 01CE 40 FF	    .word PTC_ADDRESS
+ 427           	
+ 428           	sysclk_addr0:
+ 429 01D0 EC 02	    .word sysclk
  430           	
- 431 01C8 01 04	    pop     r1
- 432 01CA 00 04	    pop     r0
- 433 01CC 20 B0	    movs    pc, lr
- 434           	
- 435           	ptc_addr:
- 436 01CE 40 FF	    .word PTC_ADDRESS
- 437           	
- 438           	sysclk_addr0:
- 439 01D0 08 03	    .word sysclk
- 440           	
- 441           	; SERVICOS ####################################################################
- 442           	; Rotina:    set_crossing_time ------------------------------------------------
- 443           	; Descricao: Atribui o tempo de travessia especificado à variável crossing_time.
- 444           	; Entradas:  -
- 445           	; Saidas:    -
- 446           	; Efeitos:   crossing_time = crossing_times_array[TIME_SWS]
- 447           	set_crossing_time:
- 448 01D2 0E 24	    push    lr
- 449 01D4 57 5C	    bl      inport_read
- 450 01D6 01 6E	    mov     r1, #TIME_SWS & 0xFF
- 451 01D8 01 70	    movt    r1, #TIME_SWS >> 8 & 0xFF
- 452 01DA 82 C0	    and     r2, r0, r1                      ; selecionar apenas bits dos Time switches
- 453 01DC A2 EA	    lsr     r2, r2, #5                      ; shift right para obter o index
- 454 01DE 22 81	    add     r2, r2, r2                      ; r2 = r2 * 3
- 455 01E0 40 0C	    ldr     r0, crossing_times_array_addr   
- 456 01E2 01 11	    ldr     r1, [r0, r2]                    ; transferir o valor da array de times, index = r2
- 457 01E4 30 0C	    ldr     r0, crossing_time_addr
- 458 01E6 01 20	    str     r1, [r0, #0]                    ; crossing_time = crossing_times_array[index]
- 459 01E8 0F 04	    pop     pc
- 460           	
- 461           	crossing_times_array_addr:
- 462 01EA 0C 03	    .word crossing_times_array
- 463           	
- 464           	crossing_time_addr:
- 465 01EC 0A 03	    .word crossing_time
- 466           	; Rotina:    check_pedestrian_button -------------------------------------------
- 467           	; Descricao: Devolve se um peão pressionou o botão de peão.
- 468           	; Entradas:  -
- 469           	; Saidas:    R0 - 1 se o botão de peão foi pressionado, 0 caso contrário
- 470           	; Efeitos:   -
- 471           	check_pedestrian_button:
- 472 01EE 0E 24	    push    lr
- 473 01F0 49 5C	    bl      inport_read
- 474 01F2 11 60	    mov     r1, #PEDESTRIAN_BUTTON
- 475 01F4 14 5C	    bl      sw_is_released
- 476 01F6 0F 04	    pop     pc
- 477           	
- 478           	; Rotina:    get_config_sw -----------------------------------------------------
- 479           	; Descricao: Devolve se um peão pressionou o botão de peão.
- 480           	; Entradas:  -
- 481           	; Saidas:    R0 - 1 se o botão de peão foi pressionado, 0 caso contrário
- 482           	; Efeitos:   -
- 483           	get_config_sw:
- 484 01F8 0E 24	    push    lr
- 485 01FA 44 5C	    bl      inport_read
- 486 01FC 01 61	    mov     r1, #CONFIG_SW
- 487           	    ;movt    r1, #CONFIG_SW >> 8 & 0xFF ; penso que é desnecessário
- 488 01FE 80 C0	    and     r0, r0, r1
- 489 0200 0F 04	    pop     pc
- 490           	
- 491           	; Rotina:    sw_is_pressed -----------------------------------------------------
- 492           	; Descricao: Deteta se existiu uma transicao ascendente no bit identificado em 
- 493           	;            IN_PEDESTRIAN_MASK.
- 494           	; Entradas:  R0 - valor do porto de entrada
- 495           	;            R1 - bit a analisar
- 496           	; Saidas:    R0 - 1 se houve transicao ascendente, 0 caso contrario
- 497           	; Efeitos:   -
- 498           	sw_is_pressed:
- 499 0202 0E 24	    push    lr
- 500 0204 80 C0	    and     r0, r0, r1                  ; r0 = sw_new_state = inport_value & pin_mask
- 501 0206 A1 0C	    ldr     r1, sw_state_addr0
- 502 0208 12 08	    ldrb    r2, [r1, #0]                ; r2 = sw_state
- 503 020A 00 B9	    cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
- 504 020C 05 40	    beq     sw_is_pressed_0
- 505 020E 10 28	    strb    r0, [r1, #0]                ; sw_state = sw_new_state
- 506 0210 00 A8	    sub     r0, r0, #0                  ; para testar a flag Z, sw_new_state == 0
- 507 0212 02 40	    beq     sw_is_pressed_0             ; se Z = 1, então r0 = 0    
- 508 0214 10 60	    mov     r0, #1
- 509 0216 01 58	    b       sw_is_pressed_end
- 510           	sw_is_pressed_0:
- 511 0218 00 60	    mov     r0, #0
- 512           	sw_is_pressed_end:
- 513 021A 0F 04	    pop     pc
- 514           	
- 515           	sw_state_addr0:
- 516 021C 07 03	    .word sw_state
- 517           	
- 518           	; Rotina:    sw_is_released -----------------------------------------------------
- 519           	; Descricao: Deteta se existiu uma transicao descendente no bit identificado em 
- 520           	;            IN_PEDESTRIAN_MASK.
- 521           	; Entradas:  R0 - valor do porto de entrada
- 522           	;            R1 - bit a analisar
- 523           	; Saidas:    R0 - 1 se houve transicao descendente, 0 caso contrario
- 524           	; Efeitos:   -
- 525           	sw_is_released:
- 526 021E 0E 24	    push    lr
- 527 0220 80 C0	    and     r0, r0, r1                  ; r0 = sw_new_state = inport_value & pin_mask
- 528 0222 B1 0C	    ldr     r1, sw_state_addr
- 529 0224 12 08	    ldrb    r2, [r1, #0]                ; r2 = sw_state
- 530 0226 00 B9	    cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
- 531 0228 04 40	    beq     sw_is_released_0
- 532 022A 10 28	    strb    r0, [r1, #0]                ; sw_state = sw_new_state
- 533 022C 11 60	    mov     r1, #1
- 534 022E 80 B8	    cmp     r0, r1                      ; r0 = sw_new_state
- 535 0230 02 44	    bne     sw_is_released_1
- 536           	sw_is_released_0:
- 537 0232 00 60	    mov     r0, #0
- 538 0234 01 58	    b       sw_is_released_end
- 539           	sw_is_released_1:
- 540 0236 10 60	    mov     r0, #1
- 541           	sw_is_released_end:
- 542 0238 0F 04	    pop     pc
- 543           	
- 544           	sw_state_addr:
- 545 023A 07 03	    .word sw_state
+ 431           	; SERVICOS ####################################################################
+ 432           	; Rotina:    set_crossing_time ------------------------------------------------
+ 433           	; Descricao: Atribui o tempo de travessia especificado à variável crossing_time.
+ 434           	; Entradas:  -
+ 435           	; Saidas:    -
+ 436           	; Efeitos:   crossing_time = crossing_times_array[TIME_SWS]
+ 437           	set_crossing_time:
+ 438 01D2 0E 24	    push    lr
+ 439 01D4 49 5C	    bl      inport_read
+ 440 01D6 01 6E	    mov     r1, #TIME_SWS & 0xFF
+ 441 01D8 01 70	    movt    r1, #TIME_SWS >> 8 & 0xFF
+ 442 01DA 82 C0	    and     r2, r0, r1                      ; selecionar apenas bits dos Time switches
+ 443 01DC A2 EA	    lsr     r2, r2, #5                      ; shift right para obter o index
+ 444 01DE 22 81	    add     r2, r2, r2                      ; r2 = r2 * 3
+ 445 01E0 40 0C	    ldr     r0, crossing_times_array_addr   
+ 446 01E2 01 11	    ldr     r1, [r0, r2]                    ; transferir o valor da array de times, index = r2
+ 447 01E4 30 0C	    ldr     r0, crossing_time_addr
+ 448 01E6 01 20	    str     r1, [r0, #0]                    ; crossing_time = crossing_times_array[index]
+ 449 01E8 0F 04	    pop     pc
+ 450           	
+ 451           	crossing_times_array_addr:
+ 452 01EA F0 02	    .word crossing_times_array
+ 453           	
+ 454           	crossing_time_addr:
+ 455 01EC EE 02	    .word crossing_time
+ 456           	; Rotina:    check_pedestrian_button -------------------------------------------
+ 457           	; Descricao: Devolve se um peão pressionou o botão de peão.
+ 458           	; Entradas:  -
+ 459           	; Saidas:    R0 - 1 se o botão de peão foi pressionado, 0 caso contrário
+ 460           	; Efeitos:   -
+ 461           	check_pedestrian_button:
+ 462 01EE 0E 24	    push    lr
+ 463 01F0 3B 5C	    bl      inport_read
+ 464 01F2 11 60	    mov     r1, #PEDESTRIAN_BUTTON
+ 465 01F4 06 5C	    bl      sw_is_released
+ 466 01F6 0F 04	    pop     pc
+ 467           	
+ 468           	; Rotina:    get_config_sw -----------------------------------------------------
+ 469           	; Descricao: Devolve se um peão pressionou o botão de peão.
+ 470           	; Entradas:  -
+ 471           	; Saidas:    R0 - 1 se o botão de peão foi pressionado, 0 caso contrário
+ 472           	; Efeitos:   -
+ 473           	get_config_sw:
+ 474 01F8 0E 24	    push    lr
+ 475 01FA 36 5C	    bl      inport_read
+ 476 01FC 01 61	    mov     r1, #CONFIG_SW
+ 477 01FE 80 C0	    and     r0, r0, r1
+ 478 0200 0F 04	    pop     pc
+ 479           	
+ 480           	; Rotina:    sw_is_released -----------------------------------------------------
+ 481           	; Descricao: Deteta se existiu uma transicao descendente no bit identificado em 
+ 482           	;            IN_PEDESTRIAN_MASK.
+ 483           	; Entradas:  R0 - valor do porto de entrada
+ 484           	;            R1 - bit a analisar
+ 485           	; Saidas:    R0 - 1 se houve transicao descendente, 0 caso contrario
+ 486           	; Efeitos:   -
+ 487           	sw_is_released:
+ 488 0202 0E 24	    push    lr
+ 489 0204 80 C0	    and     r0, r0, r1                  ; r0 = sw_new_state = inport_value & pin_mask
+ 490 0206 B1 0C	    ldr     r1, sw_state_addr
+ 491 0208 12 08	    ldrb    r2, [r1, #0]                ; r2 = sw_state
+ 492 020A 00 B9	    cmp     r0, r2                      ; r0 = sw_new_state, r2 = sw_state
+ 493 020C 04 40	    beq     sw_is_released_0
+ 494 020E 10 28	    strb    r0, [r1, #0]                ; sw_state = sw_new_state
+ 495 0210 11 60	    mov     r1, #1
+ 496 0212 80 B8	    cmp     r0, r1                      ; r0 = sw_new_state
+ 497 0214 02 44	    bne     sw_is_released_1
+ 498           	sw_is_released_0:
+ 499 0216 00 60	    mov     r0, #0
+ 500 0218 01 58	    b       sw_is_released_end
+ 501           	sw_is_released_1:
+ 502 021A 10 60	    mov     r0, #1
+ 503           	sw_is_released_end:
+ 504 021C 0F 04	    pop     pc
+ 505           	
+ 506           	sw_state_addr:
+ 507 021E EB 02	    .word sw_state
+ 508           	
+ 509           	; Rotina:    traffic_light_set_color -------------------------------------------
+ 510           	; Descricao: Atribui a cor especificada em R0 ao semáforo de trânsito (L1).
+ 511           	; Entradas:  R0 - Cor a atribuir ao semáforo de trânsito (L1)
+ 512           	; Saidas:    -
+ 513           	; Efeitos:   - 
+ 514           	traffic_light_set_color:
+ 515 0220 0E 24	    push    lr
+ 516 0222 01 B0	    mov     r1, r0                      ; r1 = color
+ 517 0224 30 60	    mov     r0, #TRAFFIC_LIGHT          ; r0 = TRAFFIC_LIGHT
+ 518 0226 38 5C	    bl      outport_write_bits
+ 519 0228 0F 04	    pop     pc
+ 520           	
+ 521           	; Rotina:    pedestrian_light_set_color ----------------------------------------
+ 522           	; Descricao: Atribui a cor especificada em R0 ao semáforo de peões (L2).
+ 523           	; Entradas:  R0 - Cor a atribuir ao semáforo de peões (L2)
+ 524           	; Saidas:    -
+ 525           	; Efeitos:   -
+ 526           	pedestrian_light_set_color:
+ 527 022A 0E 24	    push    lr
+ 528 022C 01 B0	    mov     r1, r0                      ; r1 = color
+ 529 022E C0 60	    mov     r0, #PEDESTRIAN_LIGHT       ; r0 = PEDESTRIAN_LIGHT
+ 530 0230 11 E1	    lsl     r1, r1, #2                  ; r1 = color << 2
+ 531 0232 32 5C	    bl      outport_write_bits
+ 532 0234 0F 04	    pop     pc
+ 533           	
+ 534           	; Rotina:    mode_light_set_color ----------------------------------------------
+ 535           	; Descricao: Atribui a cor especificada em R0 ao semáforo de modo (L3).
+ 536           	; Entradas:  R0 - Cor a atribuir ao semáforo de modo (L3)
+ 537           	; Saidas:    -
+ 538           	; Efeitos:   -
+ 539           	mode_light_set_color:
+ 540 0236 0E 24	    push    lr
+ 541 0238 01 B0	    mov     r1, r0                      ; r1 = color
+ 542 023A 00 63	    mov     r0, #MODE_LIGHT             ; r0 = MODE_LIGHT
+ 543 023C 11 E2	    lsl     r1, r1, #4                  ; r1 = color << 4
+ 544 023E 2C 5C	    bl      outport_write_bits
+ 545 0240 0F 04	    pop     pc
  546           	
- 547           	; Rotina:    traffic_light_set_color -------------------------------------------
- 548           	; Descricao: Atribui a cor especificada em R0 ao semáforo de trânsito (L1).
- 549           	; Entradas:  R0 - Cor a atribuir ao semáforo de trânsito (L1)
- 550           	; Saidas:    -
- 551           	; Efeitos:   - 
- 552           	traffic_light_set_color:
- 553 023C 0E 24	    push    lr
- 554 023E 01 B0	    mov     r1, r0                      ; r1 = color
- 555 0240 30 60	    mov     r0, #TRAFFIC_LIGHT          ; r0 = TRAFFIC_LIGHT
- 556 0242 38 5C	    bl      outport_write_bits
- 557 0244 0F 04	    pop     pc
- 558           	
- 559           	; Rotina:    pedestrian_light_set_color ----------------------------------------
- 560           	; Descricao: Atribui a cor especificada em R0 ao semáforo de peões (L2).
- 561           	; Entradas:  R0 - Cor a atribuir ao semáforo de peões (L2)
- 562           	; Saidas:    -
- 563           	; Efeitos:   -
- 564           	pedestrian_light_set_color:
- 565 0246 0E 24	    push    lr
- 566 0248 01 B0	    mov     r1, r0                      ; r1 = color
- 567 024A C0 60	    mov     r0, #PEDESTRIAN_LIGHT       ; r0 = PEDESTRIAN_LIGHT
- 568 024C 11 E1	    lsl     r1, r1, #2                  ; r1 = color << 2
- 569 024E 32 5C	    bl      outport_write_bits
- 570 0250 0F 04	    pop     pc
- 571           	
- 572           	; Rotina:    mode_light_set_color ----------------------------------------------
- 573           	; Descricao: Atribui a cor especificada em R0 ao semáforo de modo (L3).
- 574           	; Entradas:  R0 - Cor a atribuir ao semáforo de modo (L3)
- 575           	; Saidas:    -
- 576           	; Efeitos:   -
- 577           	mode_light_set_color:
- 578 0252 0E 24	    push    lr
- 579 0254 01 B0	    mov     r1, r0                      ; r1 = color
- 580 0256 00 63	    mov     r0, #MODE_LIGHT             ; r0 = MODE_LIGHT
- 581 0258 11 E2	    lsl     r1, r1, #4                  ; r1 = color << 4
- 582 025A 2C 5C	    bl      outport_write_bits
- 583 025C 0F 04	    pop     pc
+ 547           	; Rotina:    sysclk_init -------------------------------------------------------
+ 548           	; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
+ 549           	;            contagem recebido em R0, em ticks, limpando eventuais pedidos de
+ 550           	;            interrupcao pendentes e iniciando com o valor zero a variavel
+ 551           	;            global sysclk.
+ 552           	;            Interface exemplo: void sysclk_init( uint8_t interval );
+ 553           	; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
+ 554           	; Saidas:    -
+ 555           	; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
+ 556           	;            eventuais pedidos de interrupcao pendentes e iniciando com o
+ 557           	;            valor zero a variavel global sysclk
+ 558           	sysclk_init:
+ 559 0242 0E 24	    push    lr
+ 560 0244 00 24	    push    r0              ; preservar valor dos ticks 
+ 561 0246 46 5C	    bl      ptc_stop        ; parar o ptc
+ 562 0248 4C 5C	    bl      ptc_clr_irq     ; limpar eventuais interrupts   
+ 563           	
+ 564           	    ; iniciar a varável sysclk a 0 -------------------------
+ 565 024A 00 60	    mov     r0, #0 && 0xFF
+ 566 024C 00 70	    movt    r0, #0 >> 8 & 0xFF
+ 567 024E B1 0C	    ldr     r1, sysclk_addr
+ 568 0250 10 20	    str     r0, [r1, #0]
+ 569           	    
+ 570 0252 00 04	    pop     r0              ; repor os ticks
+ 571 0254 31 5C	    bl      ptc_init
+ 572 0256 0F 04	    pop     pc
+ 573           	
+ 574           	; Rotina:    sysclk_get_ticks --------------------------------------------------
+ 575           	; Descricao: Devolve o valor corrente da variável global sysclk.
+ 576           	;            Interface exemplo: uint16_t sysclk_get_ticks ( );
+ 577           	; Entradas:  -
+ 578           	; Saidas:    R0 - valor da variável global sysclk
+ 579           	; Efeitos:   -
+ 580           	sysclk_get_ticks:
+ 581 0258 61 0C	    ldr     r1, sysclk_addr
+ 582 025A 10 00	    ldr     r0, [r1, #0]
+ 583 025C 0F B7	    mov     pc, lr
  584           	
- 585           	; Rotina:    sysclk_init -------------------------------------------------------
- 586           	; Descricao: Inicia uma nova contagem no periferico pTC com o intervalo de
- 587           	;            contagem recebido em R0, em ticks, limpando eventuais pedidos de
- 588           	;            interrupcao pendentes e iniciando com o valor zero a variavel
- 589           	;            global sysclk.
- 590           	;            Interface exemplo: void sysclk_init( uint8_t interval );
- 591           	; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
- 592           	; Saidas:    -
- 593           	; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
- 594           	;            eventuais pedidos de interrupcao pendentes e iniciando com o
- 595           	;            valor zero a variavel global sysclk
- 596           	sysclk_init:
- 597 025E 0E 24	    push    lr
- 598 0260 00 24	    push    r0              ; preservar valor dos ticks 
- 599 0262 46 5C	    bl      ptc_stop        ; parar o ptc
- 600 0264 4C 5C	    bl      ptc_clr_irq     ; limpar eventuais interrupts   
- 601           	
- 602           	    ; iniciar a varável sysclk a 0 -------------------------
- 603 0266 00 60	    mov     r0, #0 && 0xFF
- 604 0268 00 70	    movt    r0, #0 >> 8 & 0xFF
- 605 026A B1 0C	    ldr     r1, sysclk_addr
- 606 026C 10 20	    str     r0, [r1, #0]
- 607           	    
- 608 026E 00 04	    pop     r0              ; repor os ticks
- 609 0270 31 5C	    bl      ptc_init
- 610 0272 0F 04	    pop     pc
- 611           	
- 612           	; Rotina:    sysclk_get_ticks --------------------------------------------------
- 613           	; Descricao: Devolve o valor corrente da variável global sysclk.
- 614           	;            Interface exemplo: uint16_t sysclk_get_ticks ( );
- 615           	; Entradas:  -
- 616           	; Saidas:    R0 - valor da variável global sysclk
- 617           	; Efeitos:   -
- 618           	sysclk_get_ticks:
- 619 0274 61 0C	    ldr     r1, sysclk_addr
- 620 0276 10 00	    ldr     r0, [r1, #0]
- 621 0278 0F B7	    mov     pc, lr
- 622           	
- 623           	; Rotina:    sysclk_elapsed ----------------------------------------------------
- 624           	; Descricao: Devolve o tempo decorrido, em ticks, desde o instante last_read
- 625           	; Entradas:  R0 - valor do instante last_read
- 626           	; Saidas:    R0 - tempo decorrido, em ticks, desde o instante last_read
- 627           	; Efeitos:   -
- 628           	sysclk_elapsed:
- 629 027A 31 0C	    ldr     r1, sysclk_addr
- 630 027C 12 00	    ldr     r2, [r1, #0]            ; r2 = sysclk
- 631 027E 20 88	    sub     r0, r2, r0
- 632 0280 0F B7	    mov     pc, lr
- 633           	
- 634           	sysclk_addr:
- 635 0282 08 03	    .word sysclk
- 636           	
- 637           	; GESTORES DE PERIFÉRICOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 638           	;
- 639           	; Gestor de periférico para o porto de entrada =================================
- 640           	;
- 641           	; Rotina:    inport_read -------------------------------------------------------
- 642           	; Descricao: Adquire e devolve o valor corrente do porto de entrada.
- 643           	;            Interface exemplo: uint8_t inport_read( );
- 644           	; Entradas:  -
- 645           	; Saidas:    R0 - valor adquirido do porto de entrada
- 646           	; Efeitos:   -
- 647           	inport_read:
- 648 0284 21 0C	    ldr     r1, inport_addr
- 649 0286 10 08	    ldrb    r0, [r1, #0]
- 650 0288 0F B7	    mov     pc, lr
+ 585           	; Rotina:    sysclk_elapsed ----------------------------------------------------
+ 586           	; Descricao: Devolve o tempo decorrido, em ticks, desde o instante last_read
+ 587           	; Entradas:  R0 - valor do instante last_read
+ 588           	; Saidas:    R0 - tempo decorrido, em ticks, desde o instante last_read
+ 589           	; Efeitos:   -
+ 590           	sysclk_elapsed:
+ 591 025E 31 0C	    ldr     r1, sysclk_addr
+ 592 0260 12 00	    ldr     r2, [r1, #0]            ; r2 = sysclk
+ 593 0262 20 88	    sub     r0, r2, r0
+ 594 0264 0F B7	    mov     pc, lr
+ 595           	
+ 596           	sysclk_addr:
+ 597 0266 EC 02	    .word sysclk
+ 598           	
+ 599           	; GESTORES DE PERIFÉRICOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 600           	;
+ 601           	; Gestor de periférico para o porto de entrada =================================
+ 602           	;
+ 603           	; Rotina:    inport_read -------------------------------------------------------
+ 604           	; Descricao: Adquire e devolve o valor corrente do porto de entrada.
+ 605           	;            Interface exemplo: uint8_t inport_read( );
+ 606           	; Entradas:  -
+ 607           	; Saidas:    R0 - valor adquirido do porto de entrada
+ 608           	; Efeitos:   -
+ 609           	inport_read:
+ 610 0268 21 0C	    ldr     r1, inport_addr
+ 611 026A 10 08	    ldrb    r0, [r1, #0]
+ 612 026C 0F B7	    mov     pc, lr
+ 613           	
+ 614           	inport_addr:
+ 615 026E 80 FF	    .word   INPORT_ADDRESS
+ 616           	
+ 617           	; Gestor de periférico para o porto de saída ===================================
+ 618           	;
+ 619           	; Rotina:    outport_set_bits --------------------------------------------------
+ 620           	; Descricao: Atribui o valor logico 1 aos bits do porto de saida identificados
+ 621           	;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
+ 622           	;            Interface exemplo: void outport_set_bits( uint8_t pins_mask );
+ 623           	; Entradas:  R0 - Mascara com a especificacao do indice dos bits a alterar.
+ 624           	; Saidas:    -
+ 625           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 626           	outport_set_bits:
+ 627 0270 0E 24	    push    lr
+ 628 0272 11 0E	    ldr     r1, outport_img_addr
+ 629 0274 12 08	    ldrb    r2, [r1, #0]
+ 630 0276 20 C8	    orr     r0, r2, r0
+ 631 0278 10 28	    strb    r0, [r1, #0]
+ 632 027A 17 5C	    bl      outport_write
+ 633 027C 0F 04	    pop     pc
+ 634           	
+ 635           	; Rotina:    outport_clear_bits ------------------------------------------------
+ 636           	; Descricao: Atribui o valor logico 0 aos bits do porto de saida identificados
+ 637           	;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
+ 638           	;            Interface exemplo: void outport_clear_bits( uint8_t pins_mask );
+ 639           	; Entradas:  R0 - Mascara com a especificacao do indice dos bits a alterar.
+ 640           	; Saidas:    -
+ 641           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 642           	outport_clear_bits:
+ 643 027E 0E 24	    push    lr
+ 644 0280 A1 0D	    ldr     r1, outport_img_addr
+ 645 0282 12 08	    ldrb    r2, [r1, #0]
+ 646 0284 10 B0	    mvn     r0, r0
+ 647 0286 20 C0	    and     r0, r2, r0
+ 648 0288 10 28	    strb    r0, [r1, #0]
+ 649 028A 0F 5C	    bl      outport_write
+ 650 028C 0F 04	    pop     pc
  651           	
- 652           	inport_addr:
- 653 028A 80 FF	    .word   INPORT_ADDRESS
- 654           	
- 655           	; Gestor de periférico para o porto de saída ===================================
- 656           	;
- 657           	; Rotina:    outport_set_bits --------------------------------------------------
- 658           	; Descricao: Atribui o valor logico 1 aos bits do porto de saida identificados
- 659           	;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
- 660           	;            Interface exemplo: void outport_set_bits( uint8_t pins_mask );
- 661           	; Entradas:  R0 - Mascara com a especificacao do indice dos bits a alterar.
- 662           	; Saidas:    -
- 663           	; Efeitos:   Altera o valor da variavel global outport_img.
- 664           	outport_set_bits:
- 665 028C 0E 24	    push    lr
- 666 028E 11 0E	    ldr     r1, outport_img_addr
- 667 0290 12 08	    ldrb    r2, [r1, #0]
- 668 0292 20 C8	    orr     r0, r2, r0
- 669 0294 10 28	    strb    r0, [r1, #0]
- 670 0296 17 5C	    bl      outport_write
- 671 0298 0F 04	    pop     pc
- 672           	
- 673           	; Rotina:    outport_clear_bits ------------------------------------------------
- 674           	; Descricao: Atribui o valor logico 0 aos bits do porto de saida identificados
- 675           	;            com o valor 1 em R0. O valor dos outros bits nao e alterado.
- 676           	;            Interface exemplo: void outport_clear_bits( uint8_t pins_mask );
- 677           	; Entradas:  R0 - Mascara com a especificacao do indice dos bits a alterar.
- 678           	; Saidas:    -
- 679           	; Efeitos:   Altera o valor da variavel global outport_img.
- 680           	outport_clear_bits:
- 681 029A 0E 24	    push    lr
- 682 029C A1 0D	    ldr     r1, outport_img_addr
- 683 029E 12 08	    ldrb    r2, [r1, #0]
- 684 02A0 10 B0	    mvn     r0, r0
- 685 02A2 20 C0	    and     r0, r2, r0
- 686 02A4 10 28	    strb    r0, [r1, #0]
- 687 02A6 0F 5C	    bl      outport_write
- 688 02A8 0F 04	    pop     pc
- 689           	
- 690           	; Rotina:    outport_init ------------------------------------------------------
- 691           	; Descricao: Faz a iniciacao do porto de saida, nele estabelecendo o valor
- 692           	;            recebido em R0.
- 693           	;            Interface exemplo: void outport_init( uint8_t value );
- 694           	; Entradas:  R0 - Valor a atribuir ao porto de saida.
- 695           	; Saidas:    -
- 696           	; Efeitos:   Altera o valor da variavel global outport_img.
- 697           	outport_init:
- 698 02AA 0E 24	    push    lr
- 699 02AC 21 0D	    ldr     r1, outport_img_addr
- 700 02AE 10 28	    strb    r0, [r1, #0]
- 701 02B0 0A 5C	    bl      outport_write
- 702 02B2 0F 04	    pop     pc
+ 652           	; Rotina:    outport_init ------------------------------------------------------
+ 653           	; Descricao: Faz a iniciacao do porto de saida, nele estabelecendo o valor
+ 654           	;            recebido em R0.
+ 655           	;            Interface exemplo: void outport_init( uint8_t value );
+ 656           	; Entradas:  R0 - Valor a atribuir ao porto de saida.
+ 657           	; Saidas:    -
+ 658           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 659           	outport_init:
+ 660 028E 0E 24	    push    lr
+ 661 0290 21 0D	    ldr     r1, outport_img_addr
+ 662 0292 10 28	    strb    r0, [r1, #0]
+ 663 0294 0A 5C	    bl      outport_write
+ 664 0296 0F 04	    pop     pc
+ 665           	
+ 666           	; Rotina:    outport-write_bits ------------------------------------------------
+ 667           	; Descricao: Atribui aos pinos do porto de saida identificados com o valor 1 em
+ 668           	;            pin_mask (R0) o valor correspondente de value (R1). O valor dos
+ 669           	;            restantes bits nao e alterado.
+ 670           	; Entradas:  R0 - Mascara com os bits a alterar.
+ 671           	;            R1 - Valor a atribuir aos bits identificados em R0.
+ 672           	; Saidas:    -
+ 673           	; Efeitos:   Altera o valor da variavel global outport_img.
+ 674           	outport_write_bits:
+ 675 0298 0E 24	    push    lr
+ 676 029A 11 C0	    and     r1, r1, r0                  ; r1 = pin_mask & value
+ 677 029C C2 0C	    ldr     r2, outport_img_addr
+ 678 029E 23 08	    ldrb    r3, [r2, #0]
+ 679 02A0 10 B0	    mvn     r0, r0                      ; r0 = ~pin_mask
+ 680 02A2 83 C1	    and     r3, r0, r3                  ; r3 = outport_img &= ~pin_mask
+ 681 02A4 B0 C8	    orr     r0, r3, r1                  ; r0 = outport_img |= pin_mask & value
+ 682 02A6 01 5C	    bl      outport_write
+ 683 02A8 0F 04	    pop     pc
+ 684           	
+ 685           	; Rotina:    outport_write -----------------------------------------------------
+ 686           	; Descricao: Escreve no porto de saida o valor recebido em R0.
+ 687           	;            Interface exemplo: void outport_write( uint8_t value );
+ 688           	; Entradas:  R0 - valor a atribuir ao porto de saida.
+ 689           	; Saidas:    -
+ 690           	; Efeitos:   -
+ 691           	outport_write:
+ 692 02AA 41 0C	    ldr     r1, outport_addr
+ 693 02AC 10 28	    strb    r0, [r1, #0]
+ 694 02AE 32 0C	    ldr     r2, outport_img_addr
+ 695 02B0 20 28	    strb    r0, [r2, #0]
+ 696 02B2 0F B7	    mov     pc, lr
+ 697           	
+ 698           	outport_addr:
+ 699 02B4 C0 FF	    .word   OUTPORT_ADDRESS
+ 700           	
+ 701           	outport_img_addr:
+ 702 02B6 EA 02	    .word   outport_img
  703           	
- 704           	; Rotina:    outport-write_bits ------------------------------------------------
- 705           	; Descricao: Atribui aos pinos do porto de saida identificados com o valor 1 em
- 706           	;            pin_mask (R0) o valor correspondente de value (R1). O valor dos
- 707           	;            restantes bits nao e alterado.
- 708           	; Entradas:  R0 - Mascara com os bits a alterar.
- 709           	;            R1 - Valor a atribuir aos bits identificados em R0.
- 710           	; Saidas:    -
- 711           	; Efeitos:   Altera o valor da variavel global outport_img.
- 712           	outport_write_bits:
- 713 02B4 0E 24	    push    lr
- 714 02B6 11 C0	    and     r1, r1, r0                  ; r1 = pin_mask & value
- 715 02B8 C2 0C	    ldr     r2, outport_img_addr
- 716 02BA 23 08	    ldrb    r3, [r2, #0]
- 717 02BC 10 B0	    mvn     r0, r0                      ; r0 = ~pin_mask
- 718 02BE 83 C1	    and     r3, r0, r3                  ; r3 = outport_img &= ~pin_mask
- 719 02C0 B0 C8	    orr     r0, r3, r1                  ; r0 = outport_img |= pin_mask & value
- 720 02C2 01 5C	    bl      outport_write
- 721 02C4 0F 04	    pop     pc
- 722           	
- 723           	; Rotina:    outport_write -----------------------------------------------------
- 724           	; Descricao: Escreve no porto de saida o valor recebido em R0.
- 725           	;            Interface exemplo: void outport_write( uint8_t value );
- 726           	; Entradas:  R0 - valor a atribuir ao porto de saida.
- 727           	; Saidas:    -
- 728           	; Efeitos:   -
- 729           	outport_write:
- 730 02C6 41 0C	    ldr     r1, outport_addr
- 731 02C8 10 28	    strb    r0, [r1, #0]
- 732 02CA 32 0C	    ldr     r2, outport_img_addr
- 733 02CC 20 28	    strb    r0, [r2, #0]
- 734 02CE 0F B7	    mov     pc, lr
- 735           	
- 736           	outport_addr:
- 737 02D0 C0 FF	    .word   OUTPORT_ADDRESS
- 738           	
- 739           	outport_img_addr:
- 740 02D2 06 03	    .word   outport_img
- 741           	
- 742           	; Gestor de periférico para o Pico Timer/Counter (pTC) =========================
- 743           	;
- 744           	; Rotina:    ptc_init ----------------------------------------------------------
- 745           	; Descricao: Faz a iniciacao do periférico pTC, habilitando o seu funcionamento
- 746           	;            em modo continuo e com o intervalo de contagem recebido em R0, em
- 747           	;            ticks.
- 748           	;            Interface exemplo: void ptc_init( uint8_t interval );
- 749           	; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
- 750           	; Saidas:    -
- 751           	; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
- 752           	;            o pedido de interrupcao eventualmente pendente.
- 753           	ptc_init:
- 754 02D4 0E 24	    push    lr
- 755 02D6 00 24	    push    r0                  ; guardar o valor do intervalo
- 756 02D8 0B 5C	    bl      ptc_stop
- 757 02DA 00 04	    pop     r0                  ; recuperar o valor do intervalo
- 758 02DC 41 0C	    ldr     r1, ptc_addr0
- 759 02DE 10 29	    strb    r0, [r1, #PTC_TMR]
- 760 02E0 0E 5C	    bl      ptc_clr_irq
- 761 02E2 02 5C	    bl      ptc_start
- 762 02E4 0F 04	    pop     pc
+ 704           	; Gestor de periférico para o Pico Timer/Counter (pTC) =========================
+ 705           	;
+ 706           	; Rotina:    ptc_init ----------------------------------------------------------
+ 707           	; Descricao: Faz a iniciacao do periférico pTC, habilitando o seu funcionamento
+ 708           	;            em modo continuo e com o intervalo de contagem recebido em R0, em
+ 709           	;            ticks.
+ 710           	;            Interface exemplo: void ptc_init( uint8_t interval );
+ 711           	; Entradas:  R0 - Valor do novo intervalo de contagem, em ticks.
+ 712           	; Saidas:    -
+ 713           	; Efeitos:   Inicia a contagem no periferico a partir do valor zero, limpando
+ 714           	;            o pedido de interrupcao eventualmente pendente.
+ 715           	ptc_init:
+ 716 02B8 0E 24	    push    lr
+ 717 02BA 00 24	    push    r0                  ; guardar o valor do intervalo
+ 718 02BC 0B 5C	    bl      ptc_stop
+ 719 02BE 00 04	    pop     r0                  ; recuperar o valor do intervalo
+ 720 02C0 41 0C	    ldr     r1, ptc_addr0
+ 721 02C2 10 29	    strb    r0, [r1, #PTC_TMR]
+ 722 02C4 0E 5C	    bl      ptc_clr_irq
+ 723 02C6 02 5C	    bl      ptc_start
+ 724 02C8 0F 04	    pop     pc
+ 725           	
+ 726           	ptc_addr0:
+ 727 02CA 40 FF	    .word   PTC_ADDRESS
+ 728           	
+ 729           	; Rotina:    ptc_start ---------------------------------------------------------
+ 730           	; Descricao: Habilita a contagem no periferico pTC.
+ 731           	;            Interface exemplo: void ptc_start( );
+ 732           	; Entradas:  -
+ 733           	; Saidas:    -
+ 734           	; Efeitos:   -
+ 735           	ptc_start:
+ 736 02CC D0 0C	    ldr     r0, PTC_ADDR
+ 737 02CE 01 60	    mov     r1, #PTC_CMD_START
+ 738 02D0 01 28	    strb    r1, [r0, #PTC_TCR]
+ 739 02D2 0F B7	    mov     pc, lr
+ 740           	
+ 741           	; Rotina:    ptc_stop ----------------------------------------------------------
+ 742           	; Descricao: Para a contagem no periferico pTC.
+ 743           	;            Interface exemplo: void ptc_stop( );
+ 744           	; Entradas:  -
+ 745           	; Saidas:    -
+ 746           	; Efeitos:   O valor do registo TC do periferico e colocado a zero.
+ 747           	ptc_stop:
+ 748 02D4 90 0C	    ldr     r0, PTC_ADDR
+ 749 02D6 11 60	    mov     r1, #PTC_CMD_STOP
+ 750 02D8 01 28	    strb    r1, [r0, #PTC_TCR]
+ 751 02DA 0F B7	    mov     pc, lr
+ 752           	
+ 753           	; Rotina:    ptc_get_value -----------------------------------------------------
+ 754           	; Descricao: Devolve o valor corrente da contagem do periferico pTC.
+ 755           	;            Interface exemplo: uint8_t ptc_get_value( );
+ 756           	; Entradas:  -
+ 757           	; Saidas:    R0 - O valor corrente do registo TC do periferico.
+ 758           	; Efeitos:   -
+ 759           	ptc_get_value:
+ 760 02DC 51 0C	    ldr     r1, PTC_ADDR
+ 761 02DE 10 0A	    ldrb    r0, [r1, #PTC_TC]
+ 762 02E0 0F B7	    mov     pc, lr
  763           	
- 764           	ptc_addr0:
- 765 02E6 40 FF	    .word   PTC_ADDRESS
- 766           	
- 767           	; Rotina:    ptc_start ---------------------------------------------------------
- 768           	; Descricao: Habilita a contagem no periferico pTC.
- 769           	;            Interface exemplo: void ptc_start( );
- 770           	; Entradas:  -
- 771           	; Saidas:    -
- 772           	; Efeitos:   -
- 773           	ptc_start:
- 774 02E8 D0 0C	    ldr     r0, PTC_ADDR
- 775 02EA 01 60	    mov     r1, #PTC_CMD_START
- 776 02EC 01 28	    strb    r1, [r0, #PTC_TCR]
- 777 02EE 0F B7	    mov     pc, lr
+ 764           	; Rotina:    ptc_clr_irq -------------------------------------------------------
+ 765           	; Descricao: Sinaliza o periferico pTC que foi atendido um pedido de
+ 766           	;            interrupção.
+ 767           	;            Interface exemplo: void ptc_clr_irq( );
+ 768           	; Entradas:  -
+ 769           	; Saidas:    -
+ 770           	; Efeitos:   -
+ 771           	ptc_clr_irq:
+ 772 02E2 20 0C	    ldr     r0, PTC_ADDR
+ 773 02E4 01 2B	    strb    r1, [r0, #PTC_TIR]
+ 774 02E6 0F B7	    mov     pc, lr
+ 775           	
+ 776           	PTC_ADDR:
+ 777 02E8 40 FF	    .word   PTC_ADDRESS
  778           	
- 779           	; Rotina:    ptc_stop ----------------------------------------------------------
- 780           	; Descricao: Para a contagem no periferico pTC.
- 781           	;            Interface exemplo: void ptc_stop( );
- 782           	; Entradas:  -
- 783           	; Saidas:    -
- 784           	; Efeitos:   O valor do registo TC do periferico e colocado a zero.
- 785           	ptc_stop:
- 786 02F0 90 0C	    ldr     r0, PTC_ADDR
- 787 02F2 11 60	    mov     r1, #PTC_CMD_STOP
- 788 02F4 01 28	    strb    r1, [r0, #PTC_TCR]
- 789 02F6 0F B7	    mov     pc, lr
+ 779           	
+ 780           	; ##############################################################################
+ 781           	; Seccao:    data
+ 782           	; Descricao: Guarda as variáveis globais
+ 783           	;
+ 784           	    .data
+ 785           	outport_img:
+ 786 02EA 00   	    .space  1
+ 787           	
+ 788           	sw_state:
+ 789 02EB 00   	    .space  1
  790           	
- 791           	; Rotina:    ptc_get_value -----------------------------------------------------
- 792           	; Descricao: Devolve o valor corrente da contagem do periferico pTC.
- 793           	;            Interface exemplo: uint8_t ptc_get_value( );
- 794           	; Entradas:  -
- 795           	; Saidas:    R0 - O valor corrente do registo TC do periferico.
- 796           	; Efeitos:   -
- 797           	ptc_get_value:
- 798 02F8 51 0C	    ldr     r1, PTC_ADDR
- 799 02FA 10 0A	    ldrb    r0, [r1, #PTC_TC]
- 800 02FC 0F B7	    mov     pc, lr
+ 791           	sysclk:
+ 792 02EC 00   	    .space  2
+ 792 02ED 00
+ 793           	
+ 794           	; operation mode variables -----------------------------------------------------
+ 795           	crossing_time:
+ 796 02EE 64 00	    .word 0x0064
+ 797           	
+ 798           	crossing_times_array:
+ 799          	    .word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
+ 799 02F0 64 00 C8 00 2C 01 90 01 F4 01 58 02 58 02 58 02
+ 800           	    ;.word  0x0064, 0x00C8, 0x012C, 0x0190, 0x01F4, 0x0258, 0x0258, 0x0258
  801           	
- 802           	; Rotina:    ptc_clr_irq -------------------------------------------------------
- 803           	; Descricao: Sinaliza o periferico pTC que foi atendido um pedido de
- 804           	;            interrupção.
- 805           	;            Interface exemplo: void ptc_clr_irq( );
- 806           	; Entradas:  -
- 807           	; Saidas:    -
- 808           	; Efeitos:   -
- 809           	ptc_clr_irq:
- 810 02FE 20 0C	    ldr     r0, PTC_ADDR
- 811 0300 01 2B	    strb    r1, [r0, #PTC_TIR]
- 812 0302 0F B7	    mov     pc, lr
+ 802           	in_crossing:     ; flag para saber se ha peao a atravessar
+ 803 0300 00	    .byte 0
+ 804           	
+ 805           	in_operation:    ; flag para saber se o modo de operacao esta ativo
+ 806 0301 00	    .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
+ 807           	
+ 808           	crossing_time_start_tick: ; para ter o valor do tick em que o peao comecou a atravessar
+ 809 0302 00   	    .space 2
+ 809 0303 00
+ 810           	
+ 811           	operation_time_start_tick: ; para ter o valor do tick em que o semaforo de transito apagou ou acendeu
+ 812 0304 00   	    .space 2
+ 812 0305 00
  813           	
- 814           	PTC_ADDR:
- 815 0304 40 FF	    .word   PTC_ADDRESS
+ 814           	first_time_on_op:  ; flag para saber se e para acender ou nao o led dos peoes
+ 815 0306 01	    .byte 1
  816           	
- 817           	
- 818           	; ##############################################################################
- 819           	; Seccao:    data
- 820           	; Descricao: Guarda as variáveis globais
- 821           	;
- 822           	    .data
- 823           	outport_img:
- 824 0306 00   	    .space  1
- 825           	
- 826           	sw_state:
- 827 0307 00   	    .space  1
- 828           	
- 829           	sysclk:
- 830 0308 00   	    .space  2
- 830 0309 00
- 831           	
- 832           	; operation mode variables -----------------------------------------------------
- 833           	crossing_time:
- 834 030A 64 00	    .word 0x0064
+ 817           	op_led_phase:      ; flag para saber se e para acender ou nao o led do transito
+ 818 0307 01	    .byte 1
+ 819           	
+ 820           	op_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
+ 821 0308 01	    .byte 1
+ 822           	
+ 823           	; config mode variables --------------------------------------------------------
+ 824           	in_config:       ; flag para saber se o modo de configuracao esta ativo
+ 825 0309 00	    .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
+ 826           	
+ 827           	config_time_start_tick: ; para ter o valor do tick em que os semaforos apagaram ou acenderam
+ 828 030A 00   	    .space 2
+ 828 030B 00
+ 829           	
+ 830           	conf_leds_phase:  ; flag para saber se e para acender ou nao os leds
+ 831 030C 01	    .byte 1
+ 832           	
+ 833           	conf_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
+ 834 030D 01	    .byte 1
  835           	
- 836           	crossing_times_array:
- 837          	    .word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
- 837 030C 64 00 C8 00 2C 01 90 01 F4 01 58 02 58 02 58 02
- 838           	    ;.word  0x0064, 0x00C8, 0x012C, 0x0190, 0x01F4, 0x0258, 0x0258, 0x0258
- 839           	
- 840           	in_crossing:     ; flag para saber se ha peao a atravessar
- 841 031C 00	    .byte 0
- 842 031D 00  	    .align
- 843           	
- 844           	in_operation:    ; flag para saber se o modo de operacao esta ativo
- 845 031E 00	    .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
- 846 031F 00  	    .align
- 847           	
- 848           	crossing_time_start_tick: ; para ter o valor do tick em que o peao comecou a atravessar
- 849 0320 00   	    .space 2
- 849 0321 00
- 850           	
- 851           	operation_time_start_tick: ; para ter o valor do tick em que o semaforo de transito apagou ou acendeu
- 852 0322 00   	    .space 2
- 852 0323 00
- 853           	
- 854           	first_time_on_op:  ; flag para saber se e para acender ou nao o led dos peoes
- 855 0324 01	    .byte 1
- 856 0325 00  	    .align
- 857           	
- 858           	op_led_phase:      ; flag para saber se e para acender ou nao o led do transito
- 859 0326 01	    .byte 1
- 860 0327 00  	    .align
- 861           	
- 862           	op_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
- 863 0328 01	    .byte 1
- 864 0329 00  	    .align
- 865           	
- 866           	; config mode variables --------------------------------------------------------
- 867           	in_config:       ; flag para saber se o modo de configuracao esta ativo
- 868 032A 00	    .byte 0      ; 0 - 1a entrada em modo operação, 1 - reentradas vindas do main_loop
- 869 032B 00  	    .align
- 870           	
- 871           	config_time_start_tick: ; para ter o valor do tick em que os semaforos apagaram ou acenderam
- 872 032C 00   	    .space 2
- 872 032D 00
- 873           	
- 874           	conf_leds_phase:  ; flag para saber se e para acender ou nao os leds
- 875 032E 01	    .byte 1
- 876 032F 00  	    .align
- 877           	
- 878           	conf_first_time_on_phase: ; flag para saber se e a primeira vez que os leds estao acesos
- 879 0330 01	    .byte 1
- 880 0331 00  	    .align
- 881           	
- 882           	; ##############################################################################
- 883           	; Seccao:    stack
- 884           	; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
- 885           	;
- 886           	    .stack
- 887 0332 00   	    .space  STACK_SIZE
- 887 .... ..
- 887 0371 00
- 888           	stack_top:
- 888           	
+ 836           	; ##############################################################################
+ 837           	; Seccao:    stack
+ 838           	; Descricao: Implementa a pilha com o tamanho definido pelo simbolo STACK_SIZE
+ 839           	;
+ 840           	    .stack
+ 841 030E 00   	    .space  STACK_SIZE
+ 841 .... ..
+ 841 034D 00
+ 842           	stack_top:
+ 842           	
