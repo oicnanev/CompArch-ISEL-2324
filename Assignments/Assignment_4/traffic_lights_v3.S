@@ -196,8 +196,8 @@ pedestrian_crossing:
     bl      sysclk_elapsed
     ldr     r1, crossing_time_addr0
     ldr     r1, [r1, #0]
-    cmp     r1, r0
-    blo     pedestrian_time_finished
+    cmp     r0, r1
+    bhs     pedestrian_time_finished
     ; check if anothers pedestrian pressed the button to cross
     bl      check_pedestrian_button
     cmp     r0, r5
@@ -313,9 +313,9 @@ config_mode:
     mov     r0, #YELLOW
     bl      mode_light_set_color
     ; start timer to turn ON/OFF L1 and L2 LEDS ------------
-    bl      sysclk_get_ticks                    ; get actual tick number to start timer
-    ldr     r1, config_time_start_tick_addr
-    str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
+    ;bl      sysclk_get_ticks                    ; get actual tick number to start timer
+    ;ldr     r1, config_time_start_tick_addr
+    ;str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
 not_first_time_in_config_mode:
     ; check if L1 and L2 LEDS are in ON or OFF phase ---
     ldr     r0, conf_leds_phase_addr
@@ -354,14 +354,26 @@ config_mode_leds_phases:
     push    lr
     push    r4
     push    r5
+    push    r6
 
     mov     r5, #1                              ; True
 
     ldr     r3, conf_first_time_on_phase_addr
     ldrb    r2, [r3, #0]
     cmp     r2, r5
-    bne     not_first_time_in_phase  
+    bne     not_first_time_in_phase 
+
+    ; save the light colors
+    mov     r6, r0                              ; R0 = cor a colocar no L1 (transito), guardada em R6
     mov     r4, r1                              ; R1 = cor a colocar no L2 (peoes), guardada em R4
+    
+    ; start timer to turn ON/OFF L1 and L2 LEDS ------------
+    bl      sysclk_get_ticks                    ; get actual tick number to start timer
+    ldr     r1, config_time_start_tick_addr
+    str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
+
+    
+    mov     r0, r6                              ; R0 = cor a colocar no L1 (transito)
     bl      traffic_light_set_color             ; R0 = cor a colocar no L1 (transito)
     mov     r0, r4                              ; R0 = cor a colocar no L2 (peoes)
     bl      pedestrian_light_set_color
@@ -385,6 +397,7 @@ not_first_time_in_phase:
     ldr     r0, conf_first_time_on_phase_addr
     strb    r5, [r0, #0]                        ; first_time_in_phase = True
 config_mode_leds_phase_end:
+    pop     r6
     pop     r5
     pop     r4
     pop     pc
@@ -433,10 +446,12 @@ sysclk_addr0:
 ; Efeitos:   crossing_time = crossing_times_array[TIME_SWS]
 set_crossing_time:
     push    lr
-    mov     r1, #TIME_SWS && 0xFF
-    movt    r1, #TIME_SWS >> 8 & 0xFF
     bl      inport_read
+    mov     r1, #TIME_SWS & 0xFF
+    movt    r1, #TIME_SWS >> 8 & 0xFF
     and     r2, r0, r1                      ; selecionar apenas bits dos Time switches
+    lsr     r2, r2, #5                      ; shift right para obter o index
+    add     r2, r2, r2                      ; r2 = r2 * 3
     ldr     r0, crossing_times_array_addr   
     ldr     r1, [r0, r2]                    ; transferir o valor da array de times, index = r2
     ldr     r0, crossing_time_addr
@@ -819,8 +834,8 @@ crossing_time:
     .word 0x0064
 
 crossing_times_array:
-    ;.word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
-    .word  0x0064, 0x00C8, 0x012C, 0x0190, 0x01F4, 0x0258, 0x0258, 0x0258
+    .word  100, 200, 300, 400, 500, 600, 600, 600 ; 1 tick = 100ms / 10 ticks = 1s
+    ;.word  0x0064, 0x00C8, 0x012C, 0x0190, 0x01F4, 0x0258, 0x0258, 0x0258
 
 in_crossing:     ; flag para saber se ha peao a atravessar
     .byte 0
