@@ -60,10 +60,12 @@ isr_addr:
     .text
 
 ; Rotina:    main --------------------------------------------------------------
-; Descricao: *** TODO ***
+; Descricao: Ponto de entrada do programa
 ; Entradas:  -
 ; Saidas:    -
-; Efeitos:   *** TODO ***
+; Efeitos:   Inicializa o porto de saída, o temporizador, habilita as interrupções
+;            externas e entra num loop infinito onde é verificado o estado do switch
+;            do modo de operação e é chamada a rotina correspondente. 
 main:
     mov     r0, #0                      ; todos os LEDs apagados
     bl      outport_init
@@ -87,10 +89,11 @@ main_config_mode:
     b       .
 
 ; Rotina:    operation_mode ----------------------------------------------------
-; Descricao: *** TODO ***
+; Descricao: Acende os LEDs de acordo com o modo de operação e verifica se um
+;            peão pressionou o botão de peão.
 ; Entradas:  -
 ; Saidas:    -
-; Efeitos:   *** TODO ***
+; Efeitos:   Faz a gestão do modo de operação do semáforo.
 operation_mode:
     push   lr
     push   r4
@@ -213,8 +216,9 @@ crossing_time_addr0:
     .word   crossing_time
 
 ; Rotina:    operation_mode_led_phases ---------------------------------------
-; Descricao : *** TODO ***
-; Entradas  : R0 - cor a colocar no L1 (transito)
+; Descricao : Verifica se é necessário mudar de fase nos LEDs do semáforo de
+;             trânsito.
+; Entradas  : -
 ; Saidas    : -
 ; Efeitos   : -
 operation_mode_led_phases:
@@ -230,7 +234,6 @@ operation_mode_led_phases:
     cmp     r1, r5
     bne     op_not_first_time_in_phase
     strb    r4, [r1, #0]                        ; set first_time_in_phase = False
-    ;bl      traffic_light_set_color
 op_not_first_time_in_phase:
     ldr     r0, operation_time_start_tick_addr
     ldr     r0, [r0, #0]
@@ -276,10 +279,10 @@ crossing_time_start_tick_addr:
     .word crossing_time_start_tick
 
 ; Rotina:    config_mode -------------------------------------------------------
-; Descricao: *** TODO ***
+; Descricao: Acende os LEDs de acordo com o modo de configuração.
 ; Entradas:  -
 ; Saidas:    -
-; Efeitos:   *** TODO ***
+; Efeitos:   Faz a gestão do modo de configuração do semáforo.
 config_mode:
     push    lr
     push    r4
@@ -336,7 +339,8 @@ in_crossing_addr:
     .word   in_crossing
 
 ; Rotina:    config_mode_leds_phases -------------------------------------------
-; Descricao : *** TODO ***
+; Descricao : Verifica se é necessário mudar de fase nos LEDs do semáforo de
+;             configuração.
 ; Entradas  : R0 - cor a colocar no L1 (transito)
 ;             R1 - cor a colocar no L2 (peoes)
 ; Saidas    : -
@@ -347,22 +351,17 @@ config_mode_leds_phases:
     push    r6
 
     mov     r5, #1                              ; True
-
     ldr     r3, conf_first_time_on_phase_addr
     ldrb    r2, [r3, #0]
     cmp     r2, r5
     bne     not_first_time_in_phase 
-
     ; save the light colors
     mov     r6, r0                              ; R0 = cor a colocar no L1 (transito), guardada em R6
     mov     r4, r1                              ; R1 = cor a colocar no L2 (peoes), guardada em R4
-    
     ; start timer to turn ON/OFF L1 and L2 LEDS ------------
     bl      sysclk_get_ticks                    ; get actual tick number to start timer
     ldr     r1, config_time_start_tick_addr
-    str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks
-
-    
+    str     r0, [r1, #0]                        ; config_time_start_tick = sysclk_get_ticks    
     mov     r0, r6                              ; R0 = cor a colocar no L1 (transito)
     bl      traffic_light_set_color             ; R0 = cor a colocar no L1 (transito)
     mov     r0, r4                              ; R0 = cor a colocar no L2 (peoes)
